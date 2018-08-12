@@ -1,0 +1,165 @@
+{
+  "name": "vehicle",
+  "plural": "vehicles",
+  "base": "PersistedModel",
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {
+    "DealerId": {
+      "type": "string"
+    },
+    "dealerName": {
+      "type": "string"
+    },
+    "dealerPhone": {
+      "type": "number"
+    },
+    "dealerEmail": {
+      "type": "string"
+    },
+    "dealerAddress": {
+      "type": "string"
+    },
+    "dealerCity": {
+      "type": "string"
+    },
+    "dealerState": {
+      "type": "string"
+    },
+    "dealerZip": {
+      "type": "string"
+    },
+    "dealerTagline": {
+      "type": "string"
+    },
+    "vehicleClassification": {
+      "type": "string"
+    },
+    "vehicleCertifiedFlag": {
+      "type": "string"
+    },
+    "vehicleFactoryWarrantyFlag": {
+      "type": "string"
+    },
+    "vehicleDealerWarrantyFlag": {
+      "type": "string"
+    },
+    "vehicleExtendedWarrantyAv1Flag": {
+      "type": "string"
+    },
+    "vehicleAutoCheckFlag": {
+      "type": "string"
+    },
+    "vehicleCondition": {
+      "type": "string"
+    },
+    "vehicleVinNumber": {
+      "type": "string"
+    },
+    "vehicleStockNuber": {
+      "type": "string"
+    },
+    "vehicleYear": {
+      "type": "string"
+    },
+    "vehicleMake": {
+      "type": "string"
+    },
+    "vehicleModel": {
+      "type": "string"
+    },
+    "vehicleTrim": {
+      "type": "string"
+    },
+    "vehicleMileage": {
+      "type": "string"
+    },
+    "vehicleMSRP": {
+      "type": "string"
+    },
+    "vehicleRetailWholesaleValue": {
+      "type": "string"
+    },
+    "vehicleInvoiceAmount": {
+      "type": "string"
+    },
+    "vehiclePackAmount": {
+      "type": "string"
+    },
+    "vehicleTotalCost": {
+      "type": "string"
+    },
+    "vehicleSellingPrice": {
+      "type": "string"
+    },
+    "vehicleEngineDisplacementCI": {
+      "type": "string"
+    },
+    "vehicleEngineCyl": {
+      "type": "string"
+    },
+    "vehicleEngineHP": {
+      "type": "string"
+    },
+    "vehicleHPRPM": {
+      "type": "string"
+    },
+    "vehicleEngineTorque": {
+      "type": "string"
+    },
+    "vehicleTorqueRPM": {
+      "type": "string"
+    },
+    "vehicleTransmissionType": {
+      "type": "string"
+    },
+    "vehicleTransmissionGears": {
+      "type": "string"
+    },
+    "vehicleTransmissionName": {
+      "type": "string"
+    },
+    "vehicleCityMPG": {
+      "type": "string"
+    },
+    "vehicleHwyMPG": {
+      "type": "string"
+    },
+    "vehicleFuelTankCapacity": {
+      "type": "string"
+    },
+    "vehicleExteriorColor": {
+      "type": "string"
+    },
+    "vehicleInteriorColor": {
+      "type": "string"
+    },
+    "vehicleOptionalEquipment": {
+      "type": "string"
+    },
+    "vehicleComments": {
+      "type": "string"
+    },
+    "vehicleAdTitle": {
+      "type": "string"
+    },
+    "vehicleVideoURL": {
+      "type": "string"
+    },
+    "vehicleImgURL": {
+      "type": "string"
+    },
+    "vehicleImageURLModifiedDate": {
+      "type": "string"
+    },
+    "vehicleDetailLink": {
+      "type": "string"
+    }
+  },
+  "validations": [],
+  "relations": {},
+  "acls": [],
+  "methods": {}
+}
