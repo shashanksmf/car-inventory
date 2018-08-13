@@ -1,4 +1,4 @@
-angular.module('SimpleRESTWebsite', ['angular-storage', 'ui.router', 'weblogng'])
+angular.module('SimpleRESTWebsite', ['angular-storage', 'ui.router'])
     .constant('ENDPOINT_URI', 'https://car-data-base.mybluemix.net/api/')
     .config(function ($stateProvider, $urlRouterProvider, $httpProvider) {
         $stateProvider
@@ -9,16 +9,22 @@ angular.module('SimpleRESTWebsite', ['angular-storage', 'ui.router', 'weblogng']
                 controllerAs: 'login'
             })
             .state('appdashboard', {
-                url: '/appdashboard',
+                url: '/dashboard',
                 templateUrl: 'app/templates/appdashboard.tmpl.html',
                 controller: 'appdashboardCtrl',
                 controllerAs: 'appdashboard'
             })
             .state('dashboard', {
-                url: '/dashboard',
+                url: '/vehicle',
                 templateUrl: 'app/templates/dashboard.tmpl.html',
                 controller: 'DashboardCtrl',
                 controllerAs: 'dashboard'
+            })
+            .state('task', {
+                url: '/task/:taskId',
+                templateUrl: 'app/templates/vehicles.html',
+                controller: 'TaskCtrl',
+                controllerAs: 'task'
             });
 
         $urlRouterProvider.otherwise('/dashboard');
@@ -105,9 +111,11 @@ angular.module('SimpleRESTWebsite', ['angular-storage', 'ui.router', 'weblogng']
         service.fetch = function (vehicleId) {
             return $http.get(getUrlForId(vehicleId));
         };
-
+        service.getTasksVehicles = function (taskId) {
+            return $http.get('/task/' + taskId);
+        }
         service.create = function (vehicle) {
-            return $http.post(getUrl(), vehicle);
+            return $http.post('/vehicles', vehicle);
         };
 
         service.update = function (vehicleId, vehicle) {
@@ -118,26 +126,22 @@ angular.module('SimpleRESTWebsite', ['angular-storage', 'ui.router', 'weblogng']
             return $http.delete(getUrlForId(vehicleId));
         };
     })
+    .service('TasksModel', function ($http, ENDPOINT_URI) {
+        var service = this;
+        service.getAllTasks = function () {
+            return $http.get('/tasks');
+        }
+    })
 
     .service('fileUpload', ['$http', function ($http) {
         this.uploadFileToUrl = function (file, uploadUrl) {
             var fd = new FormData();
             fd.append('file', file);
 
-            $http.post('/uploadcsv', fd, {
+            return $http.post('/uploadcsv', fd, {
                 transformRequest: angular.identity,
                 headers: { 'Content-Type': undefined }
-            })
-
-                .success(function (data) {
-                    console.log("data", data);
-                    alert("file uploaded successfully");
-                })
-
-                .error(function (data) {
-                    console.log("data", data);
-                    alert("error uploading file")
-                });
+            });
         }
     }])
     .directive('fileModel', ['$parse', function ($parse) {
@@ -210,25 +214,62 @@ angular.module('SimpleRESTWebsite', ['angular-storage', 'ui.router', 'weblogng']
 
 
     })
-    .controller('appdashboardCtrl', function ($rootScope, $state, LoginService, UserService) {
-        console.log("this is appdashboardCtrl")
-    })
+    .controller('appdashboardCtrl', ['TasksModel', function (TasksModel, $rootScope, $state, LoginService, UserService) {
+        var appdashboard = this;
+        // tasks = [];
+        var getAllTasks = function () {
+            TasksModel.getAllTasks()
+                .then(function (response) {
+                    appdashboard.tasks = response.data;
+                })
+        };
+        getAllTasks();
 
+    }])
+    .controller('TaskCtrl', ['VehiclesModel', '$scope', '$state', '$stateParams', function (VehiclesModel, $scope, $state, $stateParams) {
+        var task = this;
+        task.loading = true;
+        function getVehicles() {
+            VehiclesModel.getTasksVehicles($stateParams.taskId)
+                .then(function (response) {
+                    task.loading = false;
+                    task.vehicles = response.data;
+
+                })
+        }
+        getVehicles();
+    }])
     .controller('DashboardCtrl', ['VehiclesModel', 'fileUpload', function (VehiclesModel, fileUpload) {
 
         var dashboard = this;
-
+        dashboard.uploadTxt = 'Upload';
+        dashboard.uploading = false;
         console.log("dashboard controller")
         function uploadFile() {
             console.log("asdsad");
             var file = dashboard.myFile;
+            dashboard.uploading = true;
+            dashboard.uploadTxt = 'Uploading...';
 
             console.log('file is ');
             console.dir(file);
 
             var uploadUrl = "/fileUpload";
-            fileUpload.uploadFileToUrl(file, uploadUrl);
+            fileUpload.uploadFileToUrl(file, uploadUrl)
+                .success(function (data) {
+                    dashboard.uploading = false;
+                    dashboard.uploadTxt = 'Upload';
+
+                    console.log("data", data);
+                    alert("file uploaded successfully");
+                })
+
+                .error(function (data) {
+                    console.log("data", data);
+                    alert("error uploading file")
+                });
         };
+
         dashboard.uploadFile = uploadFile;
         function getVehicles() {
             VehiclesModel.all()

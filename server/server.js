@@ -8,6 +8,11 @@ var app = module.exports = loopback();
 // var fileUpload = require('express-fileupload');
 var mongoose = require('mongoose');
 // var server = require('http').Server(app);
+var Task = require('./models/task');
+var Vehicle = require('./models/vehicle');
+var bodyParser = require('body-parser');
+app.use(bodyParser.urlencoded({extended: false}));
+app.use(bodyParser.json());
 
 app.start = function() {
   // start the web server
@@ -37,6 +42,7 @@ boot(app, __dirname, function(err) {
 // server.listen(80);
 
 mongoose.connect('mongodb://admin:admin@cluster0-shard-00-00-wkiof.mongodb.net:27017,cluster0-shard-00-01-wkiof.mongodb.net:27017,cluster0-shard-00-02-wkiof.mongodb.net:27017/test?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin&retryWrites=true?authMode=scram-sha1/carinfo');
+// mongoose.connect('mongodb://localhost:27017/carinfo');
 
 // app.get('/', function (req, res) {
 //  res.sendFile(__dirname + '/index.html');
@@ -47,3 +53,30 @@ app.get('/template', template.get);
 
 var upload = require('./upload.js');
 app.post('/uploadcsv', upload.post);
+
+app.post('/vehicles', function(req, res) {
+  // console.log(req);
+
+  // // console.log(req);
+  // res.json(req.body);
+  var vehicle = req.body;
+  console.log('vehicle-->', vehicle);
+  vehicle['_id'] = new mongoose.Types.ObjectId();
+
+  Vehicle.create([vehicle], function(err, result) {
+    console.log(err, result);
+    res.json(result);
+  });
+});
+app.get('/tasks', function(req, res) {
+  Task.find(function(err, result) {
+    res.json(result);
+  });
+});
+
+app.get('/task/:taskId', function(req, res) {
+  const taskId = req.params.taskId;
+  Vehicle.find({taskID: taskId}, function(err, result) {
+    res.json(result);
+  });
+});
