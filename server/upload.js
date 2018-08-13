@@ -31,14 +31,16 @@ exports.post = function (req, res) {
         ignoreEmpty: true,
       })
       .on('data', function (data) {
-        data['_id'] = new mongoose.Types.ObjectId();
-        data['name'] = {};
-        data.name['firstName'] = data["Dealer Name"];
+        var nativeObj = {};
+        nativeObj['_id'] = new mongoose.Types.ObjectId();
+        nativeObj['name'] = {};
+        nativeObj.name['firstName'] = data["Dealer Name"];
         vehicles.push(data);
-        const vechileObj = new Vehicle(data);
-        vechileObj.save(data).then((err, result) => {
+        // const vechileObj = new Vehicle({ name: "shashank", _id: new mongoose.Types.ObjectId() });
+        // vechileObj.save();
+        Vehicle.create({ ...data, ...nativeObj }, function (err, result) {
           console.log("err", err, result)
-        })
+        });
 
 
       })

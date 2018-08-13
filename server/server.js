@@ -2,11 +2,11 @@
 
 var loopback = require('loopback');
 var boot = require('loopback-boot');
-
+require('./db.js');
 var app = module.exports = loopback();
 // var app = require('express')();
 // var fileUpload = require('express-fileupload');
-// var mongoose = require('mongoose');
+var mongoose = require('mongoose');
 // var server = require('http').Server(app);
 
 app.start = function() {
@@ -36,7 +36,7 @@ boot(app, __dirname, function(err) {
 
 // server.listen(80);
 
-// mongoose.connect('mongodb://admin:admin@cluster0-shard-00-00-wkiof.mongodb.net:27017,cluster0-shard-00-01-wkiof.mongodb.net:27017,cluster0-shard-00-02-wkiof.mongodb.net:27017/test?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin&retryWrites=true?authMode=scram-sha1/carinfo');
+mongoose.connect('mongodb://admin:admin@cluster0-shard-00-00-wkiof.mongodb.net:27017,cluster0-shard-00-01-wkiof.mongodb.net:27017,cluster0-shard-00-02-wkiof.mongodb.net:27017/test?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin&retryWrites=true?authMode=scram-sha1/carinfo');
 
 // app.get('/', function (req, res) {
 //  res.sendFile(__dirname + '/index.html');
