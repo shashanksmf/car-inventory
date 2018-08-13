@@ -17,6 +17,8 @@
     "express": "^4.16.3",
     "express-fileupload": "^0.4.0",
     "fast-csv": "^2.4.1",
+    "file-type": "^9.0.0",
+    "formidable": "^1.2.1",
     "helmet": "^3.10.0",
     "json2csv": "^4.2.1",
     "loopback": "^3.19.0",
@@ -24,6 +26,7 @@
     "loopback-component-explorer": "^6.0.0",
     "loopback-connector-mongodb": "^3.4.4",
     "mongoose": "^5.2.1",
+    "read-chunk": "^2.1.0",
     "serve-favicon": "^2.0.1",
     "strong-error-handler": "^3.0.0"
   },

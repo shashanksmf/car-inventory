@@ -197,10 +197,10 @@
 			<div class="col-sm-6" style="float:right;">
 			<h4>Upload New Vehicles via .csv</h4>
 			Click <a href="/template">here</a> for an example template.</p>
-			<form action="/" method="POST" encType="multipart/form-data">
-				<input type="file" name="file" accept="*.csv" /><br/><br/>
-				<input type="submit" value="Upload Vehicles" />
-			</form>
+			<div>
+				<input type="file"  file-model = "dashboard.myFile"/><br/><br/>
+				<input type="button" ng-click="dashboard.uploadFile()" value="upload" />
+			</div>
 				<!-- CREATING -->
 				<div ng-if="!dashboard.isEditing" class="col-xs-12">
 					<h4>Create a New vehicle</h4>

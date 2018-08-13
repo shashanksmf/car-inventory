@@ -118,9 +118,46 @@ angular.module('SimpleRESTWebsite', ['angular-storage', 'ui.router', 'weblogng']
             return $http.delete(getUrlForId(vehicleId));
         };
     })
+
+    .service('fileUpload', ['$http', function ($http) {
+        this.uploadFileToUrl = function (file, uploadUrl) {
+            var fd = new FormData();
+            fd.append('file', file);
+
+            $http.post('/uploadcsv', fd, {
+                transformRequest: angular.identity,
+                headers: { 'Content-Type': undefined }
+            })
+
+                .success(function (data) {
+                    console.log("data", data);
+                    alert("file uploaded successfully");
+                })
+
+                .error(function (data) {
+                    console.log("data", data);
+                    alert("error uploading file")
+                });
+        }
+    }])
+    .directive('fileModel', ['$parse', function ($parse) {
+        return {
+            restrict: 'A',
+            link: function (scope, element, attrs) {
+                var model = $parse(attrs.fileModel);
+                var modelSetter = model.assign;
+
+                element.bind('change', function () {
+                    scope.$apply(function () {
+                        modelSetter(scope, element[0].files[0]);
+                    });
+                });
+            }
+        };
+    }])
     .controller('LoginCtrl', function ($rootScope, $state, LoginService, UserService) {
         var login = this;
-
+        console.log("login controller");
         function signIn(user) {
             LoginService.login(user)
                 .then(function (response) {
@@ -148,6 +185,7 @@ angular.module('SimpleRESTWebsite', ['angular-storage', 'ui.router', 'weblogng']
     .controller('MainCtrl', function ($rootScope, $state, LoginService, UserService) {
         var main = this;
 
+        console.log("main controller")
         function logout() {
             LoginService.logout()
                 .then(function (response) {
@@ -169,15 +207,29 @@ angular.module('SimpleRESTWebsite', ['angular-storage', 'ui.router', 'weblogng']
 
         main.logout = logout;
         main.currentUser = UserService.getCurrentUser();
-    })
 
+
+    })
     .controller('appdashboardCtrl', function ($rootScope, $state, LoginService, UserService) {
         console.log("this is appdashboardCtrl")
     })
 
-    .controller('DashboardCtrl', function (VehiclesModel) {
+    .controller('DashboardCtrl', ['VehiclesModel', 'fileUpload', function (VehiclesModel, fileUpload) {
+
         var dashboard = this;
 
+        console.log("dashboard controller")
+        function uploadFile() {
+            console.log("asdsad");
+            var file = dashboard.myFile;
+
+            console.log('file is ');
+            console.dir(file);
+
+            var uploadUrl = "/fileUpload";
+            fileUpload.uploadFileToUrl(file, uploadUrl);
+        };
+        dashboard.uploadFile = uploadFile;
         function getVehicles() {
             VehiclesModel.all()
                 .then(function (result) {
@@ -276,6 +328,8 @@ angular.module('SimpleRESTWebsite', ['angular-storage', 'ui.router', 'weblogng']
             dashboard.isEditing = false;
         }
 
+
+
         dashboard.vehicles = [];
         dashboard.editedVehicle = null;
         dashboard.isEditing = false;
@@ -289,7 +343,9 @@ angular.module('SimpleRESTWebsite', ['angular-storage', 'ui.router', 'weblogng']
 
         initCreateForm();
         getVehicles();
-    })
+
+
+    }])
     .constant('weblogngConfig', {
         apiKey: '',
         options: {

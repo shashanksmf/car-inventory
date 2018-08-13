@@ -46,4 +46,4 @@ var template = require('./template.js');
 app.get('/template', template.get);
 
 var upload = require('./upload.js');
-app.post('/', upload.post);
+app.post('/uploadcsv', upload.post);

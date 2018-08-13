@@ -1,33 +1,53 @@
 var csv = require('fast-csv');
 var mongoose = require('mongoose');
 var Vehicle = require('./vehicle');
+var readChunk = require('read-chunk');
+var fileType = require('file-type');
 
-exports.post = function(req, res) {
-  console.log('req.files.file');
-  var {files = '', file = ''} = req;
-  console.log('files', files, 'file', file);
-  if (!req.files)
-      return res.status(400).send('No files were uploaded.');
+var formidable = require('formidable');
 
-  var vehicleFile = req.files.file;
+exports.post = function (req, res) {
 
-  var vehicles = [];
+  const form = new formidable.IncomingForm();
+  form.multiples = true;
+  form.parse(req, async function (err, fields, files) {
+    const file = files.file;
+    let buffer = null,
+      type = null,
+      filename = '';
+    var totalSize = 0;
 
-  csv
-        .fromString(vehicleFile.data.toString(), {
-          headers: true,
-          ignoreEmpty: true,
+    totalSize = 2147483647;
+    buffer = await readChunk.sync(file.path, 0, totalSize);
+    type = fileType(buffer);
+    // console.log("buffer.toString()", buffer.toString())
+    console.log('req.files.file');
+
+    var vehicles = [];
+
+    csv
+      .fromString(buffer.toString(), {
+        headers: true,
+        ignoreEmpty: true,
+      })
+      .on('data', function (data) {
+        data['_id'] = new mongoose.Types.ObjectId();
+        data['name'] = {};
+        data.name['firstName'] = data["Dealer Name"];
+        vehicles.push(data);
+        const vechileObj = new Vehicle(data);
+        vechileObj.save(data).then((err, result) => {
+          console.log("err", err, result)
         })
-        .on('data', function(data) {
-          data['_id'] = new mongoose.Types.ObjectId();
 
-          vehicles.push(data);
-        })
-        .on('end', function() {
-          Vehicle.create(vehicles, function(err, documents) {
-              if (err) throw err;
-            });
 
-          res.send(vehicles.length + ' vehicles have been successfully uploaded.');
-        });
+      })
+      .on('end', function () {
+        console.log("vevhiles.length", vehicles.length)
+
+        res.send(vehicles.length + ' vehicles have been successfully uploaded.');
+      });
+  })
+
+
 };
