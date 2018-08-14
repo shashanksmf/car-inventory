@@ -2,6 +2,7 @@ var csv = require('fast-csv');
 var mongoose = require('mongoose');
 var Vehicle = require('./models/vehicle');
 var Task = require('./models/task');
+var TestData = require('./models/testData');
 var readChunk = require('read-chunk');
 var fileType = require('file-type');
 var formidable = require('formidable');
@@ -22,6 +23,7 @@ exports.post = function (req, res) {
     var taskObj = {};
     taskObj['_id'] = new mongoose.Types.ObjectId();
     taskObj['startTime'] = Date.now();
+    var headers = [];
 
     taskObj['file'] = file.name;
 
@@ -33,7 +35,6 @@ exports.post = function (req, res) {
       .on('data', function (data) {
         var vehicleObj = {};
 
-
         vehicleObj["_id"] = mongoose.Types.ObjectId();
         vehicleObj["taskID"] = taskObj['_id'];
         function formatData(data, vehicleObj) {
@@ -41,6 +42,7 @@ exports.post = function (req, res) {
           var tempObj = {};
           for (var vehicleKey in data) {
             tempObj[vehicleKey.trim()] = data[vehicleKey];
+            headers.push(vehicleKey);
           }
           data = tempObj;
 
@@ -115,7 +117,14 @@ exports.post = function (req, res) {
 
           Task.create(taskObj, function (err, result) {
             console.log(err);
+            var testObj = {};
+            testObj["_id"] = mongoose.Types.ObjectId();
+            testObj['headers'] = JSON.stringify(headers);
+            testObj["taskID"] = taskObj['_id'];
 
+            TestData.create(testObj, function(err, result) {
+              if(err) throw err;
+            })
             if (err) return err;
             res.send(vehicles.length + ' vehicles have been successfully uploaded.');
           })
