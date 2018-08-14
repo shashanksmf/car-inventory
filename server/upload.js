@@ -31,7 +31,6 @@ exports.post = function (req, res) {
         ignoreEmpty: true,
       })
       .on('data', function (data) {
-        console.log(data)
         var vehicleObj = {};
 
 
@@ -46,6 +45,8 @@ exports.post = function (req, res) {
           data = tempObj;
 
           vehicleObj["dealerName"] = data['Dealer Name'];
+          vehicleObj["dealerPhone"] = data['Dealer Phone'];
+          vehicleObj["dealerEmail"] = data['Dealer Email'];
           vehicleObj["dealerAddress"] = data['Dealer Address'];
           vehicleObj["dealerCity"] = data['Dealer City'];
           vehicleObj["dealerState"] = data['Dealer State'];
@@ -107,7 +108,6 @@ exports.post = function (req, res) {
 
       })
       .on('end', function () {
-        console.log(vehicles);
         Vehicle.create(vehicles, function (err, result) {
           if (err) return err;
           taskObj['success'] = vehicles.length;

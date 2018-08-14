@@ -9,7 +9,6 @@
     <title>Car Database</title>
   </head>
 
-
 	<div class="col-sm-6 col-sm-offset-3" style="border: 2px solid #f3f3f3;padding-top: 20px;">
 				<div class="col-12">
 					<h4>Upload CSV File</h4>
@@ -387,12 +386,12 @@
 						<button type="button" class="btn btn-default btn-lg pull-right"
 								ng-click="dashboard.cancelEditing()">Cancel
 						</button>
-					</form>        
-				</div>             
+					</form>
+				</div>
 				<!-- EDITING -->
 				<div ng-if="dashboard.isEditing" class="col-xs-12">
 					<h4>Editing {{dashboard.editedvehicle.DealerId}}</h4>
-					<hr/>   
+					<hr/>
 					<form class="edit-form" role="form"
 						  ng-submit="dashboard.updateVehicle(dashboard.editedVehicle)" novalidate>
 						<div class="form-group">
@@ -753,6 +752,6 @@
 						<button type="button" class="btn btn-default btn-lg pull-right"
 								ng-click="dashboard.cancelEditing()">Cancel
 						</button>
-					</form> 
+					</form>
 				</div>
 			</div>

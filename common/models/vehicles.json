@@ -1,6 +1,6 @@
 {
-  "name": "vehicles",
-  "plural": "vehicles",
+  "name": "vehiclesnew",
+  "plural": "vehiclesnew",
   "base": "PersistedModel",
   "idInjection": true,
   "options": {

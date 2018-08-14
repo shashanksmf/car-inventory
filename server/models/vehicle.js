@@ -189,7 +189,7 @@ var vehicleSchema = new mongoose.Schema({
     type: Date,
     default: Date.now(),
   },
-});
+},{ collection: 'vehicle' });
 
 var Vehicle = mongoose.model('vehicle', vehicleSchema);
 
