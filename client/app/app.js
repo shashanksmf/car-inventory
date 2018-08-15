@@ -25,6 +25,12 @@ angular.module('SimpleRESTWebsite', ['angular-storage', 'ui.router'])
                 templateUrl: 'app/templates/vehicles.html',
                 controller: 'TaskCtrl',
                 controllerAs: 'task'
+            })
+            .state('inbound',{
+              url : '/inbound',
+              templateUrl : 'app/templates/inboundHome.html',
+              controller : 'ProviderCtrl',
+              controllerAs : 'provider'
             });
 
         $urlRouterProvider.otherwise('/dashboard');
@@ -132,7 +138,32 @@ angular.module('SimpleRESTWebsite', ['angular-storage', 'ui.router'])
             return $http.get('/tasks');
         }
     })
+    .service('ProviderModel',function($http){
+        var service = this;
+        service.getOrignalHeaders = function(){
+            return $http.get('/getOrignalHeaders');
+        };
 
+        service.submitForm = function(formData){
+            return $http.post('/providerData',formData);
+        }
+        service.testFTPConnection = function(formData){
+            return $http.post('/testFTP',{
+                host : formData.ftpHost,uname : formData.ftpUsername, 
+                password : formData.ftpPassword
+                                        });
+        }
+        service.getProviderHeaders = function(formData){
+            console.log(formData);
+            
+            return $http.post('/getProviderHeaders',{
+                host : formData.ftpHost, uname : formData.ftpUsername, 
+                password : formData.ftpPassword, dict : formData.directory,
+                filename : formData.filename
+            });
+        }
+        
+    })
     .service('fileUpload', ['$http', function ($http) {
         this.uploadFileToUrl = function (file, uploadUrl) {
             var fd = new FormData();
@@ -239,6 +270,56 @@ angular.module('SimpleRESTWebsite', ['angular-storage', 'ui.router'])
         }
         getVehicles();
     }])
+    .controller('ProviderCtrl',['ProviderModel','$scope',function(ProviderModel,$scope){
+        var provider = this;
+        provider.name = "AJay";
+        provider.mapppedHeader = {};
+        provider.orignalHeaders = [];
+        provider.providerHeaders = [];
+        provider.res = {};
+        function getOrignalHeaders(){
+            ProviderModel.getOrignalHeaders()
+                .then(function(response){
+                    for(header in response.data){
+                        provider.orignalHeaders.push(header);
+                    }
+                    console.log('Orginal Headers : ' , provider.orignalHeaders);
+                    console.log('Provider Headers : ' , provider.orignalHeaders);
+                    
+                });
+        }
+        provider.checkmapabc = function(){
+            console.log("provider.mapppedHeader",provider.mapppedHeader);
+        }
+        provider.statusChange = function(){
+            // alert('Status : ' + $scope.providerStatus)
+            console.log('Status : ' + $scope.providerStatus);
+            
+        }
+        provider.submitProviderForm = function(){
+           provider.form.headers = provider.mapppedHeader;
+           ProviderModel.submitForm(provider.form)
+                .then(function(response){
+                    console.log(JSON.stringify(response.data));
+                });
+        }
+        provider.testFTPConnection = function(){
+            ProviderModel.testFTPConnection(provider.form)
+                .then(function(res){
+                    provider.res = res.data;
+                    if(provider.res.result)
+                        provider.directories = provider.res.list;
+                })
+        }
+
+        provider.getProviderHeaders =  function(){
+             ProviderModel.getProviderHeaders(provider.form)
+                .then(function(res){
+                   provider.providerHeaders = res.data;
+                });   
+        }
+        getOrignalHeaders();
+    }])
     .controller('DashboardCtrl', ['VehiclesModel', 'fileUpload', function (VehiclesModel, fileUpload) {
 
         var dashboard = this;
@@ -271,6 +352,7 @@ angular.module('SimpleRESTWebsite', ['angular-storage', 'ui.router'])
         };
 
         dashboard.uploadFile = uploadFile;
+
         function getVehicles() {
             VehiclesModel.all()
                 .then(function (result) {

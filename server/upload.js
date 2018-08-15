@@ -84,6 +84,11 @@ exports.post = function (req, res) {
           vehicleObj["vehicleTransmissionGears"] = data['Vehicle Transmission #Gears'];
           vehicleObj["vehicleTransmissionName"] = data['Vehicle Transmission Name'];
           vehicleObj["vehicleCityMPG"] = data['Vehicle City MPG'];
+
+          vehicleObj["vehicleOfDoors"] = data['Vehicle # of Doors'];
+          vehicleObj["vehicleEngineDisplacementL"] = data['Vehicle Engine Displacement (L)'];
+
+
           vehicleObj["vehicleHwyMPG"] = data['Vehicle Hwy MPG'];
           vehicleObj["vehicleFuelTankCapacity"] = data['Vehicle Fuel Tank Capacity'];
           vehicleObj["vehicleExteriorColor"] = data['Vehicle Exterior Color'];

@@ -2,6 +2,60 @@ var mongoose = require('mongoose');
 
 var vehicleSchema = new mongoose.Schema({
   _id: mongoose.Schema.Types.ObjectId,
+  /* providerName : {
+    type : String
+  },
+  providerStatus : {
+    type : String
+  },
+  ftpHost : {
+    type : String
+  },
+  ftpUsername : {
+    type : String
+  },
+  ftpPassword : {
+    type : String
+  },
+  columnDelimiter : {
+    type : String
+  },
+  exclosureCharacter : {
+    type : String
+  },
+  escapeCharacter : {
+    type : String
+  },
+  headerIncluded : {
+    type : String
+  },
+  footerIncluded : {
+    type : String
+  },
+  indentifierPosition : {
+    type : String
+  },
+  imageDelimiter : {
+    type : String
+  },
+  optionsCharacter : {
+    type : String
+  },
+  escapeCharacter : {
+    type : String
+  },
+  pullRequestURL : {
+    type : String
+  },
+  pullRequestType : {
+    type : String
+  },
+  preprecessRequest : {
+    type : String
+  },
+  fileForHeader : {
+    type : String
+  }, */
   'DealerId': {
     type: String,
   },
@@ -75,7 +129,7 @@ var vehicleSchema = new mongoose.Schema({
   'vehicleMSRP': {
     type: String,
   },
-  'vehicleRetail/WholesaleValue': {
+  'vehicleRetailWholesaleValue': {
     type: Number,
   },
   'vehicleInvoiceAmount': {
@@ -105,7 +159,7 @@ var vehicleSchema = new mongoose.Schema({
   'vehicleMarketClassName': {
     type: String,
   },
-  'vehicle#ofDoors': {
+  'vehicleOfDoors': {
     type: Number,
   },
   'vehicleDriveTrain': {
@@ -114,15 +168,15 @@ var vehicleSchema = new mongoose.Schema({
   'vehicleFuelType': {
     type: String,
   },
-  'vehicleEngineDisplacement(L)': {
+  'vehicleEngineDisplacementL': {
     // type : Decimal128
     type: String,
   },
-  'vehicleEngineDisplacement(CI)': {
+  'vehicleEngineDisplacementCI': {
     // type : Decimal128
     type: String,
   },
-  'vehicleEngine#Cyl': {
+  'vehicleEngine_Cyl': {
     type: Number,
   },
   'vehicleEngineHP': {
@@ -140,7 +194,7 @@ var vehicleSchema = new mongoose.Schema({
   'vehicleTransmissionType': {
     type: String,
   },
-  'vehicleTransmission#Gears': {
+  'vehicleTransmissionGears': {
     type: Number,
   },
   'vehicleTransmissionName': {
