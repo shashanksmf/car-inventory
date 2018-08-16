@@ -10,9 +10,11 @@ var mongoose = require('mongoose');
 // var server = require('http').Server(app);
 var Task = require('./models/task');
 var Vehicle = require('./models/vehicle');
-var Provider = require('./models/inbound/provider');
+var Provider = require('./models/Inbound/provider');
 var bodyParser = require('body-parser');
-app.use(bodyParser.urlencoded({extended: false}));
+app.use(bodyParser.urlencoded({
+  extended: false
+}));
 app.use(bodyParser.json());
 
 app.start = function() {
@@ -79,159 +81,187 @@ app.get('/tasks', function(req, res) {
 
 app.get('/task/:taskId', function(req, res) {
   const taskId = req.params.taskId;
-  Vehicle.find({taskID: taskId}, function(err, result) {
+  Vehicle.find({
+    taskID: taskId
+  }, function(err, result) {
     res.json(result);
   });
 });
 // var ftpClient = require('ftp-client');
 var Client = require('ftp');
 var fs = require('fs');
-app.get('/ftp/getFile',function(req,res){
-    var c = new Client();
-    c.on('ready', function() {
-      c.get('small-inventory.csv', function(err, stream) {
-        if (err) throw err;
-        stream.once('close', function() { c.end(); });
-        stream.pipe(fs.createWriteStream('inboundFiles/small-inventory.csv'));
-        res.send('Fine');
-      });
-    });
-    c.connect({
-          host: '127.0.0.1',
-          port: 21,
-          user: 'Ajayssj',
-          password: 'ajayajay'
-      });
-});
-
-app.get('/ftp/uploadFile',function(req,res){
-    var c = new Client();
-    c.on('ready', function() {
-      c.put('./inboundFiles/docs.zip','/uploaded/docs.zip', function(err) {
-        if (err) throw err;
+app.get('/ftp/getFile', function(req, res) {
+  var c = new Client();
+  c.on('ready', function() {
+    c.get('small-inventory.csv', function(err, stream) {
+      if (err) throw err;
+      stream.once('close', function() {
         c.end();
-        res.send('Uploaded');
       });
+      stream.pipe(fs.createWriteStream(
+        'inboundFiles/small-inventory.csv'));
+      res.send('Fine');
     });
-    c.connect({
-          host: '127.0.0.1',
-          port: 21,
-          user: 'Ajayssj',
-          password: 'ajayajay'
-      });
+  });
+  c.connect({
+    host: '127.0.0.1',
+    port: 21,
+    user: 'Ajayssj',
+    password: 'ajayajay'
+  });
 });
 
-app.get('/getOrignalHeaders',function(req,res){
-    var orignalHeaders = Vehicle.schema.obj;
-    delete orignalHeaders.taskID;
-    res.json(orignalHeaders);
+app.get('/ftp/uploadFile', function(req, res) {
+  var c = new Client();
+  c.on('ready', function() {
+    c.put('./inboundFiles/docs.zip', '/uploaded/docs.zip', function(err) {
+      if (err) throw err;
+      c.end();
+      res.send('Uploaded');
+    });
+  });
+  c.connect({
+    host: '127.0.0.1',
+    port: 21,
+    user: 'Ajayssj',
+    password: 'ajayajay'
+  });
 });
 
-app.post('/providerData',function(req,res){
-/*   var output = {result : false, msg : ''};
-  var vehicleObj = {};
+app.get('/getOrignalHeaders', function(req, res) {
   var orignalHeaders = Vehicle.schema.obj;
   delete orignalHeaders.taskID;
-  delete orignalHeaders._id;
-  for(var param in req.body){
-    vehicleObj[param] = req.body[param];
-  }
-  for(var orignal in orignalHeaders){
-    vehicleObj[orignal] = req.body.headers[orignal];
-  }
+  res.json(orignalHeaders);
+});
 
-  Provider.create([vehicle], function(err, result) {
-    console.log(err, result);
-    res.json(result);
-  });
- */
+app.post('/providerData', function(req, res) {
+  /*   var output = {result : false, msg : ''};
+    var vehicleObj = {};
+    var orignalHeaders = Vehicle.schema.obj;
+    delete orignalHeaders.taskID;
+    delete orignalHeaders._id;
+    for(var param in req.body){
+      vehicleObj[param] = req.body[param];
+    }
+    for(var orignal in orignalHeaders){
+      vehicleObj[orignal] = req.body.headers[orignal];
+    }
+
+    Provider.create([vehicle], function(err, result) {
+      console.log(err, result);
+      res.json(result);
+    });
+   */
   var providerObj = {};
-  for(var param in req.body){
-      if(param != 'headers')
-        providerObj[param] = req.body[param];
-    }
+  for (var param in req.body) {
+    if (param != 'headers')
+      providerObj[param] = req.body[param];
+  }
   var headersMapped = {};
-  for(var header in req.body.headers){
-      headersMapped[header] = req.body.headers[header];
-    }
+  for (var header in req.body.headers) {
+    headersMapped[header] = req.body.headers[header];
+  }
   providerObj['_id'] = new mongoose.Types.ObjectId();
   providerObj.headersMapped = headersMapped;
   Provider.create(providerObj, function(err, result) {
-      if(err) throw err;
-      // console.log(err, result);
-      res.json(result);
-    });
+    if (err) throw err;
+    // console.log(err, result);
+    res.json(result);
+  });
   // res.json(providerObj);
 });
 
-app.post('/testFTP',function(req,res){
+app.post('/testFTP', function(req, res) {
   var c = new Client();
 
   c.on('ready', function() {
     c.list(function(err, list) {
-      if (err){
-        res.json({result : 0,msg : err, class : 'danger'}); 
+      if (err) {
+        res.json({
+          result: 0,
+          msg: err,
+          class: 'danger'
+        });
       }
       c.end();
-      res.json({result : 1,msg : 'Connection Successfully Established !', class : 'success', list : list});
+      res.json({
+        result: 1,
+        msg: 'Connection Successfully Established !',
+        class: 'success',
+        list: list
+      });
     });
-    
+
 
   });
-  c.on('error',function(err){
-    console.log("err",err)
-    res.json({result : 0,msg : err, class : 'danger'});
+  c.on('error', function(err) {
+    console.log("err", err)
+    res.json({
+      result: 0,
+      msg: err,
+      class: 'danger'
+    });
   });
   c.connect({
-        host: req.body.host,
-        port: 21,
-        user: req.body.uname,
-        password: req.body.password
-    });
+    host: req.body.host,
+    port: 21,
+    user: req.body.uname,
+    password: req.body.password
+  });
 });
 
 
-app.post('/getProviderHeaders',function(req,res){
+app.post('/getProviderHeaders', function(req, res) {
   var c = new Client();
-  console.log('Body ' , req.body);
+  console.log('Body ', req.body);
   var headers = [];
-   var d;
-  console.log('Dicrectoy ; ' , req.body.dict + '/' + req.body.filename);
+  var d;
+  console.log('Dicrectoy ; ', req.body.dict + '/' + req.body.filename);
   var csv = require('fast-csv');
   c.on('ready', function() {
-    
+
     c.get(req.body.dict + '/' + req.body.filename, function(err, stream) {
-      if (err){
-        res.json({result : 0,msg : err, class : 'danger'}); 
+      if (err) {
+        res.json({
+          result: 0,
+          msg: err,
+          class: 'danger'
+        });
       }
-      stream.once('close', function() { c.end(); });
-      // stream.pipe(fs.createWriteStream('inboundFiles/' + req.body.filename));
-       
-      var csvStream = csv()
-      .on("data", function(data){
-        console.log(data);
-        d = data;
-        for (var vehicleKey in data) {
-          headers.push(vehicleKey);
-        }
-      })
-      .on("end", function(){
-        res.json(d);
+      stream.once('close', function() {
+        c.end();
       });
+      // stream.pipe(fs.createWriteStream('inboundFiles/' + req.body.filename));
+
+      var csvStream = csv()
+        .on("data", function(data) {
+          console.log(data);
+          d = data;
+          for (var vehicleKey in data) {
+            headers.push(vehicleKey);
+          }
+        })
+        .on("end", function() {
+          res.json(d);
+        });
 
       stream.pipe(csvStream);
     });
   });
-  c.on('error',function(err){
-    console.log("err",err)
-    res.json({result : 0,msg : err, class : 'danger'});
+  c.on('error', function(err) {
+    console.log("err", err)
+    res.json({
+      result: 0,
+      msg: err,
+      class: 'danger'
+    });
   });
   c.connect({
-        host: req.body.host,
-        port: 21,
-        user: req.body.uname,
-        password: req.body.password
-    });
+    host: req.body.host,
+    port: 21,
+    user: req.body.uname,
+    password: req.body.password
+  });
 
   // res.json(req.body);
 });
