@@ -1,8 +1,11 @@
 var mongoose = require('mongoose');
 
-mongoose.connect('mongodb://admin:admin@cluster0-shard-00-00-wkiof.mongodb.net:27017,cluster0-shard-00-01-wkiof.mongodb.net:27017,cluster0-shard-00-02-wkiof.mongodb.net:27017/carinfo?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin&retryWrites=true?authMode=scram-sha1', {useNewUrlParser: false});
+mongoose.connect(
+  'mongodb://admin:admin@cluster0-shard-00-00-wkiof.mongodb.net:27017,cluster0-shard-00-01-wkiof.mongodb.net:27017,cluster0-shard-00-02-wkiof.mongodb.net:27017/carinfo?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin&retryWrites=true?authMode=scram-sha1', {
+    useNewUrlParser: false
+  });
 
-mongoose.connect('mongodb://localhost:27017/carinfo');
+// mongoose.connect('mongodb://localhost:27017/carinfo');
 
 // When successfully connected
 mongoose.connection.on('connected', function() {
