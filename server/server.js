@@ -329,7 +329,7 @@ app.get('/inbound/scheduleJob/getProviders',scheduleCtrl.getproviders);
 
 
 
-global.headers = [
+global.headers = {
 additional_comments: "additional_comments",
 autotrader_teaser: "autotrader_teaser",
 // body_style: "vehicleBodyStyle",
@@ -491,4 +491,4 @@ image_27: "image_27",
 image_28: "image_28",
 image_29: "image_29",
 image_30: "image_30",
-]
+}
