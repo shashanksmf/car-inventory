@@ -136,9 +136,8 @@ app.get('/ftp/uploadFile', function(req, res) {
 });
 
 app.get('/getOrignalHeaders', function(req, res) {
-  var orignalHeaders = Vehicle.schema.obj;
-  delete orignalHeaders.taskID;
-  res.json(orignalHeaders);
+  
+  res.json(headers);
 });
 
 app.post('/providerData', function(req, res) {
@@ -171,9 +170,10 @@ app.post('/providerData', function(req, res) {
   providerObj['_id'] = new mongoose.Types.ObjectId();
   providerObj.headersMapped = headersMapped;
   Provider.create(providerObj, function(err, result) {
-    if (err) throw err;
-    // console.log(err, result);
-    res.json(result);
+    if(!err)
+      res.json({result : true, msg : 'New Provider Added Successfully!', class : 'success'});
+    else
+      res.json({result : false, msg : 'Error While Adding Provider!', class : 'danger'});
   });
   // res.json(providerObj);
 });
@@ -205,7 +205,7 @@ app.post('/testFTP', function(req, res) {
     console.log("err", err)
     res.json({
       result: 0,
-      msg: err,
+      msg: 'FTP Connection Failed!',
       class: 'danger'
     });
   });
@@ -250,42 +250,10 @@ app.post('/getProviderHeaders',function(req,res){
           isFirstLine = false;
           headers = data;
           console.log("headers ", headers );
-        } else {
-          console.log("data ", data );
-          var vehicleObj = {};
-          for (var i = 0; i < headers.length; i++) {
-            var key = headers[i];
-            var vehicleVal = data[i];
-            vehicleObj[key] = vehicleVal;
-          }
-          vehicleObj = mapping.csvToDbFields(vehicleObj);
-          vehicleObj["_id"] = mongoose.Types.ObjectId();
-          vehicleObj["taskID"] = taskObj['_id'];
-          vehicleList.push(vehicleObj);
         }
-
       })
       .on("end", function(){
-        // res.json(d);
-        console.log("vehicleList", vehicleList);
-        Vehicle.create(vehicleList, function (err, result) {
-          if (err) return err;
-          taskObj['success'] = vehicleList.length;
-          taskObj['endTime'] = Date.now();
-
-          Task.create(taskObj, function (err, result) {
-            var testObj = {};
-            testObj["_id"] = mongoose.Types.ObjectId();
-            testObj['headers'] = headers;
-            testObj["taskID"] = taskObj['_id'];
-
-            TestData.create(testObj, function(err, result) {
-              if(err) throw err;
-            })
-            if (err) return err;
-            res.send(vehicleList.length + ' vehicles have been successfully uploaded.');
-          })
-        });
+        res.json(headers);
       });
 
       stream.pipe(csvStream);
@@ -327,13 +295,11 @@ app.post('/inbound/scheduleJob',scheduleCtrl.scheduleJob);
 app.get('/inbound/scheduleJob/getProviders',scheduleCtrl.getproviders);
 
 
-
-
 global.headers = {
 additional_comments: "additional_comments",
 autotrader_teaser: "autotrader_teaser",
-// body_style: "vehicleBodyStyle",
-// body_type: "vehicleBodyType",
+body_style: "vehicleBodyStyle",
+body_type: "vehicleBodyType",
 book_bb: "book_bb",
 book_kbb: "book_kbb",
 book_nada: "book_nada",
@@ -343,59 +309,59 @@ carfeine_max_radius: "carfeine_max_radius",
 carfeine_monthly_budget: "carfeine_monthly_budget",
 carfeine_tracking_no: "carfeine_tracking_no",
 cars_com_teaser: "cars_com_teaser",
-// comments: "vehicleComments",
-// condition: "vehicleCondition",
+comments: "vehicleComments",
+condition: "vehicleCondition",
 craigslist_teaser: "craigslist_teaser",
 craigslist_title: "craigslist_title",
 dealer_comments: "dealer_comments",
-// doors: "vehicleOfDoors",
+doors: "vehicleOfDoors",
 driver_position: "driver_position",
-// drivetrain: "vehicleDriveTrain",
+drivetrain: "vehicleDriveTrain",
 engine: "engine",
 engine_aspiration_type: "engine_aspiration_type",
-// engine_ci: "vehicleEngineDisplacementCI",
-// engine_cyl: "vehicleEngine_Cyl",
+engine_ci: "vehicleEngineDisplacementCI",
+engine_cyl: "vehicleEngine_Cyl",
 engine_liter: "engine_liter",
 ext_color_code: "ext_color_code",
 ext_color_generic: "ext_color_generic",
-// ext_color_name: "vehicleExteriorColor",
+ext_color_name: "vehicleExteriorColor",
 ext_color_rgb: "ext_color_rgb",
 feed_image_timestamp: "feed_image_timestamp",
 feed_lockout: "feed_lockout",
-// flag_autocheck: "vehicleAutoCheckFlag",
+flag_autocheck: "vehicleAutoCheckFlag",
 flag_carfax: "flag_carfax",
 flag_carfax_1owner: "flag_carfax_1owner",
-// flag_certified: "vehicleCertifiedFlag",
+flag_certified: "vehicleCertifiedFlag",
 flag_custom: "flag_custom",
-// flag_dealer_warranty: "vehicleDealerWarrantyFlag",
-// flag_ext_warranty: "vehicleExtendedWarrantyAvlFlag",
-// flag_factory_warranty: "vehicleFactoryWarrantyFlag",
+flag_dealer_warranty: "vehicleDealerWarrantyFlag",
+flag_ext_warranty: "vehicleExtendedWarrantyAvlFlag",
+flag_factory_warranty: "vehicleFactoryWarrantyFlag",
 flag_featured: "flag_featured",
 flag_green_vehicle: "flag_green_vehicle",
 flag_special: "flag_special",
 flag_spotlight: "flag_spotlight",
 forced_induction: "forced_induction",
-// fuel_capacity: "vehicleFuelTankCapacity",
+fuel_capacity: "vehicleFuelTankCapacity",
 fuel_type: "vehicleFuelType",
 fuel_units: "vehicleFuelTankCapacity",
 high_output: "high_output",
-// hp: "vehicleEngineHP",
-// hp_rpm: "vehicleHPRPM",
+hp: "vehicleEngineHP",
+hp_rpm: "vehicleHPRPM",
 identifier: "identifier",
 images: "images",
 int_color_code: "int_color_code",
 int_color_name: "int_color_name",
-// make: "vehicleModel",
+make: "vehicleModel",
 market_class: "vehicleMarketClassName",
-// mileage: "vehicleMileage",
-// model: "vehicleModel",
+mileage: "vehicleMileage",
+model: "vehicleModel",
 model_number: "model_number",
-// mpg_city: "vehicleCityMPG",
-// mpg_hwy: "vehicleHwyMPG",
+mpg_city: "vehicleCityMPG",
+mpg_hwy: "vehicleHwyMPG",
 needs_attention: "needs_attention",
 odometer_status: "odometer_status",
 options: "options",
-// pack_amount: "vehiclePackAmount",
+pack_amount: "vehiclePackAmount",
 passenger_capacity: "passenger_capacity",
 price_1: "price_1",
 price_1_hide: "price_1_hide",
@@ -410,24 +376,24 @@ price_4: "price_4",
 price_4_hide: "price_4_hide",
 price_4_label: "price_4_label",
 price_destination: "price_destination",
-// price_invoice: "vehicleInvoiceAmount",
+price_invoice: "vehicleInvoiceAmount",
 price_msrp: "vehicleMSRP",
-// stock_no: "vehicleStockNumber",
+stock_no: "vehicleStockNumber",
 style_id: "style_id",
 tags: "tags",
 tq: "vehicleEngineTorque",
 tq_rpm: "vehicleTorqueRPM",
-// transmission: "vehicleTransmissionName",
-// transmission_gears: "vehicleTransmissionGears",
-// transmission_type: "vehicleTransmissionType",
-// trim: "vehicleTrim",
+transmission: "vehicleTransmissionName",
+transmission_gears: "vehicleTransmissionGears",
+transmission_type: "vehicleTransmissionType",
+trim: "vehicleTrim",
 vdp_link: "vehicleDetailLink",
-// vehicle_cost: "vehicleTotalCost",
+vehicle_cost: "vehicleTotalCost",
 video_code: "video_code",
 video_provider: "video_provider",
 video_type: "video_type",
-// video_url: "vehicleVideoURL",
-// vin: "vehicleVinNumber",
+video_url: "vehicleVideoURL",
+vin: "vehicleVinNumber",
 website_teaser: "website_teaser",
 website_title: "website_title",
 year: "year",
