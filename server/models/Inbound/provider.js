@@ -17,6 +17,12 @@ var providerSchema = new mongoose.Schema({
       ftpPassword : {
         type : String
       },
+      directory : {
+          type : String
+      },
+      filename : {
+          type : String
+      },
       columnDelimiter : {
         type : String
       },
