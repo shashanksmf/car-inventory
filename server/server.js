@@ -2,6 +2,8 @@
 
 var loopback = require('loopback');
 var boot = require('loopback-boot');
+
+
 require('./db.js');
 var app = module.exports = loopback();
 // var app = require('express')();
@@ -10,11 +12,16 @@ var mongoose = require('mongoose');
 // var server = require('http').Server(app);
 var Task = require('./models/task');
 var Vehicle = require('./models/vehicle');
-var Provider = require('./models/Inbound/provider');
+// var Provider = require('./models/inbound/provider');
+var scheduleCtrl = require('./controllers/inbound/schedule');
 var bodyParser = require('body-parser');
-app.use(bodyParser.urlencoded({
-  extended: false
-}));
+var TestData = require('./models/testData');
+const mapping = require('./utils/mapping');
+const path = require('path');
+
+global.__baseDir = __dirname;
+
+app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
 
 app.start = function() {
@@ -211,57 +218,110 @@ app.post('/testFTP', function(req, res) {
 });
 
 
-app.post('/getProviderHeaders', function(req, res) {
+app.post('/getProviderHeaders',function(req,res){
   var c = new Client();
-  console.log('Body ', req.body);
+  console.log('Body ' , req.body);
+  var directoryPath = req.body.dict ? req.body.dict : '';
   var headers = [];
-  var d;
-  console.log('Dicrectoy ; ', req.body.dict + '/' + req.body.filename);
+   var d;
+  console.log('Dicrectoy ; ' , directoryPath + '/' + req.body.filename);
+  var taskObj = {};
+  var vehicleList = [];
+  taskObj['_id'] = new mongoose.Types.ObjectId();
+  taskObj['startTime'] = Date.now();
+  var isFirstLine = true;
   var csv = require('fast-csv');
   c.on('ready', function() {
 
-    c.get(req.body.dict + '/' + req.body.filename, function(err, stream) {
-      if (err) {
-        res.json({
-          result: 0,
-          msg: err,
-          class: 'danger'
-        });
+    c.get(path.join(directoryPath, '/', req.body.filename), function(err, stream) {
+      if (err){
+        console.log("err ", err );
+        return res.json({result : 0,msg : err, class : 'danger'});
       }
-      stream.once('close', function() {
-        c.end();
-      });
+      stream.once('close', function() { c.end(); });
       // stream.pipe(fs.createWriteStream('inboundFiles/' + req.body.filename));
 
       var csvStream = csv()
-        .on("data", function(data) {
-          console.log(data);
-          d = data;
-          for (var vehicleKey in data) {
-            headers.push(vehicleKey);
+      .on("data", function(data){
+        if (isFirstLine) {
+          for (var i = 0; i < data.length; i++) {
+            data[i] = data[i].trim()
           }
-        })
-        .on("end", function() {
-          res.json(d);
+          isFirstLine = false;
+          headers = data;
+          console.log("headers ", headers );
+        } else {
+          console.log("data ", data );
+          var vehicleObj = {};
+          for (var i = 0; i < headers.length; i++) {
+            var key = headers[i];
+            var vehicleVal = data[i];
+            vehicleObj[key] = vehicleVal;
+          }
+          vehicleObj = mapping.csvToDbFields(vehicleObj);
+          vehicleObj["_id"] = mongoose.Types.ObjectId();
+          vehicleObj["taskID"] = taskObj['_id'];
+          vehicleList.push(vehicleObj);
+        }
+
+      })
+      .on("end", function(){
+        // res.json(d);
+        console.log("vehicleList", vehicleList);
+        Vehicle.create(vehicleList, function (err, result) {
+          if (err) return err;
+          taskObj['success'] = vehicleList.length;
+          taskObj['endTime'] = Date.now();
+
+          Task.create(taskObj, function (err, result) {
+            var testObj = {};
+            testObj["_id"] = mongoose.Types.ObjectId();
+            testObj['headers'] = headers;
+            testObj["taskID"] = taskObj['_id'];
+
+            TestData.create(testObj, function(err, result) {
+              if(err) throw err;
+            })
+            if (err) return err;
+            res.send(vehicleList.length + ' vehicles have been successfully uploaded.');
+          })
         });
+      });
 
       stream.pipe(csvStream);
     });
   });
-  c.on('error', function(err) {
-    console.log("err", err)
-    res.json({
-      result: 0,
-      msg: err,
-      class: 'danger'
-    });
+  c.on('error',function(err){
+    console.log("err",err)
+    res.json({result : 0,msg : err, class : 'danger'});
   });
   c.connect({
-    host: req.body.host,
-    port: 21,
-    user: req.body.uname,
-    password: req.body.password
-  });
+        host: req.body.host,
+        port: 21,
+        user: req.body.uname,
+        password: req.body.password
+    });
 
   // res.json(req.body);
 });
+
+var schedule = require('node-schedule');
+var jobs = [];
+
+app.get('/startCron',function(req,res){
+
+  let startTime = new Date(Date.now() + 5000);
+  let endTime = new Date(startTime.getTime() + 23000000);
+  var msg = 'Hello AJay';
+  jobs['myjob'] = schedule.scheduleJob({ start: startTime, rule: '*/1 * * * * *' }, function(message){
+    console.log(message);
+  }.bind(null,msg));
+  res.send('Cron Job Started!');
+});
+
+app.get('/stopCron',function(req,res){
+  jobs['myjob'].cancel();
+    res.send('Cron Job Canceled');
+});
+app.post('/inbound/scheduleJob',scheduleCtrl.scheduleJob);
+app.get('/inbound/scheduleJob/getProviders',scheduleCtrl.getproviders);
