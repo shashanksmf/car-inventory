@@ -27,10 +27,16 @@ angular.module('SimpleRESTWebsite', ['angular-storage', 'ui.router'])
                 controllerAs: 'task'
             })
             .state('inbound',{
-              url : '/inbound',
-              templateUrl : 'app/templates/inboundHome.html',
-              controller : 'ProviderCtrl',
-              controllerAs : 'provider'
+                url : '/inbound',
+                templateUrl : 'app/templates/inboundHome.html',
+                controller : 'ProviderCtrl',
+                controllerAs : 'provider'
+              })
+            .state('schedule',{
+              url : '/inbound/schedule',
+              templateUrl : 'app/templates/inbound/schedule.html',
+              controller : 'ScheduleCtrl',
+              controllerAs : 'schedule'
             });
 
         $urlRouterProvider.otherwise('/dashboard');
@@ -136,6 +142,15 @@ angular.module('SimpleRESTWebsite', ['angular-storage', 'ui.router'])
         var service = this;
         service.getAllTasks = function () {
             return $http.get('/tasks');
+        }
+    })
+    .service('ScheduleModel', function ($http) {
+        var service = this;
+        service.scheduleJob = function (formData) {
+            return $http.post('/inbound/scheduleJob',formData);
+        }
+        service.getProviders = function(){
+            return $http.get('/inbound/scheduleJob/getProviders');
         }
     })
     .service('ProviderModel',function($http){
@@ -270,6 +285,35 @@ angular.module('SimpleRESTWebsite', ['angular-storage', 'ui.router'])
         }
         getVehicles();
     }])
+    .controller('ScheduleCtrl', ['ScheduleModel', function (ScheduleModel) {
+        $('#sDate,#eDate').datetimepicker();
+       
+        var schedule = this;
+        schedule.loading = false;
+        schedule.form = {startDate : '08/18/2018 8:41:00 PM' ,endDate : '08/18/2018 8:41:02 PM'}
+        schedule.res = {};
+        schedule.providers = [];
+        schedule.scheduleJob = function() {
+            schedule.loading = true;
+            console.log('Form Data ' ,  schedule.form);
+            
+            ScheduleModel.scheduleJob(schedule.form)
+                .then(function (res) {
+                    schedule.loading = false;
+                    schedule.res = res.data;
+                })
+        };
+        schedule.getProviders = function(){
+            ScheduleModel.getProviders()
+                .then(function(res){
+                    console.log('response : ', res.data);
+                    
+                    schedule.providers = res.data;
+                })
+        }
+
+        schedule.getProviders();
+    }])
     .controller('ProviderCtrl',['ProviderModel','$scope',function(ProviderModel,$scope){
         var provider = this;
         provider.name = "AJay";
@@ -277,6 +321,10 @@ angular.module('SimpleRESTWebsite', ['angular-storage', 'ui.router'])
         provider.orignalHeaders = [];
         provider.providerHeaders = [];
         provider.res = {};
+        provider.alert = false;
+        provider.isFTPTested =  false;
+        provider.testingFTP = false;
+
         function getOrignalHeaders(){
             ProviderModel.getOrignalHeaders()
                 .then(function(response){
@@ -300,23 +348,44 @@ angular.module('SimpleRESTWebsite', ['angular-storage', 'ui.router'])
            provider.form.headers = provider.mapppedHeader;
            ProviderModel.submitForm(provider.form)
                 .then(function(response){
-                    console.log(JSON.stringify(response.data));
+                    var result = response.data;
+                    if(result.result){
+                        alert(result.msg);
+                        location.reload();
+                    }else{
+                        alert(result.msg);
+                    }
                 });
         }
         provider.testFTPConnection = function(){
+            provider.testingFTP = true;
             ProviderModel.testFTPConnection(provider.form)
                 .then(function(res){
                     provider.res = res.data;
-                    if(provider.res.result)
+                    if(provider.res.result){
                         provider.directories = provider.res.list;
+                        provider.isFTPTested =  true;
+                    }
+                    provider.alert = true;
+                    provider.testingFTP = false;
+
                 })
         }
 
         provider.getProviderHeaders =  function(){
-             ProviderModel.getProviderHeaders(provider.form)
+            if(provider.isFTPTested){
+               if(provider.form.directory != undefined && provider.form.filename != undefined ){
+                ProviderModel.getProviderHeaders(provider.form)
                 .then(function(res){
                    provider.providerHeaders = res.data;
                 });   
+               }else{
+                alert('Select FTP Directory And Filename!');
+               }
+              
+            }else{
+                alert('Connect To FTP Server First!')
+            }
         }
         getOrignalHeaders();
     }])
