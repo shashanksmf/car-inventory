@@ -251,7 +251,7 @@ var vehicleSchema = new mongoose.Schema({
   },
 book_kbb: {
   type: String,
-}
+},
 book_nada: {
   type: String,
 },
