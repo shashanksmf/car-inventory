@@ -31,82 +31,75 @@ function reScheduleFutureJob(job){
     }.bind(null,job));
 }
 
-function insertRecordsIntoDB(vehicles,taskObj){
+function insertRecordsIntoDB(vehicles){
     // inserting vehicle and task obj
     Vehicle.create(vehicles, function (err, result) {
-        if (err) return err;
-        taskObj['success'] = vehicles.length;
-        taskObj['endTime'] = Date.now();
-
-        Task.create(taskObj, function (err, result) {
-         // TODO: store header of file if want to debugging
-          if (err) return err;
-        })
+            if (err) return err;
       });
 }
 function readFileFromServer(ftpDetails){
-    var vehicles = [];
-    var taskObj = {};
-    taskObj['_id'] = new mongoose.Types.ObjectId();
-    taskObj['startTime'] = Date.now();
-    var headers = {};
-    var providerHeaders = {};
-    var isFirstLine = true;
-    taskObj['file'] = file.name;
-    getProviderHeaderFields(function(headers){
-        providerHeaders = headers;
-    })
-      c.connect({
-        host: ftpDetails.ftpHost,
-        port: 21,
-        user: ftpDetails.ftpUsername,
-        password: ftpDetails.ftpPassword
-      });
-      c.on('ready', function() {
-        var vehicles = [];
+    var c = new Client();
 
-        c.get(ftpDetails.directory + '/' + ftpDetails.filename, function(err, stream) {
-          var dataD ;
-          if (err) {
-            // handle error here   
-          }
-
-          stream.once('close', function() {
-            // close connection once stream is closed
-            c.end();
+    getProviderHeaderFields(ftpDetails._id,function(providerHeaders){
+        c.connect({
+            host: ftpDetails.ftpHost,
+            port: 21,
+            user: ftpDetails.ftpUsername,
+            password: ftpDetails.ftpPassword
           });
+          c.on('ready', function() {
+            var vehicles = [];
+            var isFirstLine = true;
+            c.get(ftpDetails.directory + '/' + ftpDetails.filename, function(err, stream) {
+              var dataD ;
+              if (err) {
+                // handle error here   
+              }
     
-          var csvStream = csv()
-            .on("data", function(data) {
-                // Push Records Into global Array
-                var vehicleObj;
-                for(var key in providerHeaders){
-                    vehicleObj[key] = data[providerHeaders[key]];
-                }
-                vehicleObj["_id"] = mongoose.Types.ObjectId();
-                vehicleObj["taskID"] = taskObj['_id'];
-                vehicles.push(vehicleObj);
-                
+              stream.once('close', function() {
+                // close connection once stream is closed
+                c.end();
+              });
               
-            })
-            .on("end", function() {
-                // pass vehicle object & task Obj to insert into database
-                insertRecordsIntoDB(vehicles , taskObj );
-            });
-    
-          stream.pipe(csvStream);
-        });
-      });
-      c.on('error', function(err) {
-        console.log("err", err)
+              csv.fromStream(stream, {
+                headers: true,
+                ignoreEmpty: true,
+              })
+                .on("data", function(data) {
+                   
+                    var vehicleObj = {};
+                    for(var key in providerHeaders){
+                        if(providerHeaders[key])
+                            vehicleObj[headers[key]] = data[providerHeaders[key]];
+                    }
+                    vehicleObj["_id"] = mongoose.Types.ObjectId();
+                    // Push Records Into global Array
+
+                    vehicles.push(vehicleObj);
+                  
+                })
+                .on("end", function() {
+                    // pass vehicle object & task Obj to insert into database
+                    insertRecordsIntoDB(vehicles );
+                });
         
-      });
+            });
+          });
+          c.on('error', function(err) {
+            console.log("err", err)
+            
+          });
+    })
+      
     
 }
 function getProviderHeaderFields(providerId,cb){
     Provider.findOne({_id: providerId},function(err,result){
-        if(!err)
+        if(!err){
+            delete result.headersMapped['$init'];
             cb(result.headersMapped);
+        }
+            
     });
 }
 function updateIsStartedFlag(jobId){
@@ -124,7 +117,7 @@ function updateIsActiveFlag(jobId){
 }
 
 function getProviderFTPDetails(providerId,cb){
-    Provider.findOne({_id : providerId},function(err,result){
+    Provider.findOne({_id : providerId} ,function(err,result){
         if(!err){
             cb(result);
         }
@@ -133,7 +126,7 @@ function getProviderFTPDetails(providerId,cb){
 
 function scheduleFutureJob(job){
     // scheduling new job for provider
-    cronJobs[job._id] = schedule.scheduleJob({ start: new Date(job.startDate).getTime(), end:  new Date(job.endDate).getTime(), rule:'*/1 * * * * * ' },function(job){
+    cronJobs[job._id] = schedule.scheduleJob({ start: new Date(job.startDate).getTime(), end:  new Date(job.endDate).getTime(), rule:'0 */1 * * * * ' },function(job){
         if(!cronJobs[job._id]['isStarted']){
             updateIsStartedFlag(job._id);
         }
