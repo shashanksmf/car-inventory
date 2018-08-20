@@ -28,7 +28,6 @@ Routes.middlewares = function () {
 
 };
 Routes.statics = function() {
-  Routes.bindMiddlewares();
 
 
 }
