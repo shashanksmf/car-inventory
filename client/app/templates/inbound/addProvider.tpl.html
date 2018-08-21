@@ -58,7 +58,7 @@
                 <label for="" class="col-sm-2 col-form-label">Directory Path</label>
                 <div class="col-sm-10">
                   <select required class="form-control" ng-model="provider.form.directory"> 
-                    <option value="{{directory.name}}" ng-if="directory.type == 'd'"  ng-repeat="directory in provider.directories">{{ directory.name }}</option>
+                    <option value="{{directory.name}}" ng-if="directory.type == 'd' &&  (directory.name != '.' && directory.name != '..')"  ng-repeat="directory in provider.directories">{{ directory.name }}</option>
                   </select>
                 </div>
             </div>

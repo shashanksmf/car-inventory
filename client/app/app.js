@@ -428,6 +428,9 @@ angular.module('SimpleRESTWebsite', ['angular-storage', 'ui.router','ui.bootstra
         provider.testingFTP = false;
 
         provider.form = {};
+        provider.form.ftpHost = '195.201.243.232';
+        provider.form.ftpUsername = 'test@ajayssj4.tk';
+        provider.form.ftpPassword = 'password123';
         function getOrignalHeaders(){
             ProviderModel.getOrignalHeaders()
                 .then(function(response){

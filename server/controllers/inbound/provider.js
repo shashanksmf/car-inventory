@@ -71,10 +71,10 @@ module.exports = {
         taskObj['startTime'] = Date.now();
         var isFirstLine = true;
         c.on('ready', function() {
-          c.get(path.join(directoryPath, '/', req.body.filename), function(err, stream) {
+          c.get(path.join(directoryPath, req.body.filename), function(err, stream) {
             if (err){
               console.log("err ", err );
-              return res.json({result : 0,msg : err, class : 'danger'});
+              return  res.json({result : 0 ,msg : 'File Or Directory Not Found!', class : 'danger'});
             }
             stream.once('close', function() { c.end(); });
             // stream.pipe(fs.createWriteStream('inboundFiles/' + req.body.filename));
