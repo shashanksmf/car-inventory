@@ -2,34 +2,51 @@ var CronSchedule = require('../../models/Inbound/cronSchedule');
 var schedule = require('node-schedule');
 var cronJobs = {};
 var Provider = require('../../models/Inbound/provider');
+var History = require('../../models/history');
 var Vehicle = require('../../models/vehicle');
 var Task = require('../../models/task');
 var csv = require('fast-csv');
 var Client = require('ftp');
 var mongoose = require('mongoose');
 
-function reScheduleAlreadyStartedJob(job){
+function updateLastNextRun(providerId,added,providerName){
+    CronSchedule.findOne({providerId : providerId},function(err,result){
+        var hours = result.interval;
+        var lastRunDate = new Date().getTime();
+        var nextRunDate = lastRunDate + ( hours * 60 * 60 * 1000 );
+        var obj = {};
+        obj['_id'] = new mongoose.Types.ObjectId();
+        obj['lastRun'] = lastRunDate;
+        obj['nextRun'] = nextRunDate;
+        obj['providerId'] = providerId;
+        obj['providerName'] = providerName;
+        obj['type'] = 1;
+        obj['added'] = added;
+        insertHistory(obj);
+        Provider.updateOne({_id : providerId},{nextRun : nextRunDate, lastRun : lastRunDate, added : added  }, function(err,result){ 
+            // if(!err)
+            //     // console.log('Date Updated!');
+                
+        });
+    })
+}
+
+function reScheduleJob(job,isStarted = false){
    // for re scheduling already  jobs which are vanished because server is restarted;
-    cronJobs[job._id] = schedule.scheduleJob(job.expression,function(providerId){
+    cronJobs[job._id] = schedule.scheduleJob({ start: new Date(job.startDate).getTime(), rule: job.expression },function(providerId){
+      
+        if(!cronJobs[job._id]['isStarted']){
+            cronJobs[job._id]['isStarted'] = true;
+            updateIsStartedFlag(job._id);
+        }
+       
         getProviderFTPDetails(providerId,function(ftpDetails){
             readFileFromServer(ftpDetails);
         });
     }.bind(null,job.providerId));
+    cronJobs[job._id]['isStarted'] = isStarted;
 }
 
-function reScheduleFutureJob(job){
-    // for re scheduling future jobs which are not started yet when server is restarted;
-    cronJobs[job._id] = schedule.scheduleJob({ start: new Date(job.startDate).getTime(), end: new Date(job.endDate).getTime(), rule: job.expression },function(job){
-        if(!cronJobs[job._id]['isStarted']){
-            cronJobs[job._id]['isStarted'] = true;
-            updateJobScheduleCollectionFlags(job._id);
-        }
-        getProviderFTPDetails(providerId,function(ftpDetails){
-            readFileFromServer(ftpDetails);
-        });
-
-    }.bind(null,job));
-}
 
 function insertRecordsIntoDB(vehicles){
     // inserting vehicle and task obj
@@ -39,8 +56,13 @@ function insertRecordsIntoDB(vehicles){
 }
 function readFileFromServer(ftpDetails){
     var c = new Client();
-
+    var added = 0;
     getProviderHeaderFields(ftpDetails._id,function(providerHeaders){
+        if(currentProvider.id != ftpDetails._id){
+            currentProvider.id = ftpDetails._id;
+            currentProvider.added = 0;
+        }
+
         c.connect({
             host: ftpDetails.ftpHost,
             port: 21,
@@ -76,9 +98,12 @@ function readFileFromServer(ftpDetails){
                     // Push Records Into global Array
 
                     vehicles.push(vehicleObj);
+                    // currentProvider.added++;
+                    added++;
                   
                 })
                 .on("end", function() {
+                    updateLastNextRun(ftpDetails._id,added,ftpDetails.providerName);
                     // pass vehicle object & task Obj to insert into database
                     insertRecordsIntoDB(vehicles );
                 });
@@ -89,9 +114,12 @@ function readFileFromServer(ftpDetails){
             console.log("err", err)
             
           });
-    })
-      
-    
+    })   
+}
+function insertHistory(obj){
+    History.create(obj,function(err,result){
+        
+    });
 }
 function getProviderHeaderFields(providerId,cb){
     Provider.findOne({_id: providerId},function(err,result){
@@ -108,11 +136,16 @@ function updateIsStartedFlag(jobId){
             cronJobs[jobId]['isStarted'] = true;
     })
 }
-function updateIsActiveFlag(jobId){
+function updateIsActiveFlag(jobId,cb){
     CronSchedule.updateOne({_id : jobId},{isActive : false}, function(err,result){   
         if(!err)  
+           { 
             cronJobs[jobId].cancel();
-            delete cronJobs[jobId];
+             delete cronJobs[jobId];
+             cb(true);
+            }
+            else
+            cb(false);
     });
 }
 
@@ -126,7 +159,7 @@ function getProviderFTPDetails(providerId,cb){
 
 function scheduleFutureJob(job){
     // scheduling new job for provider
-    cronJobs[job._id] = schedule.scheduleJob({ start: new Date(job.startDate).getTime(), end:  new Date(job.endDate).getTime(), rule:'0 */1 * * * * ' },function(job){
+    cronJobs[job._id] = schedule.scheduleJob({ start: new Date(job.startDate).getTime(), rule:job.expression },function(job){
         if(!cronJobs[job._id]['isStarted']){
             updateIsStartedFlag(job._id);
         }
@@ -149,8 +182,11 @@ function insertJobIntoDB(job,cb){
             cb(false);
     })
 }
-function cancelScheduledJob(jobId){
-    updateIsActiveFlag(jobId);
+function cancelScheduledJob(jobId,cb){
+    updateIsActiveFlag(jobId,function(result){
+        cb(result);
+    });
+    
 }
 module.exports = {
     scheduleJob : function(req,res){
@@ -159,8 +195,13 @@ module.exports = {
        scheduleObj['_id'] = mongoose.Types.ObjectId();
        scheduleObj['providerId'] = req.body.provider;
        scheduleObj['startDate'] = req.body.startDate;
-       scheduleObj['endDate'] = req.body.endDate;
-       scheduleObj['expression'] = '0 0 */' + req.body.interval + ' * * *';
+//    scheduleObj['endDate'] = req.body.endDate;
+       scheduleObj['interval'] = req.body.interval;
+       if(scheduleObj['interval'] == 100)
+         scheduleObj['expression'] = '0 */1 * * * * ';
+        else
+        scheduleObj['expression'] = '0 0 */' + req.body.interval + ' * * *';
+
        scheduleObj['isActive'] = req.body.status;
        
        scheduleFutureJob(scheduleObj);
@@ -171,8 +212,14 @@ module.exports = {
             res.json({result: false, msg : 'Error While Scheduling Job ',class : 'danger'});
        }) 
     },
-    cancelJob : function(jobId){
-        cancelScheduledJob(jobId);
+    cancelJob : function(req,res){
+        var jobId = req.param.jobId;
+        cancelScheduledJob(jobId,function(result){
+            if(result)
+                res.json({result : true, msg : 'Inbound Provider Schedule Canceled Successfully!', class: 'success'});
+            else
+                res.json({result : true, msg : 'Error While Canceling Schedule', class: 'danger'});
+        });
     },
     reScheduleCronJobs : function(){
         CronSchedule.find(function(err,result){
@@ -180,9 +227,9 @@ module.exports = {
             result.forEach(function(job){
                 if(job.isActive){
                     if(job.isStarted)
-                        reScheduleAlreadyStartedJob(job);
+                        reScheduleJob(job,true);
                     else
-                        reScheduleFutureJob(job);
+                        reScheduleJob(job);
                 }
             })
         })

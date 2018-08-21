@@ -12,12 +12,12 @@ var mongoose = require('mongoose');
 // var server = require('http').Server(app);
 var Task = require('./models/task');
 var Vehicle = require('./models/vehicle');
-// var Provider = require('./models/inbound/provider');
 var scheduleCtrl = require('./controllers/inbound/schedule');
+var providerCtrl = require('./controllers/inbound/provider');
+var ftpCtrl = require('./controllers/ftp');
+
 var bodyParser = require('body-parser');
 var TestData = require('./models/testData');
-const mapping = require('./utils/mapping');
-const path = require('path');
 
 global.__baseDir = __dirname;
 
@@ -28,6 +28,7 @@ app.start = function() {
   // start the web server
   return app.listen(function() {
     app.emit('started');
+    scheduleCtrl.reScheduleCronJobs();
     var baseUrl = app.get('url').replace(/\/$/, '');
     console.log('Web server listening at: %s', baseUrl);
     if (app.get('loopback-component-explorer')) {
@@ -94,207 +95,24 @@ app.get('/task/:taskId', function(req, res) {
     res.json(result);
   });
 });
-// var ftpClient = require('ftp-client');
-var Client = require('ftp');
-var fs = require('fs');
-app.get('/ftp/getFile', function(req, res) {
-  var c = new Client();
-  c.on('ready', function() {
-    c.get('small-inventory.csv', function(err, stream) {
-      if (err) throw err;
-      stream.once('close', function() {
-        c.end();
-      });
-      stream.pipe(fs.createWriteStream(
-        'inboundFiles/small-inventory.csv'));
-      res.send('Fine');
-    });
-  });
-  c.connect({
-    host: '127.0.0.1',
-    port: 21,
-    user: 'Ajayssj',
-    password: 'ajayajay'
-  });
-});
 
-app.get('/ftp/uploadFile', function(req, res) {
-  var c = new Client();
-  c.on('ready', function() {
-    c.put('./inboundFiles/docs.zip', '/uploaded/docs.zip', function(err) {
-      if (err) throw err;
-      c.end();
-      res.send('Uploaded');
-    });
-  });
-  c.connect({
-    host: '127.0.0.1',
-    port: 21,
-    user: 'Ajayssj',
-    password: 'ajayajay'
-  });
-});
-
-app.get('/getOrignalHeaders', function(req, res) {
-  
-  res.json(headers);
-});
-
-app.post('/providerData', function(req, res) {
-  /*   var output = {result : false, msg : ''};
-    var vehicleObj = {};
-    var orignalHeaders = Vehicle.schema.obj;
-    delete orignalHeaders.taskID;
-    delete orignalHeaders._id;
-    for(var param in req.body){
-      vehicleObj[param] = req.body[param];
-    }
-    for(var orignal in orignalHeaders){
-      vehicleObj[orignal] = req.body.headers[orignal];
-    }
-
-    Provider.create([vehicle], function(err, result) {
-      console.log(err, result);
-      res.json(result);
-    });
-   */
-  var providerObj = {};
-  for (var param in req.body) {
-    if (param != 'headers')
-      providerObj[param] = req.body[param];
-  }
-  var headersMapped = {};
-  for (var header in req.body.headers) {
-    headersMapped[header] = req.body.headers[header];
-  }
-  providerObj['_id'] = new mongoose.Types.ObjectId();
-  providerObj.headersMapped = headersMapped;
-  Provider.create(providerObj, function(err, result) {
-    if(!err)
-      res.json({result : true, msg : 'New Provider Added Successfully!', class : 'success'});
-    else
-      res.json({result : false, msg : 'Error While Adding Provider!', class : 'danger'});
-  });
-  // res.json(providerObj);
-});
-
-app.post('/testFTP', function(req, res) {
-  var c = new Client();
-
-  c.on('ready', function() {
-    c.list(function(err, list) {
-      if (err) {
-        res.json({
-          result: 0,
-          msg: err,
-          class: 'danger'
-        });
-      }
-      c.end();
-      res.json({
-        result: 1,
-        msg: 'Connection Successfully Established !',
-        class: 'success',
-        list: list
-      });
-    });
-
-
-  });
-  c.on('error', function(err) {
-    console.log("err", err)
-    res.json({
-      result: 0,
-      msg: 'FTP Connection Failed!',
-      class: 'danger'
-    });
-  });
-  c.connect({
-    host: req.body.host,
-    port: 21,
-    user: req.body.uname,
-    password: req.body.password
-  });
-});
-
-
-app.post('/getProviderHeaders',function(req,res){
-  var c = new Client();
-  console.log('Body ' , req.body);
-  var directoryPath = req.body.dict ? req.body.dict : '';
-  var headers = [];
-   var d;
-  console.log('Dicrectoy ; ' , directoryPath + '/' + req.body.filename);
-  var taskObj = {};
-  var vehicleList = [];
-  taskObj['_id'] = new mongoose.Types.ObjectId();
-  taskObj['startTime'] = Date.now();
-  var isFirstLine = true;
-  var csv = require('fast-csv');
-  c.on('ready', function() {
-
-    c.get(path.join(directoryPath, '/', req.body.filename), function(err, stream) {
-      if (err){
-        console.log("err ", err );
-        return res.json({result : 0,msg : err, class : 'danger'});
-      }
-      stream.once('close', function() { c.end(); });
-      // stream.pipe(fs.createWriteStream('inboundFiles/' + req.body.filename));
-
-      var csvStream = csv()
-      .on("data", function(data){
-        if (isFirstLine) {
-          for (var i = 0; i < data.length; i++) {
-            data[i] = data[i].trim()
-          }
-          isFirstLine = false;
-          headers = data;
-          console.log("headers ", headers );
-        }
-      })
-      .on("end", function(){
-        res.json(headers);
-      });
-
-      stream.pipe(csvStream);
-    });
-  });
-  c.on('error',function(err){
-    console.log("err",err)
-    res.json({result : 0,msg : err, class : 'danger'});
-  });
-  c.connect({
-        host: req.body.host,
-        port: 21,
-        user: req.body.uname,
-        password: req.body.password
-    });
-
-  // res.json(req.body);
-});
-
-var schedule = require('node-schedule');
-var jobs = [];
-
-app.get('/startCron',function(req,res){
-
-  let startTime = new Date(Date.now() + 5000);
-  let endTime = new Date(startTime.getTime() + 23000000);
-  var msg = 'Hello AJay';
-  jobs['myjob'] = schedule.scheduleJob({ start: startTime, rule: '*/1 * * * * *' }, function(message){
-    console.log(message);
-  }.bind(null,msg));
-  res.send('Cron Job Started!');
-});
-
-app.get('/stopCron',function(req,res){
-  jobs['myjob'].cancel();
-    res.send('Cron Job Canceled');
-});
+app.get('/ftp/getFile',ftpCtrl.downloadFile);
+app.get('/ftp/uploadFile', ftpCtrl.uploadFile);
+app.get('/getOrignalHeaders', providerCtrl.getOrignalHeaders);
+app.post('/addProvider', providerCtrl.addProvider);
+app.post('/testFTP', ftpCtrl.testFTP);
+app.post('/getProviderHeaders',providerCtrl.getProviderHeaders);
+app.get('/getTodaysProvidersData',providerCtrl.getTodaysProvidersData);
 app.post('/inbound/scheduleJob',scheduleCtrl.scheduleJob);
 app.get('/inbound/scheduleJob/getProviders',scheduleCtrl.getproviders);
+app.get('/getProvidersData',providerCtrl.getProvidersDetails);
 
-
+global.currentProvider = {
+  id : '',
+  added : 0,
+  updated : 0,
+  error : 0
+}
 global.headers = {
 additional_comments: "additional_comments",
 autotrader_teaser: "autotrader_teaser",

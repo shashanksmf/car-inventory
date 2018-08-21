@@ -6,11 +6,18 @@ var cronScheduleSchema = new mongoose.Schema({
   startDate: {
     type: Date
   },
+  endDate: {
+    type: Date
+  },
   status: {
     type: Date
   },
+  interval:{
+    type : Number
+  },
   isStarted: {
-    type: Number
+    type: Number,
+    default: 0
   },
   expression: {
     type: String

@@ -5,6 +5,24 @@ var providerSchema = new mongoose.Schema({
     providerName : {
         type : String
       },
+      lastRun : {
+          type : Date
+      },
+      nextRun : {
+        type : Date
+      },
+      added : {
+        type : Number,
+        default : 0
+      },
+      updated : {
+        type : Number,
+        default : 0
+      },
+      error : {
+        type : Number,
+        default : 0
+      },
       providerStatus : {
         type : String
       },
