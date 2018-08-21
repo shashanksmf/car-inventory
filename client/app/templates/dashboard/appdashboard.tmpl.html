@@ -1,0 +1,72 @@
+
+<div class="container">
+    <div class="row">
+        <ul class="nav nav-pills">
+                <li class="active" ><a href="#/dashboard">Dashboard</a></li>
+                <li><a href="#/inbound/provider/feed/list">Provider</a></li>
+                <li ><a href="#/inbound/provider/schedule/list">Schedule</a></li>
+                <li><a href="#">Errors-ToDo</a></li>
+              </ul>
+</div>
+  <h3 class="page-heading">Dashboard</h3>
+  <div ng-view></div>
+
+  <div class="container">
+    <h5 class="bg-primary dashboard-table-heading">Recent Reporting Tasks</h5>
+    <div class="table-wrapper container-fluid">
+      <table class="inbound-outbound-table table">
+        <thead>
+          <tr>
+            <th>Task ID</th>
+            <th>Type</th>
+            <th>Start Time</th>
+            <th>End Time</th>
+            <th>Success</th>
+            <th>Errors</th>
+            <!-- <th>3xx (redirect)</th> -->
+            <!-- <th>Other</th> -->
+          </tr>
+        </thead>
+        <tbody>
+          <p>{{ JSON.strinify(tasks); }}</p>
+          <tr ng-repeat="task in appdashboard.tasks">
+            <td>{{$index +1 }}</td>
+            <td><a href="#/task/{{ task._id }}">{{ task.file}}</a></td>
+            <td>{{ task.startTime}}</td>
+            <td>{{ task.endTime }}</td>
+            <td>{{ task.success }}</td>
+            <td>{{ task.error }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+
+<style>
+  .dashboard-table-heading {
+    padding: 10px;
+    margin-bottom: 0;
+  }
+.table-wrapper {
+  border:1px solid #428bca;
+}
+
+.inbound-outbound-table {
+  margin-top: 20px;
+}
+
+table.table tbody tr td,
+table.table thead tr th,
+table.table thead {
+  border:2px solid #ddd;
+  }
+
+  .page-heading {
+    border-bottom: 2px solid #ddd;
+    margin-left: 20px;
+    padding-bottom: 10px;
+  }
+</style>

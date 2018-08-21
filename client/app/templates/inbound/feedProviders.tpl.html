@@ -1,0 +1,52 @@
+<div class="container" ng-init="feedprovider.getProvidersData();">
+        <div class="row">
+                <ul class="nav nav-pills">
+                        <li ><a href="#/inbound/dashboard">Dashboard</a></li>
+                        <li  class="active"><a href="#/inbound/provider/feed/list">Provider</a></li>
+                        <li><a href="#/inbound/provider/schedule/list">Schedule</a></li>
+                        <li><a href="#">Errors-ToDo</a></li>
+                      </ul>
+        </div>
+    <div class="row">
+        <div class="col-md-12 ">
+            <div class="col-md-6">
+                <h4>
+                    Inbound Feed Providers
+                </h4>
+            </div>
+            <div class="col-md-6" style="text-align: right;">
+                <a href="#/inbound/provider/feed/add" class="btn btn-primary">Add New Provider</a>
+            </div>
+            <!-- <p>{{ feedprovider.providers}}</p> -->
+            <table class="table table-striped table-bordered">
+                <thead>
+                    <tr>
+                        <th>Provider ID</th>
+                        
+                        <th>Username</th>
+                        <th>Status</th>
+                        <th>Directory</th>
+                        <th>Last Run</th>
+                        <th>Next Run</th>
+                        <th>Last-Run Added</th>
+                        <th>Last-Run Updated</th>
+                        <th>Last-Run Errors</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="provider in feedprovider.providers">
+                        <td>{{ $index + 1 }}</td>
+                        <td>{{ provider.providerName }}</td>
+                        <td>{{ (provider.providerStatus)?'Active':'Inactive'}}</td>
+                        <td>{{ provider.directory }}</td>
+                        <td>{{ provider.lastRun}}</td>
+                        <td>{{ provider.nextRun}}</td>
+                        <td>{{ provider.added }}</td>
+                        <td>N/A</td>
+                        <td>N/A</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

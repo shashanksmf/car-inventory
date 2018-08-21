@@ -1,0 +1,936 @@
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+    <title>Car Database</title>
+  </head>
+
+  <div class="col-sm-6">
+    <div class="portal col">
+        <div class="vehicle" ng-repeat="vehicle in dashboard.vehicles"
+             ng-click="dashboard.setEditedVehicle(vehicle)"  
+			 ng-class="{'active':dashboard.isCurrentVehicle(vehicle.id)}">
+
+			 <button class="btn btn-primary" data-toggle="collapse" data-target="#collapse{{vehicle.id}}" aria-expaned="true" aria-controls="collapseOne">
+			 {{vehicle.id}}</button>
+            <button type="button" class="close" ng-click="dashboard.deleteVehicle(vehicle.id)">&times;</button>
+                                        <div class="collapse" id="collapse{{vehicle.id}}" data-parent="#accordion">
+                                          Dealer ID :
+                                          {{vehicle.DealerId}}
+										  <br>
+										  Dealer Name : 
+                                          {{vehicle.dealerName}}
+										  <br>
+                                          Dealer Phone :
+                                          {{vehicle.dealerPhone}}
+										  <br>
+										  Dealer EMail :
+                                          {{vehicle.dealerEmail}}
+                                          <br>
+										  Dealer Address :
+                                          {{vehicle.dealerAddress}}
+                                          <br>
+										  Dealer City :
+										  {{vehicle.dealerCity}}
+                                          <br>
+										  Dealer State :
+                                          {{vehicle.dealerState}}
+                                          <br>
+										  Dealer Zip:
+										  {{vehicle.dealerZip}}
+                                          <br>
+										  Dealer Tagline :
+                                          {{vehicle.dealerTagline}}
+                                          <br>
+										  Vehicle Classification :
+										  {{vehicle.vehicleClassification}}
+                                          <br>
+										  Vehicle Certified Flag :
+                                          {{vehicle.vehicleCertifiedFlag}}
+                                          <br>
+										  Vehicle Dealer Warranty Flag :
+                                          {{vehicle.vehicleDealerWarrantyFlag}}
+                                          <br>
+										  Vehicle Warranty Av1 Flag
+										  {{vehicle.vehicleExtendedWarrantyAv1Flag}}
+                                          <br>
+										  Vehicle Auto Check Flag :
+                                          {{vehicle.vehicleAutoCheckFlag}}
+                                          <br>
+										  Vehicle Condition :
+										  {{vehicle.vehicleCondition}}
+                                          <br>
+										  Vehicle Vin Number :
+                                          {{vehicle.vehicleVinNumber}}
+                                          <br>
+										  Vehicle Stock Number
+										  {{vehicle.vehicleStockNuber}}
+                                          <br>
+										  Vehicle Year :
+                                          {{vehicle.vehicleYear}}
+                                          <br>
+										  Vehicle Make :
+										  {{vehicle.vehicleMake}}
+                                          <br>
+										  Vehicle Model :
+                                          {{vehicle.vehicleModel}}
+                                          <br>
+										  Vehicle Trim :
+										  {{vehicle.vehicleTrim}}
+										  <br>
+                                          Vehicle Mileage :
+                                          {{vehicle.vehicleMileage}}
+                                          <br>
+										  Vehicle MSRP :
+										  {{vehicle.vehicleMSRP}}
+                                          <br>
+										  Vehicle Retail Wholesale value :
+                                          {{vehicle.vehicleRetailWholesaleValue}}
+                                          <br>
+										  Vehicle Invoice Amount :
+										  {{vehicle.vehicleInvoiceAmount}}
+                                          <br>
+										  Vehicle Pack Amount :
+                                          {{vehicle.vehiclePackAmount}}
+										  <br>
+                                          Vehicle Total Cost :
+										  {{vehicle.vehicleTotalCost}}
+										  <br>
+                                          Vehicle Selling Price :
+                                          {{vehicle.vehicleSellingPrice}}
+										  <br>
+										  Vehicle Engine Displacement CI :
+                                          {{vehicle.vehicleEngineDisplacementCI}}
+										  <br>
+                                          Vehicle Engine CYL :
+                                          {{vehicle.vehicleEngineCyl}}
+										  <br>
+										  Vehicle Special Price :
+                                          {{vehicle.vehicleSpecialPrice}}
+										  <br>
+                                          Vehicle Status :
+                                          {{vehicle.vehicleStatus}}
+										  <br>
+										  Vehicle Body Type :
+                                          {{vehicle.vehicleBodyType}}
+										  <br>
+                                          Vehicle Body Style :
+                                          {{vehicle.vehicleBodyStyle}}
+										  <br>
+										  Vehicle Market Class Name :
+                                          {{vehicle.vehicleMarketClassName}}
+										  <br>
+                                          Vehicle Number Of Doors :
+                                          {{vehicle.vehicleNumberOfDoors}}
+										  <br>
+										  Vehicle Drive Train :
+                                          {{vehicle.vehicleDriveTrain}}
+										  <br>
+                                          Vehicle Fuel Type :
+                                          {{vehicle.vehicleFuelType}}
+										  <br>
+										  Vehicle Engine Displacement :
+                                          {{vehicle.vehicleEngineDisplacement}}
+										  <br>
+                                          vehicle Engine HP :
+                                          {{vehicle.vehicleEngineHP}}
+										  <br>
+										  Vehicle HRPM :
+                                          {{vehicle.vehicleHPRPM}}
+                                          <br>
+										  Vehicle Engine Torque :
+                                          {{vehicle.vehicleEngineTorque}}
+                                          <br>
+										  Vehicle Torque RPM :
+										  {{vehicle.vehicleTorqueRPM}}
+                                          <br>
+										  Vehicle Transmission Type :
+                                          {{vehicle.vehicleTransmissionType}}
+                                          <br>
+										  Vehicle Transmission Gears :
+										  {{vehicle.vehicleTransmissionGears}}
+										  <br>
+                                          Vehicle Transmission Name :
+                                          {{vehicle.vehicleTransmissionName}}
+										  <br>
+										  Vehicle City MPG :
+                                          {{vehicle.vehicleCityMPG}}
+										  <br>
+                                          Vehicle HWY MPG :
+                                          {{vehicle.vehicleHwyMPG}}
+										  <br>
+										  Vehicle Fuel Tank Capacity :
+                                          {{vehicle.vehicleFuelTankCapacity}}
+										  <br>
+                                          Vehicle Exterior Color :
+                                          {{vehicle.vehicleExteriorColor}}
+										  <br>
+										  Vehicle Interior Color :
+                                          {{vehicle.vehicleInteriorColor}}
+										  <br>
+                                          Vehicle Optional Equipment :
+                                          {{vehicle.vehicleOptionalEquipment}}
+                                          <br>
+										  Vehicle Comments :
+										  {{vehicle.vehicleComments}}
+                                          <br>
+										  Vehicle AD Title :
+                                          {{vehicle.vehicleAdTitle}}
+                                          <br>
+										  Vehicle Video URL :
+										  {{vehicle.vehicleVideoURL}}
+                                          Vehicle Image URL :
+                                          {{vehicle.vehicleImgURL}}
+										  <br>
+										  Vehicle Image URL Modified Date :
+                                          {{vehicle.vehicleImageURLModifiedDate}}
+										  <br>
+                                          vehicle Detail Link :
+                                          </div>{{vehicle.vehicleDetailLink}}
+                                </div>  </div>
+         </div>  </div>
+
+			<div class="col-sm-6" style="float:right;">
+			<h4>Upload New Vehicles via .csv</h4>
+			Click <a href="/template">here</a> for an example template.</p>
+			<div>
+				<input type="file"  file-model = "dashboard.myFile"/><br/><br/>
+				<input type="button" ng-click="dashboard.uploadFile()" value="upload" />
+			</div>
+				<!-- CREATING -->
+				<div ng-if="!dashboard.isEditing" class="col-xs-12">
+					<h4>Create a New vehicle</h4>
+					<hr/>
+					<form class="create-form" role="form"
+						  ng-submit="dashboard.createVehicle(dashboard.newVehicle)" novalidate>
+						<div class="form-group">
+							<label>Dealer ID</label>
+							<input type="text" class="form-control"
+								   ng-model="dashboard.newVehicle.DealerId"
+								   placeholder="Enter Dealer ID">
+						</div>
+						<div class="form-group">
+							<label>Dealer Name</label>
+							<input type="text" class="form-control"
+								   ng-model="dashboard.newVehicle.dealerName"
+								   placeholder="Enter Dealer Name">
+						</div>
+						<div class="form-group">
+							<label>Dealer Phone</label>
+							<input type="text" class="form-control"
+								   ng-model="dashboard.newVehicle.dealerPhone"
+								   placeholder="Enter Dealer Phone">
+						</div>
+						<div class="form-group">
+							<label>Dealer E Mail</label>
+							<input type="text" class="form-control"
+								   ng-model="dashboard.newVehicle.dealerEmail"
+								   placeholder="Enter Dealer E-Mail">
+						</div>
+						<div class="form-group">
+							<label>Dealer Address</label>
+							<input type="text" class="form-control"
+								   ng-model="dashboard.newVehicle.dealerAddress"
+								   placeholder="Enter Dealer Address">
+						</div>
+						<div class="form-group">
+							<label>Dealer City</label>
+							<input type="text" class="form-control"
+								   ng-model="dashboard.newVehicle.dealerCity"
+								   placeholder="Enter Dealer City">
+						</div>
+						<div class="form-group">
+							<label>Dealer State</label>
+							<input type="text" class="form-control"
+								   ng-model="dashboard.newVehicle.dealerState"
+								   placeholder="Enter Dealer State">
+						</div>
+						<div class="form-group">
+							<label>Dealer Zip</label>
+							<input type="text" class="form-control"
+								   ng-model="dashboard.newVehicle.dealerZip"
+								   placeholder="Enter Dealer Zip">
+						</div>
+						<div class="form-group">
+							<label>Dealer Tagline</label>
+							<input type="text" class="form-control"
+								   ng-model="dashboard.newVehicle.dealerTagline"
+								   placeholder="Enter Dealer Tagline">
+						</div>
+						<div class="form-group">
+							<label>vehicle Classification</label>
+							<input type="text" class="form-control"
+								   ng-model="dashboard.newVehicle.vehicleClassification"
+								   placeholder="Enter vehicle Classification">
+						</div>
+						<div class="form-group">
+							<label>vehicle Certified Flag</label>
+							<input type="text" class="form-control"
+								   ng-model="dashboard.newVehicle.vehicleCertifiedFlag"
+								   placeholder="Enter vehicle Certified Flag">
+						</div>
+						<div class="form-group">
+							<label>Vehicle Factory Warranty Flag</label>
+							<input type="text" class="form-control"
+								   ng-model="dashboard.newVehicle.vehicleFactoryWarrantyFlag"
+								   placeholder="Enter Vehicle Factory Warranty Flag">
+						</div>
+						<div class="form-group">
+							<label>Vehicle Dealer Warranty Flag</label>
+							<input type="text" class="form-control"
+								   ng-model="dashboard.newVehicle.vehicleDealerWarrantyFlag"
+								   placeholder="Enter Vehicle Dealer Warranty Flag">
+						</div>
+						<div class="form-group">
+							<label>Vehicle Extended Warranty Av 1 Flag</label>
+							<input type="text" class="form-control"
+								   ng-model="dashboard.newVehicle.vehicleExtendedWarrantyAv1Flag"
+								   placeholder="Enter Vehicle Extended Warranty Av 1 Flag">
+						</div>
+						<div class="form-group">
+							<label>Vehicle Auto heck Flag</label>
+							<input type="text" class="form-control"
+								   ng-model="dashboard.newVehicle.vehicleAutoCheckFlag"
+								   placeholder="Enter Vehicle Auto Check Flag">
+						</div>
+						<div class="form-group">
+							<label>Vehicle Condition</label>
+							<input type="text" class="form-control"
+								   ng-model="dashboard.newVehicle.vehicleCondition"
+								   placeholder="Enter Vehicle Condition">
+						</div>
+						<div class="form-group">
+							<label>Vehicle Vin Number</label>
+							<input type="text" class="form-control"
+								   ng-model="dashboard.newVehicle.vehicleVinNumber"
+								   placeholder="Enter Vehicle Vin Number">
+						</div>
+						<div class="form-group">
+							<label>Vehicle Stock Nuber</label>
+							<input type="text" class="form-control"
+								   ng-model="dashboard.newVehicle.vehicleStockNuber"
+								   placeholder="Enter Vehicle Stock Nuber">
+						</div>
+						<div class="form-group">
+							<label>Vehicle Year</label>
+							<input type="text" class="form-control"
+								   ng-model="dashboard.newVehicle.vehicleYear"
+								   placeholder="Enter Vehicle Year">
+						</div>
+						<div class="form-group">
+							<label>Vehicle Make</label>
+							<input type="text" class="form-control"
+								   ng-model="dashboard.newVehicle.vehicleMake"
+								   placeholder="Enter Vehicle Make">
+						</div>
+						<div class="form-group">
+							<label>Vehicle Model</label>
+							<input type="text" class="form-control"
+								   ng-model="dashboard.newVehicle.vehicleModel"
+								   placeholder="Enter Vehicle Model">
+						</div>
+						<div class="form-group">
+							<label>Vehicle Trim</label>
+							<input type="text" class="form-control"
+								   ng-model="dashboard.newVehicle.vehicleTrim"
+								   placeholder="Enter Vehicle Trim">
+						</div>
+						<div class="form-group">
+							<label>Vehicle Mileage</label>
+							<input type="text" class="form-control"
+								   ng-model="dashboard.newVehicle.vehicleMileage"
+								   placeholder="Enter Vehicle Mileage">
+						</div>
+						<div class="form-group">
+							<label>Vehicle MSRP</label>
+							<input type="text" class="form-control"
+								   ng-model="dashboard.newVehicle.vehicleMSRP"
+								   placeholder="Enter Vehicle MSRP">
+						</div>
+						<div class="form-group">
+							<label>Vehicle Retail Wholesale Value</label>
+							<input type="text" class="form-control"
+								   ng-model="dashboard.newVehicle.vehicleRetailWholesaleValue"
+								   placeholder="Enter Vehicle Retail Wholesale Value">
+						</div>
+						<div class="form-group">
+							<label>Vehicle Invoice Amount</label>
+							<input type="text" class="form-control"
+								   ng-model="dashboard.newVehicle.vehicleInvoiceAmount"
+								   placeholder="Enter Vehicle Invoice Amount">
+						</div>
+						<div class="form-group">
+							<label>Vehicle Pack Amount</label>
+							<input type="text" class="form-control"
+								   ng-model="dashboard.newVehicle.vehiclePackAmount"
+								   placeholder="Enter Vehicle Pack Amount">
+						</div>
+						<div class="form-group">
+							<label>Vehicle Total Cost</label>
+							<input type="text" class="form-control"
+								   ng-model="dashboard.newVehicle.vehicleTotalCost"
+								   placeholder="Enter Vehicle Total Cost">
+						</div>
+						<div class="form-group">
+							<label>Vehicle Selling Price</label>
+							<input type="text" class="form-control"
+								   ng-model="dashboard.newVehicle.vehicleSellingPrice"
+								   placeholder="Enter Vehicle Selling Price">
+						</div>
+						<div class="form-group">
+							<label>Vehicle Engine Displacement CI</label>
+							<input type="text" class="form-control"
+								   ng-model="dashboard.newVehicle.vehicleEngineDisplacementCI"
+								   placeholder="Enter Vehicle Engine Displacement CI">
+						</div>
+						<div class="form-group">
+							<label>Vehicle Engine Cyl</label>
+							<input type="text" class="form-control"
+								   ng-model="dashboard.newVehicle.vehicleEngineCyl"
+								   placeholder="Enter Vehicle Engine Cyl">
+						</div>
+						<div class="form-group">
+							<label>Vehicle Special Price</label>
+							<input type="text" class="form-control"
+								   ng-model="dashboard.newVehicle.vehicleSpecialPrice"
+								   placeholder="Enter Vehicle Special Price">
+						</div>
+						<div class="form-group">
+							<label>Vehicle Status</label>
+							<input type="text" class="form-control"
+								   ng-model="dashboard.newVehicle.vehicleStatus"
+								   placeholder="Enter Vehicle Status">
+						</div>
+						<div class="form-group">
+							<label>Vehicle Body Type</label>
+							<input type="text" class="form-control"
+								   ng-model="dashboard.newVehicle.vehicleBodyType"
+								   placeholder="Enter Vehicle Body Type">
+						</div>
+						<div class="form-group">
+							<label>Vehicle Body Style</label>
+							<input type="text" class="form-control"
+								   ng-model="dashboard.newVehicle.vehicleBodyStyle"
+								   placeholder="Enter Vehicle Body Style">
+						</div>
+						<div class="form-group">
+							<label>Vehicle Market Class Name</label>
+							<input type="text" class="form-control"
+								   ng-model="dashboard.newVehicle.vehicleMarketClassName"
+								   placeholder="Enter Vehicle Market Class Name">
+						</div>
+						<div class="form-group">
+							<label>Vehicle Number Of Doors</label>
+							<input type="text" class="form-control"
+								   ng-model="dashboard.newVehicle.vehicleNumberOfDoors"
+								   placeholder="Enter Vehicle Number Of Doors">
+						</div>
+						<div class="form-group">
+							<label>Vehicle Drive Train</label>
+							<input type="text" class="form-control"
+								   ng-model="dashboard.newVehicle.vehicleDriveTrain"
+								   placeholder="Enter Vehicle Drive Train">
+						</div>
+						<div class="form-group">
+							<label>Vehicle Fuel Type</label>
+							<input type="text" class="form-control"
+								   ng-model="dashboard.newVehicle.vehicleFuelType"
+								   placeholder="Enter Vehicle Fuel Type">
+						</div>
+						<div class="form-group">
+							<label>Vehicle Engine Displacement (L)</label>
+							<input type="text" class="form-control"
+								   ng-model="dashboard.newVehicle.vehicleEngineDisplacementL"
+								   placeholder="Enter Vehicle EngineDisplacement (L)">
+						</div>
+						<div class="form-group">
+							<label>Vehicle Engine HP</label>
+							<input type="text" class="form-control"
+								   ng-model="dashboard.newVehicle.vehicleEngineHP"
+								   placeholder="Enter Vehicle Engine HP">
+						</div>
+						<div class="form-group">
+							<label>Vehicle HP RPM</label>
+							<input type="text" class="form-control"
+								   ng-model="dashboard.newVehicle.vehicleHPRPM"
+								   placeholder="Enter Vehicle HP RPM">
+						</div>
+						<div class="form-group">
+							<label>Vehicle Engine Torque</label>
+							<input type="text" class="form-control"
+								   ng-model="dashboard.newVehicle.vehicleEngineTorque"
+								   placeholder="Enter Vehicle Engine Torque">
+						</div>
+						<div class="form-group">
+							<label>Vehicle Torque RPM</label>
+							<input type="text" class="form-control"
+								   ng-model="dashboard.newVehicle.vehicleTorqueRPM"
+								   placeholder="Enter Vehicle Torque RPM">
+						</div>
+						<div class="form-group">
+							<label>Vehicle Transmission Type</label>
+							<input type="text" class="form-control"
+								   ng-model="dashboard.newVehicle.vehicleTransmissionType"
+								   placeholder="Enter Vehicle Transmission Type">
+						</div>
+						<div class="form-group">
+							<label>Vehicle Transmission Gears</label>
+							<input type="text" class="form-control"
+								   ng-model="dashboard.newVehicle.vehicleTransmissionGears"
+								   placeholder="Enter Vehicle Transmission Gears">
+						</div>
+						<div class="form-group">
+							<label>Vehicle Transmission Name</label>
+							<input type="text" class="form-control"
+								   ng-model="dashboard.newVehicle.vehicleTransmissionName"
+								   placeholder="Enter Vehicle Transmission Name">
+						</div>
+						<div class="form-group">
+							<label>Vehicle City MPG</label>
+							<input type="text" class="form-control"
+								   ng-model="dashboard.newVehicle.vehicleCityMPG"
+								   placeholder="Enter Vehicle City MPG">
+						</div>
+						<div class="form-group">
+							<label>Vehicle Hwy MPG</label>
+							<input type="text" class="form-control"
+								   ng-model="dashboard.newVehicle.vehicleHwyMPG"
+								   placeholder="Enter Vehicle Hwy MPG">
+						</div>
+						<div class="form-group">
+							<label>Vehicle Fuel Tank Capacity</label>
+							<input type="text" class="form-control"
+								   ng-model="dashboard.newVehicle.vehicleFuelTankCapacity"
+								   placeholder="Enter Vehicle Fuel Tank Capacity">
+						</div>
+						<div class="form-group">
+							<label>Vehicle Exterior Color</label>
+							<input type="text" class="form-control"
+								   ng-model="dashboard.newVehicle.vehicleExteriorColor"
+								   placeholder="Enter Vehicle Exterior Color">
+						</div>
+						<div class="form-group">
+							<label>Vehicle Interior Color</label>
+							<input type="text" class="form-control"
+								   ng-model="dashboard.newVehicle.vehicleInteriorColor"
+								   placeholder="Enter Vehicle Interior Color">
+						</div>
+						<div class="form-group">
+							<label>Vehicle Optional Equipment</label>
+							<input type="text" class="form-control"
+								   ng-model="dashboard.newVehicle.vehicleOptionalEquipment"
+								   placeholder="Enter Vehicle Optional Equipment">
+						</div>
+						<div class="form-group">
+							<label>Vehicle Comments</label>
+							<input type="text" class="form-control"
+								   ng-model="dashboard.newVehicle.vehicleComments"
+								   placeholder="Enter Vehicle Comments">
+						</div>
+						<div class="form-group">
+							<label>Vehicle Ad Title</label>
+							<input type="text" class="form-control"
+								   ng-model="dashboard.newVehicle.vehicleAdTitle"
+								   placeholder="Enter Vehicle Ad Title">
+						</div>
+						<div class="form-group">
+							<label>Vehicle Video URL</label>
+							<input type="text" class="form-control"
+								   ng-model="dashboard.newVehicle.vehicleVideoURL"
+								   placeholder="Enter Vehicle Video URL">
+						</div>
+						<div class="form-group">
+							<label>Vehicle Img URLs</label>
+							<input type="text" class="form-control"
+								   ng-model="dashboard.newVehicle.vehicleImgURL"
+								   placeholder="Enter Vehicle Img URLs">
+						</div>
+						<div class="form-group">
+							<label>Vehicle Image URL Modified Date</label>
+							<input type="text" class="form-control"
+								   ng-model="dashboard.newVehicle.vehicleImageURLModifiedDate"
+								   placeholder="Enter Vehicle Image URL Modified Date">
+						</div>
+						<div class="form-group">
+							<label>Vehicle Detail Link</label>
+							<input type="text" class="form-control"
+								   ng-model="dashboard.newVehicle.vehicleDetailLink"
+								   placeholder="Enter Vehicle Detail Link">
+						</div>
+						<button type="submit" class="btn btn-info btn-lg">Save</button>
+						<button type="button" class="btn btn-default btn-lg pull-right"
+								ng-click="dashboard.cancelEditing()">Cancel
+						</button>
+					</form>        
+				</div>             
+				<!-- EDITING -->
+				<div ng-if="dashboard.isEditing" class="col-xs-12">
+					<h4>Editing {{dashboard.editedvehicle.DealerId}}</h4>
+					<hr/>   
+					<form class="edit-form" role="form"
+						  ng-submit="dashboard.updateVehicle(dashboard.editedVehicle)" novalidate>
+						<div class="form-group">
+							<label>Dealer ID</label>
+							<input type="text" class="form-control"
+								   ng-model="dashboard.editedVehicle.DealerId"
+								   placeholder="Enter Dealer ID">
+						</div>
+						<div class="form-group">
+							<label>Dealer Name</label>
+							<input type="text" class="form-control"
+								   ng-model="dashboard.editedVehicle.dealerName"
+								   placeholder="Enter Dealer Name">
+						</div>
+						<div class="form-group">
+							<label>Dealer Phone</label>
+							<input type="text" class="form-control"
+								   ng-model="dashboard.editedVehicle.dealerPhone"
+								   placeholder="Enter Dealer Phone">
+						</div>
+						<div class="form-group">
+							<label>Dealer E Mail</label>
+							<input type="text" class="form-control"
+								   ng-model="dashboard.editedVehicle.dealerEmail"
+								   placeholder="Enter Dealer E-Mail">
+						</div>
+						<div class="form-group">
+							<label>Dealer Address</label>
+							<input type="text" class="form-control"
+								   ng-model="dashboard.editedVehicle.dealerAddress"
+								   placeholder="Enter Dealer Address">
+						</div>
+						<div class="form-group">
+							<label>Dealer City</label>
+							<input type="text" class="form-control"
+								   ng-model="dashboard.editedVehicle.dealerCity"
+								   placeholder="Enter Dealer City">
+						</div>
+						<div class="form-group">
+							<label>Dealer State</label>
+							<input type="text" class="form-control"
+								   ng-model="dashboard.editedVehicle.dealerState"
+								   placeholder="Enter Dealer State">
+						</div>
+						<div class="form-group">
+							<label>Dealer Zip</label>
+							<input type="text" class="form-control"
+								   ng-model="dashboard.editedVehicle.dealerZip"
+								   placeholder="Enter Dealer Zip">
+						</div>
+						<div class="form-group">
+							<label>Dealer Tagline</label>
+							<input type="text" class="form-control"
+								   ng-model="dashboard.editedVehicle.dealerTagline"
+								   placeholder="Enter Dealer Tagline">
+						</div>
+						<div class="form-group">
+							<label>vehicle Classification</label>
+							<input type="text" class="form-control"
+								   ng-model="dashboard.editedVehicle.vehicleClassification"
+								   placeholder="Enter vehicle Classification">
+						</div>
+						<div class="form-group">
+							<label>vehicle Certified Flag</label>
+							<input type="text" class="form-control"
+								   ng-model="dashboard.editedVehicle.vehicleCertifiedFlag"
+								   placeholder="Enter vehicle Certified Flag">
+						</div>
+						<div class="form-group">
+							<label>Vehicle Factory Warranty Flag</label>
+							<input type="text" class="form-control"
+								   ng-model="dashboard.editedVehicle.vehicleFactoryWarrantyFlag"
+								   placeholder="Enter Vehicle Factory Warranty Flag">
+						</div>
+						<div class="form-group">
+							<label>Vehicle Dealer Warranty Flag</label>
+							<input type="text" class="form-control"
+								   ng-model="dashboard.editedVehicle.vehicleDealerWarrantyFlag"
+								   placeholder="Enter Vehicle Dealer Warranty Flag">
+						</div>
+						<div class="form-group">
+							<label>Vehicle Extended Warranty Av 1 Flag</label>
+							<input type="text" class="form-control"
+								   ng-model="dashboard.editedVehicle.vehicleExtendedWarrantyAv1Flag"
+								   placeholder="Enter Vehicle Extended Warranty Av 1 Flag">
+						</div>
+						<div class="form-group">
+							<label>Vehicle Auto heck Flag</label>
+							<input type="text" class="form-control"
+								   ng-model="dashboard.editedVehicle.vehicleAutoCheckFlag"
+								   placeholder="Enter Vehicle Auto Check Flag">
+						</div>
+						<div class="form-group">
+							<label>Vehicle Condition</label>
+							<input type="text" class="form-control"
+								   ng-model="dashboard.editedVehicle.vehicleCondition"
+								   placeholder="Enter Vehicle Condition">
+						</div>
+						<div class="form-group">
+							<label>Vehicle Vin Number</label>
+							<input type="text" class="form-control"
+								   ng-model="dashboard.editedVehicle.vehicleVinNumber"
+								   placeholder="Enter Vehicle Vin Number">
+						</div>
+						<div class="form-group">
+							<label>Vehicle Stock Nuber</label>
+							<input type="text" class="form-control"
+								   ng-model="dashboard.editedVehicle.vehicleStockNuber"
+								   placeholder="Enter Vehicle Stock Nuber">
+						</div>
+						<div class="form-group">
+							<label>Vehicle Year</label>
+							<input type="text" class="form-control"
+								   ng-model="dashboard.editedVehicle.vehicleYear"
+								   placeholder="Enter Vehicle Year">
+						</div>
+						<div class="form-group">
+							<label>Vehicle Make</label>
+							<input type="text" class="form-control"
+								   ng-model="dashboard.editedVehicle.vehicleMake"
+								   placeholder="Enter Vehicle Make">
+						</div>
+						<div class="form-group">
+							<label>Vehicle Model</label>
+							<input type="text" class="form-control"
+								   ng-model="dashboard.editedVehicle.vehicleModel"
+								   placeholder="Enter Vehicle Model">
+						</div>
+						<div class="form-group">
+							<label>Vehicle Trim</label>
+							<input type="text" class="form-control"
+								   ng-model="dashboard.editedVehicle.vehicleTrim"
+								   placeholder="Enter Vehicle Trim">
+						</div>
+						<div class="form-group">
+							<label>Vehicle Mileage</label>
+							<input type="text" class="form-control"
+								   ng-model="dashboard.editedVehicle.vehicleMileage"
+								   placeholder="Enter Vehicle Mileage">
+						</div>
+						<div class="form-group">
+							<label>Vehicle MSRP</label>
+							<input type="text" class="form-control"
+								   ng-model="dashboard.editedVehicle.vehicleMSRP"
+								   placeholder="Enter Vehicle MSRP">
+						</div>
+						<div class="form-group">
+							<label>Vehicle Retail Wholesale Value</label>
+							<input type="text" class="form-control"
+								   ng-model="dashboard.editedVehicle.vehicleRetailWholesaleValue"
+								   placeholder="Enter Vehicle Retail Wholesale Value">
+						</div>
+						<div class="form-group">
+							<label>Vehicle Invoice Amount</label>
+							<input type="text" class="form-control"
+								   ng-model="dashboard.editedVehicle.vehicleInvoiceAmount"
+								   placeholder="Enter Vehicle Invoice Amount">
+						</div>
+						<div class="form-group">
+							<label>Vehicle Pack Amount</label>
+							<input type="text" class="form-control"
+								   ng-model="dashboard.editedVehicle.vehiclePackAmount"
+								   placeholder="Enter Vehicle Pack Amount">
+						</div>
+						<div class="form-group">
+							<label>Vehicle Total Cost</label>
+							<input type="text" class="form-control"
+								   ng-model="dashboard.editedVehicle.vehicleTotalCost"
+								   placeholder="Enter Vehicle Total Cost">
+						</div>
+						<div class="form-group">
+							<label>Vehicle Selling Price</label>
+							<input type="text" class="form-control"
+								   ng-model="dashboard.editedVehicle.vehicleSellingPrice"
+								   placeholder="Enter Vehicle Selling Price">
+						</div>
+						<div class="form-group">
+							<label>Vehicle Engine Displacement CI</label>
+							<input type="text" class="form-control"
+								   ng-model="dashboard.editedVehicle.vehicleEngineDisplacementCI"
+								   placeholder="Enter Vehicle Engine Displacement CI">
+						</div>
+						<div class="form-group">
+							<label>Vehicle Engine Cyl</label>
+							<input type="text" class="form-control"
+								   ng-model="dashboard.editedVehicle.vehicleEngineCyl"
+								   placeholder="Enter Vehicle Engine Cyl">
+						</div>
+						<div class="form-group">
+							<label>Vehicle Special Price</label>
+							<input type="text" class="form-control"
+								   ng-model="dashboard.editedVehicle.vehicleSpecialPrice"
+								   placeholder="Enter Vehicle Special Price">
+						</div>
+						<div class="form-group">
+							<label>Vehicle Status</label>
+							<input type="text" class="form-control"
+								   ng-model="dashboard.editedVehicle.vehicleStatus"
+								   placeholder="Enter Vehicle Status">
+						</div>
+						<div class="form-group">
+							<label>Vehicle Body Type</label>
+							<input type="text" class="form-control"
+								   ng-model="dashboard.editedVehicle.vehicleBodyType"
+								   placeholder="Enter Vehicle Body Type">
+						</div>
+						<div class="form-group">
+							<label>Vehicle Body Style</label>
+							<input type="text" class="form-control"
+								   ng-model="dashboard.editedVehicle.vehicleBodyStyle"
+								   placeholder="Enter Vehicle Body Style">
+						</div>
+						<div class="form-group">
+							<label>Vehicle Market Class Name</label>
+							<input type="text" class="form-control"
+								   ng-model="dashboard.editedVehicle.vehicleMarketClassName"
+								   placeholder="Enter Vehicle Market Class Name">
+						</div>
+						<div class="form-group">
+							<label>Vehicle Number Of Doors</label>
+							<input type="text" class="form-control"
+								   ng-model="dashboard.editedVehicle.vehicleNumberOfDoors"
+								   placeholder="Enter Vehicle Number Of Doors">
+						</div>
+						<div class="form-group">
+							<label>Vehicle Drive Train</label>
+							<input type="text" class="form-control"
+								   ng-model="dashboard.editedVehicle.vehicleDriveTrain"
+								   placeholder="Enter Vehicle Drive Train">
+						</div>
+						<div class="form-group">
+							<label>Vehicle Fuel Type</label>
+							<input type="text" class="form-control"
+								   ng-model="dashboard.editedVehicle.vehicleFuelType"
+								   placeholder="Enter Vehicle Fuel Type">
+						</div>
+						<div class="form-group">
+							<label>Vehicle Engine Displacement (L)</label>
+							<input type="text" class="form-control"
+								   ng-model="dashboard.editedVehicle.vehicleEngineDisplacementL"
+								   placeholder="Enter Vehicle EngineDisplacement (L)">
+						</div>
+						<div class="form-group">
+							<label>Vehicle Engine HP</label>
+							<input type="text" class="form-control"
+								   ng-model="dashboard.editedVehicle.vehicleEngineHP"
+								   placeholder="Enter Vehicle Engine HP">
+						</div>
+						<div class="form-group">
+							<label>Vehicle HP RPM</label>
+							<input type="text" class="form-control"
+								   ng-model="dashboard.editedVehicle.vehicleHPRPM"
+								   placeholder="Enter Vehicle HP RPM">
+						</div>
+						<div class="form-group">
+							<label>Vehicle Engine Torque</label>
+							<input type="text" class="form-control"
+								   ng-model="dashboard.editedVehicle.vehicleEngineTorque"
+								   placeholder="Enter Vehicle Engine Torque">
+						</div>
+						<div class="form-group">
+							<label>Vehicle Torque RPM</label>
+							<input type="text" class="form-control"
+								   ng-model="dashboard.editedVehicle.vehicleTorqueRPM"
+								   placeholder="Enter Vehicle Torque RPM">
+						</div>
+						<div class="form-group">
+							<label>Vehicle Transmission Type</label>
+							<input type="text" class="form-control"
+								   ng-model="dashboard.editedVehicle.vehicleTransmissionType"
+								   placeholder="Enter Vehicle Transmission Type">
+						</div>
+						<div class="form-group">
+							<label>Vehicle Transmission Gears</label>
+							<input type="text" class="form-control"
+								   ng-model="dashboard.editedVehicle.vehicleTransmissionGears"
+								   placeholder="Enter Vehicle Transmission Gears">
+						</div>
+						<div class="form-group">
+							<label>Vehicle Transmission Name</label>
+							<input type="text" class="form-control"
+								   ng-model="dashboard.editedVehicle.vehicleTransmissionName"
+								   placeholder="Enter Vehicle Transmission Name">
+						</div>
+						<div class="form-group">
+							<label>Vehicle City MPG</label>
+							<input type="text" class="form-control"
+								   ng-model="dashboard.editedVehicle.vehicleCityMPG"
+								   placeholder="Enter Vehicle City MPG">
+						</div>
+						<div class="form-group">
+							<label>Vehicle Hwy MPG</label>
+							<input type="text" class="form-control"
+								   ng-model="dashboard.editedVehicle.vehicleHwyMPG"
+								   placeholder="Enter Vehicle Hwy MPG">
+						</div>
+						<div class="form-group">
+							<label>Vehicle Fuel Tank Capacity</label>
+							<input type="text" class="form-control"
+								   ng-model="dashboard.editedVehicle.vehicleFuelTankCapacity"
+								   placeholder="Enter Vehicle Fuel Tank Capacity">
+						</div>
+						<div class="form-group">
+							<label>Vehicle Exterior Color</label>
+							<input type="text" class="form-control"
+								   ng-model="dashboard.editedVehicle.vehicleExteriorColor"
+								   placeholder="Enter Vehicle Exterior Color">
+						</div>
+						<div class="form-group">
+							<label>Vehicle Interior Color</label>
+							<input type="text" class="form-control"
+								   ng-model="dashboard.editedVehicle.vehicleInteriorColor"
+								   placeholder="Enter Vehicle Interior Color">
+						</div>
+						<div class="form-group">
+							<label>Vehicle Optional Equipment</label>
+							<input type="text" class="form-control"
+								   ng-model="dashboard.editedVehicle.vehicleOptionalEquipment"
+								   placeholder="Enter Vehicle Optional Equipment">
+						</div>
+						<div class="form-group">
+							<label>Vehicle Comments</label>
+							<input type="text" class="form-control"
+								   ng-model="dashboard.editedVehicle.vehicleComments"
+								   placeholder="Enter Vehicle Comments">
+						</div>
+						<div class="form-group">
+							<label>Vehicle Ad Title</label>
+							<input type="text" class="form-control"
+								   ng-model="dashboard.editedVehicle.vehicleAdTitle"
+								   placeholder="Enter Vehicle Ad Title">
+						</div>
+						<div class="form-group">
+							<label>Vehicle Video URL</label>
+							<input type="text" class="form-control"
+								   ng-model="dashboard.editedVehicle.vehicleVideoURL"
+								   placeholder="Enter Vehicle Video URL">
+						</div>
+						<div class="form-group">
+							<label>Vehicle Img URLs</label>
+							<input type="text" class="form-control"
+								   ng-model="dashboard.editedVehicle.vehicleImgURL"
+								   placeholder="Enter Vehicle Img URLs">
+						</div>
+						<div class="form-group">
+							<label>Vehicle Image URL Modified Date</label>
+							<input type="text" class="form-control"
+								   ng-model="dashboard.editedVehicle.vehicleImageURLModifiedDate"
+								   placeholder="Enter Vehicle Image URL Modified Date">
+						</div>
+						<div class="form-group">
+							<label>Vehicle Detail Link</label>
+							<input type="text" class="form-control"
+								   ng-model="dashboard.editedVehicle.vehicleDetailLink"
+								   placeholder="Enter Vehicle Detail Link">
+						</div>
+						<button type="submit" class="btn btn-info btn-lg">Save</button>
+						<button type="button" class="btn btn-default btn-lg pull-right"
+								ng-click="dashboard.cancelEditing()">Cancel
+						</button>
+					</form> 
+				</div>
+			</div>
