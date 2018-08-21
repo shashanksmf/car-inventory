@@ -8,6 +8,7 @@ var Task = require('../../models/task');
 var csv = require('fast-csv');
 var Client = require('ftp');
 var mongoose = require('mongoose');
+var moment = require('moment');
 
 function updateLastNextRun(providerId,added,providerName){
     CronSchedule.findOne({providerId : providerId},function(err,result){
@@ -33,8 +34,16 @@ function updateLastNextRun(providerId,added,providerName){
 
 function reScheduleJob(job,isStarted = false){
    // for re scheduling already  jobs which are vanished because server is restarted;
-    cronJobs[job._id] = schedule.scheduleJob({ start: new Date(job.startDate).getTime(), rule: job.expression },function(providerId){
-      
+   
+   // get local time with respect to utc time stored into db taken from client at time of scheduling
+    var utcStartDate = moment.utc(job.startDate).toDate();
+    console.log('UTC Start : ' , job.startDate);
+    
+    var startDate = moment(utcStartDate).format('YYYY-MM-DD HH:mm:ss A');
+
+    console.log('Local Start : ' , startDate);
+    cronJobs[job._id] = schedule.scheduleJob({ start: new Date(startDate).getTime(), rule: job.expression },function(providerId){
+        
         if(!cronJobs[job._id]['isStarted']){
             cronJobs[job._id]['isStarted'] = true;
             updateIsStartedFlag(job._id);
@@ -159,7 +168,11 @@ function getProviderFTPDetails(providerId,cb){
 
 function scheduleFutureJob(job){
     // scheduling new job for provider
-    cronJobs[job._id] = schedule.scheduleJob({ start: new Date(job.startDate).getTime(), rule:job.expression },function(job){
+    // get local time with respect to utc time stored into db taken from client at time of scheduling
+    var utcStartDate = moment.utc(job.startDate).toDate();
+    var startDate = moment(utcStartDate).format('YYYY-MM-DD HH:mm:ss A');
+
+    cronJobs[job._id] = schedule.scheduleJob({ start: new Date(startDate).getTime(), rule:job.expression },function(job){
         if(!cronJobs[job._id]['isStarted']){
             updateIsStartedFlag(job._id);
         }
@@ -194,7 +207,8 @@ module.exports = {
        var scheduleObj = {};
        scheduleObj['_id'] = mongoose.Types.ObjectId();
        scheduleObj['providerId'] = req.body.provider;
-       scheduleObj['startDate'] = req.body.startDate;
+    //    scheduleObj['timezone'] = req.body.timezone;
+       scheduleObj['startDate'] = req.body.utcStartDate;
 //    scheduleObj['endDate'] = req.body.endDate;
        scheduleObj['interval'] = req.body.interval;
        if(scheduleObj['interval'] == 100)

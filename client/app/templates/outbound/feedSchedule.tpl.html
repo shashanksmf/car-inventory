@@ -1,10 +1,9 @@
 <div class="container" ng-init="feedprovider.getProvidersData()">
         <div class="row">
                 <ul class="nav nav-pills">
-                        <li ><a href="#/inbound/dashboard">Dashboard</a></li>
-                        <li><a href="#/inbound/provider/feed/list">Provider</a></li>
-                        <li class="active"><a href="#/inbound/provider/schedule/list">Schedule</a></li>
-                        <li><a href="#">Errors-ToDo</a></li>
+                        <li ><a href="#/outbound/dashboard">Dashboard</a></li>
+                        <li><a href="#/outbound/provider/feed/list">Provider</a></li>
+                        <li class="active"><a href="#/outbound/provider/schedule/list">Schedule</a></li>
                       </ul>
         </div>
         <div class="row">
@@ -15,7 +14,7 @@
                     </h4>
                 </div>
                 <div class="col-md-6" style="text-align: right;">
-                    <a href="#/inbound/provider/schedule" class="btn btn-primary">Schedule A Feed</a>
+                    <a href="#/outbound/provider/schedule" class="btn btn-primary">Schedule A Feed</a>
                 </div>
                 <hr>
               
@@ -34,17 +33,15 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr ng-repeat="provider in feedprovider.providers">
-                            <td>{{ $index + 1 }}</td>
-                            <td>{{ provider.providerName }}</td>
-                            <td>{{ (provider.providersData[0].isActive)?'Active':'Inactive'}}</td>
-                            <td>{{ (provider.providersData[0].isStarted)?'Running':'Not Running'}}</td>
-                            <td>{{  provider.providersData[0].interval   }}</td>
-                            <td>{{ provider.lastRun}}</td>
-                            <td>{{ provider.nextRun}}</td>
-                            <!-- <td>{{ provider.lastRun | date:'yyyy-MM-dd h:m:s ' }}</td>
-                            <td>{{ provider.lastRun | date:'yyyy-MM-dd h:m:s ' }}</td> -->
-                            <td><a href="">View</a> | <a href="">History</a> | <a href="">Run</a> | <a href="">Delete</a></td>   
+                        <tr>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
                         </tr>
                     </tbody>
                 </table>

@@ -1,11 +1,14 @@
 var Provider = require('../../models/Inbound/provider');
 var History = require('../../models/history');
 var Client = require('ftp');
-var c = new Client();
+
 var csv = require('fast-csv');
 const path = require('path');
 var mongoose = require('mongoose');
+function getHeaders(cb){
 
+  cb()
+}
 module.exports = {
     getProvidersDetails : function(req,res){
       mongoose.model('provider').aggregate([{
@@ -54,7 +57,10 @@ module.exports = {
             res.json(result);
         });
     },
+
+    
     getProviderHeaders : function(req,res){
+      var c = new Client();
         var directoryPath = req.body.dict ? req.body.dict : '';
         var headers = [];
         var d;
@@ -85,7 +91,7 @@ module.exports = {
               }
             })
             .on("end", function(){
-              res.json(headers);
+              res.json({result : 1, headers : headers});
             });
       
             stream.pipe(csvStream);
@@ -93,7 +99,7 @@ module.exports = {
         });
         c.on('error',function(err){
           console.log("err",err)
-          res.json({result : 0,msg : err, class : 'danger'});
+          res.json({result : 0,msg : 'FTP Connection Failed!', class : 'danger'});
         });
         c.connect({
               host: req.body.host,

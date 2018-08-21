@@ -26,6 +26,12 @@ angular.module('SimpleRESTWebsite', ['angular-storage', 'ui.router','ui.bootstra
                 controller: 'FeedProviderCtrl',
                 controllerAs: 'feedprovider'
             })
+            .state('outbound/dashboard', {
+                url: '/outbound/dashboard',
+                templateUrl: 'app/templates/outbound/dashboard.tpl.html',
+                controller: 'FeedProviderCtrl',
+                controllerAs: 'feedprovider'
+            })
             .state('task', {
                 url: '/task/:taskId',
                 templateUrl: 'app/templates/dashboard/tasks.tpl.html',
@@ -38,9 +44,21 @@ angular.module('SimpleRESTWebsite', ['angular-storage', 'ui.router','ui.bootstra
                 controller : 'ProviderCtrl',
                 controllerAs : 'provider'
               })
+              .state('outbound/add',{
+                url : '/outbound/provider/feed/add',
+                templateUrl : 'app/templates/outbound/addProvider.tpl.html',
+                controller : 'ProviderCtrl',
+                controllerAs : 'provider'
+              })
             .state('inbound/list',{
                 url : '/inbound/provider/feed/list',
                 templateUrl : 'app/templates/inbound/feedProviders.tpl.html',
+                controller : 'FeedProviderCtrl',
+                controllerAs : 'feedprovider'
+            })
+            .state('outbound/list',{
+                url : '/outbound/provider/feed/list',
+                templateUrl : 'app/templates/outbound/feedProviders.tpl.html',
                 controller : 'FeedProviderCtrl',
                 controllerAs : 'feedprovider'
             })
@@ -50,9 +68,21 @@ angular.module('SimpleRESTWebsite', ['angular-storage', 'ui.router','ui.bootstra
               controller : 'ScheduleCtrl',
               controllerAs : 'schedule'
             })
+            .state('outbound/schedule',{
+                url : '/outbound/provider/schedule',
+                templateUrl : 'app/templates/outbound/schedule.tpl.html',
+                controller : 'ScheduleCtrl',
+                controllerAs : 'schedule'
+              })
             .state('inbound/schedule/list',{
                 url : '/inbound/provider/schedule/list',
                 templateUrl : 'app/templates/inbound/feedSchedule.tpl.html',
+                controller : 'FeedProviderCtrl',
+                controllerAs : 'feedprovider'
+              })
+              .state('outbound/schedule/list',{
+                url : '/outbound/provider/schedule/list',
+                templateUrl : 'app/templates/outbound/feedSchedule.tpl.html',
                 controller : 'FeedProviderCtrl',
                 controllerAs : 'feedprovider'
               });
@@ -343,6 +373,7 @@ angular.module('SimpleRESTWebsite', ['angular-storage', 'ui.router','ui.bootstra
             $('#eDate').data('DateTimePicker').minDate(incrementDay); */
             // $(this).data("DateTimePicker").hide();
             schedule.form.startDate = $('#sDate input').val(); 
+
         });
         $('#eDate').on('dp.change', function(e){  
             var decrementDay = moment(new Date(e.date));
@@ -354,17 +385,24 @@ angular.module('SimpleRESTWebsite', ['angular-storage', 'ui.router','ui.bootstra
         var schedule = this;
         schedule.loading = false;
         var date =  moment(new Date());
-        schedule.form = {startDate : date.format('MM/DD/YYYY h:mm A'),endDate : date.add(1,'days').format('MM/DD/YYYY h:mm A')}
+        schedule.form = {};
+        schedule.form.startDate = date.format('MM/DD/YYYY h:mm A');
+        schedule.form.endDate = date.add(1,'days').format('MM/DD/YYYY h:mm A');
         schedule.res = {};
         schedule.providers = [];
         schedule.scheduleJob = function() {
             schedule.loading = true;
+            schedule.form.utcStartDate = moment.utc(new Date(schedule.form.startDate)).format('YYYY-MM-DD HH:mm:ss A');       
             console.log('Form Data ' ,  schedule.form);
-            
             ScheduleModel.scheduleJob(schedule.form)
                 .then(function (res) {
                     schedule.loading = false;
                     schedule.res = res.data;
+                    if(res.data.result){
+                        alert(res.data.msg);
+                        window.location.href = '#/inbound/provider/schedule/list';
+                    }
+                    
                 })
         };
         schedule.getProviders = function(){
@@ -390,7 +428,6 @@ angular.module('SimpleRESTWebsite', ['angular-storage', 'ui.router','ui.bootstra
         provider.testingFTP = false;
 
         provider.form = {};
-
         function getOrignalHeaders(){
             ProviderModel.getOrignalHeaders()
                 .then(function(response){
@@ -460,7 +497,10 @@ angular.module('SimpleRESTWebsite', ['angular-storage', 'ui.router','ui.bootstra
                if(provider.form.directory != undefined && provider.form.filename != undefined ){
                 ProviderModel.getProviderHeaders(provider.form)
                 .then(function(res){
-                   provider.providerHeaders = res.data;
+                   if(res.data.result)
+                    provider.providerHeaders = res.data.headers;
+                    else
+                        alert(res.data.msg);
                 });   
                }else{
                 alert('Select FTP Directory And Filename!');
