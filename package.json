@@ -12,6 +12,7 @@
     "posttest": "npm run lint && nsp check"
   },
   "dependencies": {
+    "angularjs-bootstrap-datetimepicker": "^1.1.4",
     "body-parser": "^1.18.3",
     "compression": "^1.0.3",
     "cors": "^2.5.2",
