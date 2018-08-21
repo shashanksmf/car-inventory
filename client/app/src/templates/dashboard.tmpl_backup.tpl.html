@@ -1,17 +1,206 @@
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-	<div class="col-sm-6 col-sm-offset-3" style="border: 2px solid #f3f3f3;padding-top: 20px;">
-				<div class="col-12">
-					<h4>Upload CSV File</h4>
-					Click <a href="/template">here</a> for an example template.</p>
-					<div class="row">
-							<div class="col-10">
-									<input class="form-control" type="file"  file-model = "dashboard.myFile"/><br/><br/>
-								</div>
-								<div class="col-2">
-										<input class="form-control btn btn-primary" type="button" ng-click="dashboard.uploadFile()" value="{{ dashboard.uploadTxt }}" />
-								</div>
-					</div>
-				</div>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+    <title>Car Database</title>
+  </head>
+
+  <div class="col-sm-6">
+    <div class="portal col">
+        <div class="vehicle" ng-repeat="vehicle in dashboard.vehicles"
+             ng-click="dashboard.setEditedVehicle(vehicle)"  
+			 ng-class="{'active':dashboard.isCurrentVehicle(vehicle.id)}">
+
+			 <button class="btn btn-primary" data-toggle="collapse" data-target="#collapse{{vehicle.id}}" aria-expaned="true" aria-controls="collapseOne">
+			 {{vehicle.id}}</button>
+            <button type="button" class="close" ng-click="dashboard.deleteVehicle(vehicle.id)">&times;</button>
+                                        <div class="collapse" id="collapse{{vehicle.id}}" data-parent="#accordion">
+                                          Dealer ID :
+                                          {{vehicle.DealerId}}
+										  <br>
+										  Dealer Name : 
+                                          {{vehicle.dealerName}}
+										  <br>
+                                          Dealer Phone :
+                                          {{vehicle.dealerPhone}}
+										  <br>
+										  Dealer EMail :
+                                          {{vehicle.dealerEmail}}
+                                          <br>
+										  Dealer Address :
+                                          {{vehicle.dealerAddress}}
+                                          <br>
+										  Dealer City :
+										  {{vehicle.dealerCity}}
+                                          <br>
+										  Dealer State :
+                                          {{vehicle.dealerState}}
+                                          <br>
+										  Dealer Zip:
+										  {{vehicle.dealerZip}}
+                                          <br>
+										  Dealer Tagline :
+                                          {{vehicle.dealerTagline}}
+                                          <br>
+										  Vehicle Classification :
+										  {{vehicle.vehicleClassification}}
+                                          <br>
+										  Vehicle Certified Flag :
+                                          {{vehicle.vehicleCertifiedFlag}}
+                                          <br>
+										  Vehicle Dealer Warranty Flag :
+                                          {{vehicle.vehicleDealerWarrantyFlag}}
+                                          <br>
+										  Vehicle Warranty Av1 Flag
+										  {{vehicle.vehicleExtendedWarrantyAv1Flag}}
+                                          <br>
+										  Vehicle Auto Check Flag :
+                                          {{vehicle.vehicleAutoCheckFlag}}
+                                          <br>
+										  Vehicle Condition :
+										  {{vehicle.vehicleCondition}}
+                                          <br>
+										  Vehicle Vin Number :
+                                          {{vehicle.vehicleVinNumber}}
+                                          <br>
+										  Vehicle Stock Number
+										  {{vehicle.vehicleStockNuber}}
+                                          <br>
+										  Vehicle Year :
+                                          {{vehicle.vehicleYear}}
+                                          <br>
+										  Vehicle Make :
+										  {{vehicle.vehicleMake}}
+                                          <br>
+										  Vehicle Model :
+                                          {{vehicle.vehicleModel}}
+                                          <br>
+										  Vehicle Trim :
+										  {{vehicle.vehicleTrim}}
+										  <br>
+                                          Vehicle Mileage :
+                                          {{vehicle.vehicleMileage}}
+                                          <br>
+										  Vehicle MSRP :
+										  {{vehicle.vehicleMSRP}}
+                                          <br>
+										  Vehicle Retail Wholesale value :
+                                          {{vehicle.vehicleRetailWholesaleValue}}
+                                          <br>
+										  Vehicle Invoice Amount :
+										  {{vehicle.vehicleInvoiceAmount}}
+                                          <br>
+										  Vehicle Pack Amount :
+                                          {{vehicle.vehiclePackAmount}}
+										  <br>
+                                          Vehicle Total Cost :
+										  {{vehicle.vehicleTotalCost}}
+										  <br>
+                                          Vehicle Selling Price :
+                                          {{vehicle.vehicleSellingPrice}}
+										  <br>
+										  Vehicle Engine Displacement CI :
+                                          {{vehicle.vehicleEngineDisplacementCI}}
+										  <br>
+                                          Vehicle Engine CYL :
+                                          {{vehicle.vehicleEngineCyl}}
+										  <br>
+										  Vehicle Special Price :
+                                          {{vehicle.vehicleSpecialPrice}}
+										  <br>
+                                          Vehicle Status :
+                                          {{vehicle.vehicleStatus}}
+										  <br>
+										  Vehicle Body Type :
+                                          {{vehicle.vehicleBodyType}}
+										  <br>
+                                          Vehicle Body Style :
+                                          {{vehicle.vehicleBodyStyle}}
+										  <br>
+										  Vehicle Market Class Name :
+                                          {{vehicle.vehicleMarketClassName}}
+										  <br>
+                                          Vehicle Number Of Doors :
+                                          {{vehicle.vehicleNumberOfDoors}}
+										  <br>
+										  Vehicle Drive Train :
+                                          {{vehicle.vehicleDriveTrain}}
+										  <br>
+                                          Vehicle Fuel Type :
+                                          {{vehicle.vehicleFuelType}}
+										  <br>
+										  Vehicle Engine Displacement :
+                                          {{vehicle.vehicleEngineDisplacement}}
+										  <br>
+                                          vehicle Engine HP :
+                                          {{vehicle.vehicleEngineHP}}
+										  <br>
+										  Vehicle HRPM :
+                                          {{vehicle.vehicleHPRPM}}
+                                          <br>
+										  Vehicle Engine Torque :
+                                          {{vehicle.vehicleEngineTorque}}
+                                          <br>
+										  Vehicle Torque RPM :
+										  {{vehicle.vehicleTorqueRPM}}
+                                          <br>
+										  Vehicle Transmission Type :
+                                          {{vehicle.vehicleTransmissionType}}
+                                          <br>
+										  Vehicle Transmission Gears :
+										  {{vehicle.vehicleTransmissionGears}}
+										  <br>
+                                          Vehicle Transmission Name :
+                                          {{vehicle.vehicleTransmissionName}}
+										  <br>
+										  Vehicle City MPG :
+                                          {{vehicle.vehicleCityMPG}}
+										  <br>
+                                          Vehicle HWY MPG :
+                                          {{vehicle.vehicleHwyMPG}}
+										  <br>
+										  Vehicle Fuel Tank Capacity :
+                                          {{vehicle.vehicleFuelTankCapacity}}
+										  <br>
+                                          Vehicle Exterior Color :
+                                          {{vehicle.vehicleExteriorColor}}
+										  <br>
+										  Vehicle Interior Color :
+                                          {{vehicle.vehicleInteriorColor}}
+										  <br>
+                                          Vehicle Optional Equipment :
+                                          {{vehicle.vehicleOptionalEquipment}}
+                                          <br>
+										  Vehicle Comments :
+										  {{vehicle.vehicleComments}}
+                                          <br>
+										  Vehicle AD Title :
+                                          {{vehicle.vehicleAdTitle}}
+                                          <br>
+										  Vehicle Video URL :
+										  {{vehicle.vehicleVideoURL}}
+                                          Vehicle Image URL :
+                                          {{vehicle.vehicleImgURL}}
+										  <br>
+										  Vehicle Image URL Modified Date :
+                                          {{vehicle.vehicleImageURLModifiedDate}}
+										  <br>
+                                          vehicle Detail Link :
+                                          </div>{{vehicle.vehicleDetailLink}}
+                                </div>  </div>
+         </div>  </div>
+
+			<div class="col-sm-6" style="float:right;">
+			<h4>Upload New Vehicles via .csv</h4>
+			Click <a href="/template">here</a> for an example template.</p>
+			<div>
+				<input type="file"  file-model = "dashboard.myFile"/><br/><br/>
+				<input type="button" ng-click="dashboard.uploadFile()" value="upload" />
+			</div>
 				<!-- CREATING -->
 				<div ng-if="!dashboard.isEditing" class="col-xs-12">
 					<h4>Create a New vehicle</h4>
@@ -376,12 +565,12 @@
 						<button type="button" class="btn btn-default btn-lg pull-right"
 								ng-click="dashboard.cancelEditing()">Cancel
 						</button>
-					</form>
-				</div>
+					</form>        
+				</div>             
 				<!-- EDITING -->
 				<div ng-if="dashboard.isEditing" class="col-xs-12">
 					<h4>Editing {{dashboard.editedvehicle.DealerId}}</h4>
-					<hr/>
+					<hr/>   
 					<form class="edit-form" role="form"
 						  ng-submit="dashboard.updateVehicle(dashboard.editedVehicle)" novalidate>
 						<div class="form-group">
@@ -742,6 +931,6 @@
 						<button type="button" class="btn btn-default btn-lg pull-right"
 								ng-click="dashboard.cancelEditing()">Cancel
 						</button>
-					</form>
+					</form> 
 				</div>
 			</div>

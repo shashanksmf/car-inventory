@@ -1,0 +1,66 @@
+
+<div class="container">
+  <h3 class="page-heading">Dashboard</h3>
+
+  <div class="container">
+    <h5 class="bg-primary dashboard-table-heading">Recent Reporting Tasks</h5>
+    <div class="table-wrapper container-fluid">
+      <p>{{JSON.stringify(task.vehicles) }}</p>
+      <table class="inbound-outbound-table table">
+        <thead>
+          <tr>
+            <th>DealerId</th>
+            <th>Dealer Name</th>
+            <th>Dealer Phone</th>
+            <th>Dealer Email</th>
+            <th>Dealer Address</th>
+            <th>Dealer City</th>
+            <!-- <th>3xx (redirect)</th> -->
+            <!-- <th>Other</th> -->
+          </tr>
+        </thead>
+        <tbody>
+          <tr ng-if="task.loading" style="text-align: center;">
+            <td colspan="6">Loading ...</td>
+          </tr>
+          <tr ng-repeat="vehicle in task.vehicles">
+            <td><a href="#">{{ vehicle['DealerId'] || ($index+1)}}</a></td>
+            <td>{{ vehicle['dealerName'] }}</td>
+            <td>{{ vehicle['dealerPhone'] }}</td>
+            <td>{{ vehicle['dealerEmail'] }}</td>
+            <td>{{ vehicle['dealerAddress'] }}</td>
+            <td>{{ vehicle['dealerCity']}}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+
+<style>
+        .dashboard-table-heading {
+          padding: 10px;
+          margin-bottom: 0;
+        }
+      .table-wrapper {
+        border:1px solid #428bca;
+      }
+      
+      .inbound-outbound-table {
+        margin-top: 20px;
+      }
+      
+      table.table tbody tr td,
+      table.table thead tr th,
+      table.table thead {
+        border:2px solid #ddd;
+        }
+      
+        .page-heading {
+          border-bottom: 2px solid #ddd;
+          margin-left: 20px;
+          padding-bottom: 10px;
+        }
+      </style>

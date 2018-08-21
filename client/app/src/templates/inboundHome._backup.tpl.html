@@ -1,0 +1,1435 @@
+<div class="container">
+  <div class="">
+    <h3>Add A New Inbound Feed Provider</h3>
+    <hr>
+  </div>
+  <div class="row">
+    <div class="col-md-12">
+      <div class="row">
+        <div class="col-sm-6">
+          <div class="">
+            <label for="">Provider Info</label>
+            <hr>
+          </div>
+          <div class="form-group row">
+            <label for="inputEmail3" class="col-sm-2 col-form-label">Provider Name</label>
+            <div class="col-sm-10">
+              <input type="email" class="form-control" id="inputEmail3">
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="inputPassword3" class="col-sm-2 col-form-label">Provider Status</label>
+            <div class="col-sm-10">
+              <select class=" form-control custom-select my-1 mr-sm-2" id="inlineFormCustomSelectPref">
+                <option selected>Choose...</option>
+                <option value="1">One</option>
+                <option value="2">Two</option>
+                <option value="3">Three</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group row">
+              <label for="inputPassword3" class="col-sm-2 col-form-label">FTP Host</label>
+              <div class="col-sm-10">
+                <input type="text" class="form-control" id="inputPassword3">
+              </div>
+            </div>
+          <div class="form-group row">
+            <label for="inputPassword3" class="col-sm-2 col-form-label">FTP Username</label>
+            <div class="col-sm-10">
+              <input type="text" class="form-control" id="inputPassword3">
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="inputPassword3" class="col-sm-2 col-form-label">FTP Password</label>
+            <div class="col-sm-10">
+              <input type="password" class="form-control" id="inputPassword3">
+            </div>
+          </div>
+
+
+          <div class="form-group row">
+
+          </div>
+        </div>
+        <div class="col-sm-6">
+          <div class="">
+
+            <label for="">File Parser Setting</label>
+            <hr>
+          </div>
+          <div class="form-group row">
+            <label for="inputEmail3" class="col-sm-2 col-form-label">Column Delimiter</label>
+            <div class="col-sm-10">
+              <input type="text" class="form-control" value=",">
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="inputPassword3" class="col-sm-2 col-form-label">Exclosure Character</label>
+            <div class="col-sm-10">
+              <input type="text" class="form-control" id="inputPassword3">
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="inputPassword3" class="col-sm-2 col-form-label">Escape Character</label>
+            <div class="col-sm-10">
+              <input type="text" class="form-control" value="\">
+            </div>
+          </div>
+
+
+          <div class="form-group row">
+
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-sm-6">
+          <div class="">
+            <label for="">File Indentifier Setting</label>
+            <hr>
+          </div>
+          <div class="form-group row">
+            <label for="inputEmail3" class="col-sm-2 col-form-label">Header Included</label>
+            <div class="col-sm-10">
+              <select class=" form-control custom-select my-1 mr-sm-2" id="inlineFormCustomSelectPref">
+                	<option value="">Select An Option</option>
+									<option value="1">Yes</option>
+									<option value="0">No</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="inputPassword3" class="col-sm-2 col-form-label">Footer Included</label>
+            <div class="col-sm-10">
+              <select class=" form-control custom-select my-1 mr-sm-2" id="inlineFormCustomSelectPref">
+                	<option value="">Select An Option</option>
+									<option value="1">Yes</option>
+									<option value="0">No</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="inputPassword3" class="col-sm-2 col-form-label">Indentifier Position</label>
+            <div class="col-sm-10">
+              <select class=" form-control custom-select my-1 mr-sm-2" id="inlineFormCustomSelectPref">
+                	<option value="">Select An Option</option>
+									<option value="1">In File</option>
+									<option value="0">In File Name</option>
+              </select>
+            </div>
+          </div>
+
+        </div>
+        <div class="col-sm-6">
+          <div class="">
+
+            <label for="">Image & Options Parser Setting</label>
+            <hr>
+          </div>
+          <div class="form-group row">
+            <label for="inputEmail3" class="col-sm-2 col-form-label">Image Delimiter</label>
+            <div class="col-sm-10">
+              <input type="text" class="form-control" id="inputEmail3">
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="inputPassword3" class="col-sm-2 col-form-label">Options Character</label>
+            <div class="col-sm-10">
+              <input type="text" class="form-control" id="inputPassword3">
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="inputPassword3" class="col-sm-2 col-form-label">Escape Character</label>
+            <div class="col-sm-10">
+              <input type="password" class="form-control" id="inputPassword3">
+            </div>
+          </div>
+
+
+          <div class="form-group row">
+
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-sm-6">
+          <div class="">
+            <label for="">Special Parsing Setting</label>
+            <hr>
+          </div>
+          <div class="form-group row">
+            <label for="inputEmail3" class="col-sm-2 col-form-label">Pull Request URL</label>
+            <div class="col-sm-10">
+              <input type="text" class="form-control">
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="inputPassword3" class="col-sm-2 col-form-label">Pull Request Type</label>
+            <div class="col-sm-10">
+              <select class=" form-control custom-select my-1 mr-sm-2" id="inlineFormCustomSelectPref">
+                  <option value="">Select A Type</option>
+									<option value="web">Web</option>
+									<option value="ftp">FTP</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="inputPassword3" class="col-sm-2 col-form-label">Preprocess Request</label>
+            <div class="col-sm-10">
+              <input type="text" class="form-control">
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+  </div>
+  <div class="">
+    <h3>Inbound File Header Mapping</h3>
+    <hr>
+  </div>
+  <div class="row">
+    <div class="col-md-12">
+      <div class="form-group">
+        <label for="">File Header (Dicrectory From File). Paste it here or create it here </label>
+        <input type="text" class="form-control">
+      </div>
+    </div>
+    <div class="col-md-12">
+      <div class="row">
+        <div class="col-md-6">
+          <div>
+            <label for="">Header Mapping</label>
+            <hr>
+            <table class="table table-striped table-bordered">
+              <thead>
+                <tr>
+                  <th>Carweek Header</th>
+                  <th>Provider Header</th>
+                </tr>
+              </thead>
+              <tbody >
+                <tr>
+                  <td>additional_comments</td>
+                  <td>
+                    <select name="header[additional_comments]" data-key="additional_comments" class="in-feed-provider-select">
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>autotrader_teaser</td>
+                  <td>
+                    <select name="header[autotrader_teaser]" data-key="autotrader_teaser" class="in-feed-provider-select">
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>body_style</td>
+                  <td>
+                    <select name="header[body_style]" data-key="body_style" class="in-feed-provider-select">
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>body_type</td>
+                  <td>
+                    <select name="header[body_type]" data-key="body_type" class="in-feed-provider-select">
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>book_bb</td>
+                  <td>
+                    <select name="header[book_bb]" data-key="book_bb" class="in-feed-provider-select">
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>book_kbb</td>
+                  <td>
+                    <select name="header[book_kbb]" data-key="book_kbb" class="in-feed-provider-select">
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>book_nada</td>
+                  <td>
+                    <select name="header[book_nada]" data-key="book_nada" class="in-feed-provider-select">
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>book_other</td>
+                  <td>
+                    <select name="header[book_other]" data-key="book_other" class="in-feed-provider-select">
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>carfeine_bid_price</td>
+                  <td>
+                    <select name="header[carfeine_bid_price]" data-key="carfeine_bid_price" class="in-feed-provider-select">
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>carfeine_max_radius</td>
+                  <td>
+                    <select name="header[carfeine_max_radius]" data-key="carfeine_max_radius" class="in-feed-provider-select">
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>carfeine_monthly_budget</td>
+                  <td>
+                    <select name="header[carfeine_monthly_budget]" data-key="carfeine_monthly_budget" class="in-feed-provider-select">
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>carfeine_tracking_no</td>
+                  <td>
+                    <select name="header[carfeine_tracking_no]" data-key="carfeine_tracking_no" class="in-feed-provider-select">
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>cars_com_teaser</td>
+                  <td>
+                    <select name="header[cars_com_teaser]" data-key="cars_com_teaser" class="in-feed-provider-select">
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>comments</td>
+                  <td>
+                    <select name="header[comments]" data-key="comments" class="in-feed-provider-select">
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>condition</td>
+                  <td>
+                    <select name="header[condition]" data-key="condition" class="in-feed-provider-select">
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>craigslist_teaser</td>
+                  <td>
+                    <select name="header[craigslist_teaser]" data-key="craigslist_teaser" class="in-feed-provider-select">
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>craigslist_title</td>
+                  <td>
+                    <select name="header[craigslist_title]" data-key="craigslist_title" class="in-feed-provider-select">
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>dealer_comments</td>
+                  <td>
+                    <select name="header[dealer_comments]" data-key="dealer_comments" class="in-feed-provider-select">
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>doors</td>
+                  <td>
+                    <select name="header[doors]" data-key="doors" class="in-feed-provider-select">
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>driver_position</td>
+                  <td>
+                    <select name="header[driver_position]" data-key="driver_position" class="in-feed-provider-select">
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>drivetrain</td>
+                  <td>
+                    <select name="header[drivetrain]" data-key="drivetrain" class="in-feed-provider-select">
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>engine</td>
+                  <td>
+                    <select name="header[engine]" data-key="engine" class="in-feed-provider-select">
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>engine_aspiration_type</td>
+                  <td>
+                    <select name="header[engine_aspiration_type]" data-key="engine_aspiration_type" class="in-feed-provider-select">
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>engine_ci</td>
+                  <td>
+                    <select name="header[engine_ci]" data-key="engine_ci" class="in-feed-provider-select">
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>engine_cyl</td>
+                  <td>
+                    <select name="header[engine_cyl]" data-key="engine_cyl" class="in-feed-provider-select">
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>engine_liter</td>
+                  <td>
+                    <select name="header[engine_liter]" data-key="engine_liter" class="in-feed-provider-select">
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>ext_color_code</td>
+                  <td>
+                    <select name="header[ext_color_code]" data-key="ext_color_code" class="in-feed-provider-select">
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>ext_color_generic</td>
+                  <td>
+                    <select name="header[ext_color_generic]" data-key="ext_color_generic" class="in-feed-provider-select">
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>ext_color_name</td>
+                  <td>
+                    <select name="header[ext_color_name]" data-key="ext_color_name" class="in-feed-provider-select">
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>ext_color_rgb</td>
+                  <td>
+                    <select name="header[ext_color_rgb]" data-key="ext_color_rgb" class="in-feed-provider-select">
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>feed_image_timestamp</td>
+                  <td>
+                    <select name="header[feed_image_timestamp]" data-key="feed_image_timestamp" class="in-feed-provider-select">
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>feed_lockout</td>
+                  <td>
+                    <select name="header[feed_lockout]" data-key="feed_lockout" class="in-feed-provider-select">
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>flag_autocheck</td>
+                  <td>
+                    <select name="header[flag_autocheck]" data-key="flag_autocheck" class="in-feed-provider-select">
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>flag_carfax</td>
+                  <td>
+                    <select name="header[flag_carfax]" data-key="flag_carfax" class="in-feed-provider-select">
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>flag_carfax_1owner</td>
+                  <td>
+                    <select name="header[flag_carfax_1owner]" data-key="flag_carfax_1owner" class="in-feed-provider-select">
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>flag_certified</td>
+                  <td>
+                    <select name="header[flag_certified]" data-key="flag_certified" class="in-feed-provider-select">
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>flag_custom</td>
+                  <td>
+                    <select name="header[flag_custom]" data-key="flag_custom" class="in-feed-provider-select">
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>flag_dealer_warranty</td>
+                  <td>
+                    <select name="header[flag_dealer_warranty]" data-key="flag_dealer_warranty" class="in-feed-provider-select">
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>flag_ext_warranty</td>
+                  <td>
+                    <select name="header[flag_ext_warranty]" data-key="flag_ext_warranty" class="in-feed-provider-select">
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>flag_factory_warranty</td>
+                  <td>
+                    <select name="header[flag_factory_warranty]" data-key="flag_factory_warranty" class="in-feed-provider-select">
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>flag_featured</td>
+                  <td>
+                    <select name="header[flag_featured]" data-key="flag_featured" class="in-feed-provider-select">
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>flag_green_vehicle</td>
+                  <td>
+                    <select name="header[flag_green_vehicle]" data-key="flag_green_vehicle" class="in-feed-provider-select">
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>flag_special</td>
+                  <td>
+                    <select name="header[flag_special]" data-key="flag_special" class="in-feed-provider-select">
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>flag_spotlight</td>
+                  <td>
+                    <select name="header[flag_spotlight]" data-key="flag_spotlight" class="in-feed-provider-select">
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>forced_induction</td>
+                  <td>
+                    <select name="header[forced_induction]" data-key="forced_induction" class="in-feed-provider-select">
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>fuel_capacity</td>
+                  <td>
+                    <select name="header[fuel_capacity]" data-key="fuel_capacity" class="in-feed-provider-select">
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>fuel_type</td>
+                  <td>
+                    <select name="header[fuel_type]" data-key="fuel_type" class="in-feed-provider-select">
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>fuel_units</td>
+                  <td>
+                    <select name="header[fuel_units]" data-key="fuel_units" class="in-feed-provider-select">
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>high_output</td>
+                  <td>
+                    <select name="header[high_output]" data-key="high_output" class="in-feed-provider-select">
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>hp</td>
+                  <td>
+                    <select name="header[hp]" data-key="hp" class="in-feed-provider-select">
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>hp_rpm</td>
+                  <td>
+                    <select name="header[hp_rpm]" data-key="hp_rpm" class="in-feed-provider-select">
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>identifier</td>
+                  <td>
+                    <select name="header[identifier]" data-key="identifier" class="in-feed-provider-select">
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>images</td>
+                  <td>
+                    <select name="header[images]" data-key="images" class="in-feed-provider-select">
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>int_color_code</td>
+                  <td>
+                    <select name="header[int_color_code]" data-key="int_color_code" class="in-feed-provider-select">
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>int_color_name</td>
+                  <td>
+                    <select name="header[int_color_name]" data-key="int_color_name" class="in-feed-provider-select">
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>make</td>
+                  <td>
+                    <select name="header[make]" data-key="make" class="in-feed-provider-select">
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>market_class</td>
+                  <td>
+                    <select name="header[market_class]" data-key="market_class" class="in-feed-provider-select">
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>mileage</td>
+                  <td>
+                    <select name="header[mileage]" data-key="mileage" class="in-feed-provider-select">
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>model</td>
+                  <td>
+                    <select name="header[model]" data-key="model" class="in-feed-provider-select">
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>model_number</td>
+                  <td>
+                    <select name="header[model_number]" data-key="model_number" class="in-feed-provider-select">
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>mpg_city</td>
+                  <td>
+                    <select name="header[mpg_city]" data-key="mpg_city" class="in-feed-provider-select">
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>mpg_hwy</td>
+                  <td>
+                    <select name="header[mpg_hwy]" data-key="mpg_hwy" class="in-feed-provider-select">
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>needs_attention</td>
+                  <td>
+                    <select name="header[needs_attention]" data-key="needs_attention" class="in-feed-provider-select">
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>odometer_status</td>
+                  <td>
+                    <select name="header[odometer_status]" data-key="odometer_status" class="in-feed-provider-select">
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>options</td>
+                  <td>
+                    <select name="header[options]" data-key="options" class="in-feed-provider-select">
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>pack_amount</td>
+                  <td>
+                    <select name="header[pack_amount]" data-key="pack_amount" class="in-feed-provider-select">
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>passenger_capacity</td>
+                  <td>
+                    <select name="header[passenger_capacity]" data-key="passenger_capacity" class="in-feed-provider-select">
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>price_1</td>
+                  <td>
+                    <select name="header[price_1]" data-key="price_1" class="in-feed-provider-select">
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>price_1_hide</td>
+                  <td>
+                    <select name="header[price_1_hide]" data-key="price_1_hide" class="in-feed-provider-select">
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>price_1_label</td>
+                  <td>
+                    <select name="header[price_1_label]" data-key="price_1_label" class="in-feed-provider-select">
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>price_2</td>
+                  <td>
+                    <select name="header[price_2]" data-key="price_2" class="in-feed-provider-select">
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>price_2_hide</td>
+                  <td>
+                    <select name="header[price_2_hide]" data-key="price_2_hide" class="in-feed-provider-select">
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>price_2_label</td>
+                  <td>
+                    <select name="header[price_2_label]" data-key="price_2_label" class="in-feed-provider-select">
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>price_3</td>
+                  <td>
+                    <select name="header[price_3]" data-key="price_3" class="in-feed-provider-select">
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>price_3_hide</td>
+                  <td>
+                    <select name="header[price_3_hide]" data-key="price_3_hide" class="in-feed-provider-select">
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>price_3_label</td>
+                  <td>
+                    <select name="header[price_3_label]" data-key="price_3_label" class="in-feed-provider-select">
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>price_4</td>
+                  <td>
+                    <select name="header[price_4]" data-key="price_4" class="in-feed-provider-select">
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>price_4_hide</td>
+                  <td>
+                    <select name="header[price_4_hide]" data-key="price_4_hide" class="in-feed-provider-select">
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>price_4_label</td>
+                  <td>
+                    <select name="header[price_4_label]" data-key="price_4_label" class="in-feed-provider-select">
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>price_destination</td>
+                  <td>
+                    <select name="header[price_destination]" data-key="price_destination" class="in-feed-provider-select">
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>price_invoice</td>
+                  <td>
+                    <select name="header[price_invoice]" data-key="price_invoice" class="in-feed-provider-select">
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>price_msrp</td>
+                  <td>
+                    <select name="header[price_msrp]" data-key="price_msrp" class="in-feed-provider-select">
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>stock_no</td>
+                  <td>
+                    <select name="header[stock_no]" data-key="stock_no" class="in-feed-provider-select">
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>style_id</td>
+                  <td>
+                    <select name="header[style_id]" data-key="style_id" class="in-feed-provider-select">
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>tags</td>
+                  <td>
+                    <select name="header[tags]" data-key="tags" class="in-feed-provider-select">
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>tq</td>
+                  <td>
+                    <select name="header[tq]" data-key="tq" class="in-feed-provider-select">
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>tq_rpm</td>
+                  <td>
+                    <select name="header[tq_rpm]" data-key="tq_rpm" class="in-feed-provider-select">
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>transmission</td>
+                  <td>
+                    <select name="header[transmission]" data-key="transmission" class="in-feed-provider-select">
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>transmission_gears</td>
+                  <td>
+                    <select name="header[transmission_gears]" data-key="transmission_gears" class="in-feed-provider-select">
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>transmission_type</td>
+                  <td>
+                    <select name="header[transmission_type]" data-key="transmission_type" class="in-feed-provider-select">
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>trim</td>
+                  <td>
+                    <select name="header[trim]" data-key="trim" class="in-feed-provider-select">
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>vdp_link</td>
+                  <td>
+                    <select name="header[vdp_link]" data-key="vdp_link" class="in-feed-provider-select">
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>vehicle_cost</td>
+                  <td>
+                    <select name="header[vehicle_cost]" data-key="vehicle_cost" class="in-feed-provider-select">
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>video_code</td>
+                  <td>
+                    <select name="header[video_code]" data-key="video_code" class="in-feed-provider-select">
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>video_provider</td>
+                  <td>
+                    <select name="header[video_provider]" data-key="video_provider" class="in-feed-provider-select">
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>video_type</td>
+                  <td>
+                    <select name="header[video_type]" data-key="video_type" class="in-feed-provider-select">
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>video_url</td>
+                  <td>
+                    <select name="header[video_url]" data-key="video_url" class="in-feed-provider-select">
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>vin</td>
+                  <td>
+                    <select name="header[vin]" data-key="vin" class="in-feed-provider-select">
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>website_teaser</td>
+                  <td>
+                    <select name="header[website_teaser]" data-key="website_teaser" class="in-feed-provider-select">
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>website_title</td>
+                  <td>
+                    <select name="header[website_title]" data-key="website_title" class="in-feed-provider-select">
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>year</td>
+                  <td>
+                    <select name="header[year]" data-key="year" class="in-feed-provider-select">
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>option_01</td>
+                  <td>
+                    <select name="header[option_01]" data-key="option_01" class="in-feed-provider-select">
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>option_02</td>
+                  <td>
+                    <select name="header[option_02]" data-key="option_02" class="in-feed-provider-select">
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>option_03</td>
+                  <td>
+                    <select name="header[option_03]" data-key="option_03" class="in-feed-provider-select">
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>option_04</td>
+                  <td>
+                    <select name="header[option_04]" data-key="option_04" class="in-feed-provider-select">
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>option_05</td>
+                  <td>
+                    <select name="header[option_05]" data-key="option_05" class="in-feed-provider-select">
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>option_06</td>
+                  <td>
+                    <select name="header[option_06]" data-key="option_06" class="in-feed-provider-select">
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>option_07</td>
+                  <td>
+                    <select name="header[option_07]" data-key="option_07" class="in-feed-provider-select">
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>option_08</td>
+                  <td>
+                    <select name="header[option_08]" data-key="option_08" class="in-feed-provider-select">
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>option_09</td>
+                  <td>
+                    <select name="header[option_09]" data-key="option_09" class="in-feed-provider-select">
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>option_10</td>
+                  <td>
+                    <select name="header[option_10]" data-key="option_10" class="in-feed-provider-select">
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>option_11</td>
+                  <td>
+                    <select name="header[option_11]" data-key="option_11" class="in-feed-provider-select">
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>option_12</td>
+                  <td>
+                    <select name="header[option_12]" data-key="option_12" class="in-feed-provider-select">
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>option_13</td>
+                  <td>
+                    <select name="header[option_13]" data-key="option_13" class="in-feed-provider-select">
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>option_14</td>
+                  <td>
+                    <select name="header[option_14]" data-key="option_14" class="in-feed-provider-select">
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>option_15</td>
+                  <td>
+                    <select name="header[option_15]" data-key="option_15" class="in-feed-provider-select">
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>option_16</td>
+                  <td>
+                    <select name="header[option_16]" data-key="option_16" class="in-feed-provider-select">
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>option_17</td>
+                  <td>
+                    <select name="header[option_17]" data-key="option_17" class="in-feed-provider-select">
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>option_18</td>
+                  <td>
+                    <select name="header[option_18]" data-key="option_18" class="in-feed-provider-select">
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>option_19</td>
+                  <td>
+                    <select name="header[option_19]" data-key="option_19" class="in-feed-provider-select">
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>option_20</td>
+                  <td>
+                    <select name="header[option_20]" data-key="option_20" class="in-feed-provider-select">
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>option_21</td>
+                  <td>
+                    <select name="header[option_21]" data-key="option_21" class="in-feed-provider-select">
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>option_22</td>
+                  <td>
+                    <select name="header[option_22]" data-key="option_22" class="in-feed-provider-select">
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>option_23</td>
+                  <td>
+                    <select name="header[option_23]" data-key="option_23" class="in-feed-provider-select">
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>option_24</td>
+                  <td>
+                    <select name="header[option_24]" data-key="option_24" class="in-feed-provider-select">
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>option_25</td>
+                  <td>
+                    <select name="header[option_25]" data-key="option_25" class="in-feed-provider-select">
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>option_26</td>
+                  <td>
+                    <select name="header[option_26]" data-key="option_26" class="in-feed-provider-select">
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>option_27</td>
+                  <td>
+                    <select name="header[option_27]" data-key="option_27" class="in-feed-provider-select">
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>option_28</td>
+                  <td>
+                    <select name="header[option_28]" data-key="option_28" class="in-feed-provider-select">
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>option_29</td>
+                  <td>
+                    <select name="header[option_29]" data-key="option_29" class="in-feed-provider-select">
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>option_30</td>
+                  <td>
+                    <select name="header[option_30]" data-key="option_30" class="in-feed-provider-select">
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>image_01</td>
+                  <td>
+                    <select name="header[image_01]" data-key="image_01" class="in-feed-provider-select">
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>image_02</td>
+                  <td>
+                    <select name="header[image_02]" data-key="image_02" class="in-feed-provider-select">
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>image_03</td>
+                  <td>
+                    <select name="header[image_03]" data-key="image_03" class="in-feed-provider-select">
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>image_04</td>
+                  <td>
+                    <select name="header[image_04]" data-key="image_04" class="in-feed-provider-select">
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>image_05</td>
+                  <td>
+                    <select name="header[image_05]" data-key="image_05" class="in-feed-provider-select">
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>image_06</td>
+                  <td>
+                    <select name="header[image_06]" data-key="image_06" class="in-feed-provider-select">
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>image_07</td>
+                  <td>
+                    <select name="header[image_07]" data-key="image_07" class="in-feed-provider-select">
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>image_08</td>
+                  <td>
+                    <select name="header[image_08]" data-key="image_08" class="in-feed-provider-select">
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>image_09</td>
+                  <td>
+                    <select name="header[image_09]" data-key="image_09" class="in-feed-provider-select">
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>image_10</td>
+                  <td>
+                    <select name="header[image_10]" data-key="image_10" class="in-feed-provider-select">
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>image_11</td>
+                  <td>
+                    <select name="header[image_11]" data-key="image_11" class="in-feed-provider-select">
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>image_12</td>
+                  <td>
+                    <select name="header[image_12]" data-key="image_12" class="in-feed-provider-select">
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>image_13</td>
+                  <td>
+                    <select name="header[image_13]" data-key="image_13" class="in-feed-provider-select">
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>image_14</td>
+                  <td>
+                    <select name="header[image_14]" data-key="image_14" class="in-feed-provider-select">
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>image_15</td>
+                  <td>
+                    <select name="header[image_15]" data-key="image_15" class="in-feed-provider-select">
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>image_16</td>
+                  <td>
+                    <select name="header[image_16]" data-key="image_16" class="in-feed-provider-select">
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>image_17</td>
+                  <td>
+                    <select name="header[image_17]" data-key="image_17" class="in-feed-provider-select">
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>image_18</td>
+                  <td>
+                    <select name="header[image_18]" data-key="image_18" class="in-feed-provider-select">
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>image_19</td>
+                  <td>
+                    <select name="header[image_19]" data-key="image_19" class="in-feed-provider-select">
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>image_20</td>
+                  <td>
+                    <select name="header[image_20]" data-key="image_20" class="in-feed-provider-select">
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>image_21</td>
+                  <td>
+                    <select name="header[image_21]" data-key="image_21" class="in-feed-provider-select">
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>image_22</td>
+                  <td>
+                    <select name="header[image_22]" data-key="image_22" class="in-feed-provider-select">
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>image_23</td>
+                  <td>
+                    <select name="header[image_23]" data-key="image_23" class="in-feed-provider-select">
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>image_24</td>
+                  <td>
+                    <select name="header[image_24]" data-key="image_24" class="in-feed-provider-select">
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>image_25</td>
+                  <td>
+                    <select name="header[image_25]" data-key="image_25" class="in-feed-provider-select">
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>image_26</td>
+                  <td>
+                    <select name="header[image_26]" data-key="image_26" class="in-feed-provider-select">
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>image_27</td>
+                  <td>
+                    <select name="header[image_27]" data-key="image_27" class="in-feed-provider-select">
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>image_28</td>
+                  <td>
+                    <select name="header[image_28]" data-key="image_28" class="in-feed-provider-select">
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>image_29</td>
+                  <td>
+                    <select name="header[image_29]" data-key="image_29" class="in-feed-provider-select">
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>image_30</td>
+                  <td>
+                    <select name="header[image_30]" data-key="image_30" class="in-feed-provider-select">
+                    </select>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="">
+            <label for="">Flag & Condition Mapping</label>
+            <hr>
+          </div>
+          <table class="table table-striped table-bordered">
+              <thead>
+                <tr>
+                  <th>Field</th>
+                  <th>Carweek Value</th>
+                  <th>Feed Value</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Condition</td>
+                  <td>New</td>
+                  <td><input name="flag_condition_map[condition][new]" value="" /></td>
+                </tr>
+                <tr>
+                  <td>Condition</td>
+                  <td>Used</td>
+                  <td><input name="flag_condition_map[condition][used]" value="" /></td>
+                </tr>
+                <tr>
+                  <td>Condition</td>
+                  <td>Certified</td>
+                  <td><input name="flag_condition_map[condition][certified]" value="" /></td>
+                </tr>
+                <tr>
+                  <td>Flag</td>
+                  <td>Auto Check</td>
+                  <td><input name="flag_condition_map[flag][autocheck]" value="" /></td>
+                </tr>
+                <tr>
+                  <td>Flag</td>
+                  <td>Carfax</td>
+                  <td><input name="flag_condition_map[flag][carfax]" value="" /></td>
+                </tr>
+                <tr>
+                  <td>Flag</td>
+                  <td>Carfax 1 Owner</td>
+                  <td><input name="flag_condition_map[flag][carfax_1owner]" value="" /></td>
+                </tr>
+                <tr>
+                  <td>Flag</td>
+                  <td>Certified</td>
+                  <td><input name="flag_condition_map[flag][certified]" value="" /></td>
+                </tr>
+                <tr>
+                  <td>Flag</td>
+                  <td>Dealer Warranty</td>
+                  <td><input name="flag_condition_map[flag][dealer_warranty]" value="" /></td>
+                </tr>
+                <tr>
+                  <td>Flag</td>
+                  <td>Extended Warranty</td>
+                  <td><input name="flag_condition_map[flag][extended_warranty]" value="" /></td>
+                </tr>
+                <tr>
+                  <td>Flag</td>
+                  <td>Factory Warranty</td>
+                  <td><input name="flag_condition_map[flag][factory_warranty]" value="" /></td>
+                </tr>
+                <tr>
+                  <td>Flag</td>
+                  <td>Green Vehicle</td>
+                  <td><input name="flag_condition_map[flag][green_vehicle]" value="" /></td>
+                </tr>
+                <tr>
+                  <td>Trans</td>
+                  <td>Automatic</td>
+                  <td><input name="flag_condition_map[trans][automatic]" value="" /></td>
+                </tr>
+                <tr>
+                  <td>Trans</td>
+                  <td>Manual</td>
+                  <td><input name="flag_condition_map[trans][manual]" value="" /></td>
+                </tr>
+              </tbody>
+            </table>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-4 col-md-offset-4">
+          <button class="btn btn-success" type="button">Add New Provider</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,43 +1,61 @@
-angular.module('SimpleRESTWebsite', ['angular-storage', 'ui.router'])
+angular.module('SimpleRESTWebsite', ['angular-storage', 'ui.router','ui.bootstrap.datetimepicker'])
     .constant('ENDPOINT_URI', 'https://car-data-base.mybluemix.net/api/')
     .config(function ($stateProvider, $urlRouterProvider, $httpProvider) {
         $stateProvider
             .state('login', {
                 url: '/login',
-                templateUrl: 'app/templates/login.tmpl.html',
+                templateUrl: 'app/templates/login.tpl.html',
                 controller: 'LoginCtrl',
                 controllerAs: 'login'
             })
             .state('appdashboard', {
                 url: '/dashboard',
-                templateUrl: 'app/templates/appdashboard.tmpl.html',
+                templateUrl: 'app/templates/dashboard/appdashboard.tmpl.html',
                 controller: 'appdashboardCtrl',
                 controllerAs: 'appdashboard'
             })
             .state('dashboard', {
                 url: '/vehicle',
-                templateUrl: 'app/templates/dashboard.tmpl.html',
+                templateUrl: 'app/templates/dashboard/vehicles.tpl.html',
                 controller: 'DashboardCtrl',
                 controllerAs: 'dashboard'
             })
+            .state('inbound/dashboard', {
+                url: '/inbound/dashboard',
+                templateUrl: 'app/templates/inbound/dashboard.tpl.html',
+                controller: 'FeedProviderCtrl',
+                controllerAs: 'feedprovider'
+            })
             .state('task', {
                 url: '/task/:taskId',
-                templateUrl: 'app/templates/vehicles.html',
+                templateUrl: 'app/templates/dashboard/tasks.tpl.html',
                 controller: 'TaskCtrl',
                 controllerAs: 'task'
             })
-            .state('inbound',{
-                url : '/inbound',
-                templateUrl : 'app/templates/inboundHome.html',
+            .state('inbound/add',{
+                url : '/inbound/provider/feed/add',
+                templateUrl : 'app/templates/inbound/addProvider.tpl.html',
                 controller : 'ProviderCtrl',
                 controllerAs : 'provider'
               })
-            .state('schedule',{
-              url : '/inbound/schedule',
-              templateUrl : 'app/templates/inbound/schedule.html',
+            .state('inbound/list',{
+                url : '/inbound/provider/feed/list',
+                templateUrl : 'app/templates/inbound/feedProviders.tpl.html',
+                controller : 'FeedProviderCtrl',
+                controllerAs : 'feedprovider'
+            })
+            .state('inbound/schedule',{
+              url : '/inbound/provider/schedule',
+              templateUrl : 'app/templates/inbound/schedule.tpl.html',
               controller : 'ScheduleCtrl',
               controllerAs : 'schedule'
-            });
+            })
+            .state('inbound/schedule/list',{
+                url : '/inbound/provider/schedule/list',
+                templateUrl : 'app/templates/inbound/feedSchedule.tpl.html',
+                controller : 'FeedProviderCtrl',
+                controllerAs : 'feedprovider'
+              });
 
         $urlRouterProvider.otherwise('/dashboard');
 
@@ -104,6 +122,15 @@ angular.module('SimpleRESTWebsite', ['angular-storage', 'ui.router'])
             return $http.post(getUrl(), user);
         };
     })
+    .service('FeedProviderModel',function($http){
+        var service = this;
+        service.getProvidersData = function(){
+            return $http.get('/getProvidersData');
+        }
+        service.getTodaysProvidersData = function(){
+            return $http.get('/getTodaysProvidersData')
+        }
+    })
     .service('VehiclesModel', function ($http, ENDPOINT_URI) {
         var service = this,
             path = 'vehicles/';
@@ -160,7 +187,7 @@ angular.module('SimpleRESTWebsite', ['angular-storage', 'ui.router'])
         };
 
         service.submitForm = function(formData){
-            return $http.post('/providerData',formData);
+            return $http.post('/addProvider',formData);
         }
         service.testFTPConnection = function(formData){
             return $http.post('/testFTP',{
@@ -204,6 +231,29 @@ angular.module('SimpleRESTWebsite', ['angular-storage', 'ui.router'])
                 });
             }
         };
+    }])
+    .controller('FeedProviderCtrl', ['FeedProviderModel',function (FeedProviderModel) {
+        var feedprovider = this;
+        feedprovider.providers = [];
+        feedprovider.todaysProviders = [];
+        feedprovider.getProvidersData = function(){
+            FeedProviderModel.getProvidersData()
+                    .then(function(response){
+                        console.log(response.data);
+                        feedprovider.providers = response.data;
+                    });
+        }
+        feedprovider.getTodaysProvidersData = function(){
+            FeedProviderModel.getTodaysProvidersData()
+                .then(function(response){
+                    feedprovider.todaysProviders = response.data;
+                })
+        }
+        
+        feedprovider.hi = function(){
+            alert('Hi');
+        }
+
     }])
     .controller('LoginCtrl', function ($rootScope, $state, LoginService, UserService) {
         var login = this;
@@ -287,10 +337,24 @@ angular.module('SimpleRESTWebsite', ['angular-storage', 'ui.router'])
     }])
     .controller('ScheduleCtrl', ['ScheduleModel', function (ScheduleModel) {
         $('#sDate,#eDate').datetimepicker();
-       
+        $('#sDate').on('dp.change', function(e){  
+           /*  var incrementDay = moment(new Date(e.date));
+            // incrementDay.add(1, 'days');
+            $('#eDate').data('DateTimePicker').minDate(incrementDay); */
+            // $(this).data("DateTimePicker").hide();
+            schedule.form.startDate = $('#sDate input').val(); 
+        });
+        $('#eDate').on('dp.change', function(e){  
+            var decrementDay = moment(new Date(e.date));
+            // decrementDay.subtract(1, 'days');
+            $('#sDate').data('DateTimePicker').maxDate(decrementDay);
+            // $(this).data("DateTimePicker").hide();
+            schedule.form.endDate = $('#eDate input').val(); 
+        });
         var schedule = this;
         schedule.loading = false;
-        schedule.form = {startDate : '08/18/2018 8:41:00 PM' ,endDate : '08/18/2018 8:41:02 PM'}
+        var date =  moment(new Date());
+        schedule.form = {startDate : date.format('MM/DD/YYYY h:mm A'),endDate : date.add(1,'days').format('MM/DD/YYYY h:mm A')}
         schedule.res = {};
         schedule.providers = [];
         schedule.scheduleJob = function() {
@@ -325,6 +389,8 @@ angular.module('SimpleRESTWebsite', ['angular-storage', 'ui.router'])
         provider.isFTPTested =  false;
         provider.testingFTP = false;
 
+        provider.form = {};
+
         function getOrignalHeaders(){
             ProviderModel.getOrignalHeaders()
                 .then(function(response){
@@ -344,6 +410,18 @@ angular.module('SimpleRESTWebsite', ['angular-storage', 'ui.router'])
             console.log('Status : ' + $scope.providerStatus);
             
         }
+
+       $scope.getIntervals = function(value){
+             var intervals  = {
+                24 : 'Every 24 Hours',
+                12 : 'Every 12 Hours' ,
+                6 : 'Every 6 Hours',
+                100 : 'Every 1 Minute',
+             }   
+
+             return intervals[value];
+           
+        }
         provider.submitProviderForm = function(){
            provider.form.headers = provider.mapppedHeader;
            ProviderModel.submitForm(provider.form)
@@ -358,18 +436,23 @@ angular.module('SimpleRESTWebsite', ['angular-storage', 'ui.router'])
                 });
         }
         provider.testFTPConnection = function(){
-            provider.testingFTP = true;
-            ProviderModel.testFTPConnection(provider.form)
-                .then(function(res){
-                    provider.res = res.data;
-                    if(provider.res.result){
-                        provider.directories = provider.res.list;
-                        provider.isFTPTested =  true;
-                    }
-                    provider.alert = true;
-                    provider.testingFTP = false;
-
-                })
+            if(!provider.form.ftpHost && !provider.form.ftpUsername && !provider.form.ftpPassword){
+                alert('Enter FTP Authentication Details First!')
+            }else{
+                provider.testingFTP = true;
+                ProviderModel.testFTPConnection(provider.form)
+                    .then(function(res){
+                        provider.res = res.data;
+                        if(provider.res.result){
+                            provider.directories = provider.res.list;
+                            provider.isFTPTested =  true;
+                        }
+                        provider.alert = true;
+                        provider.testingFTP = false;
+    
+                    })
+            }
+           
         }
 
         provider.getProviderHeaders =  function(){
