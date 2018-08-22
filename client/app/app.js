@@ -288,7 +288,7 @@ angular.module('SimpleRESTWebsite', ['angular-storage', 'ui.router','ui.bootstra
                 })
         }
         feedprovider.utcToLocalTime = function(time){
-            return moment(moment(moment(time).format('YYYY-MM-DD HH:mm:ss ')).toDate()).format('YYYY-MM-DD HH:mm:ss ');  
+            return moment(moment.utc(moment(time).format('YYYY-MM-DD HH:mm:ss ')).toDate()).format('YYYY-MM-DD HH:mm:ss ');  
         }
 
        
@@ -407,7 +407,7 @@ angular.module('SimpleRESTWebsite', ['angular-storage', 'ui.router','ui.bootstra
         schedule.providers = [];
         schedule.scheduleJob = function() {
             schedule.loading = true;
-            schedule.form.utcStartDate = moment.utc(new Date(schedule.form.startDate)).format('YYYY-MM-DD HH:mm:ss A');       
+            schedule.form.utcStartDate = moment.utc(new Date(schedule.form.startDate)).format('YYYY-MM-DD HH:mm:ss');       
             console.log('Form Data ' ,  schedule.form);
             ScheduleModel.scheduleJob(schedule.form)
                 .then(function (res) {
@@ -438,7 +438,7 @@ angular.module('SimpleRESTWebsite', ['angular-storage', 'ui.router','ui.bootstra
                 })
         }
         schedule.utcToLocalTime = function(time){
-            return moment(moment(moment(time).format('YYYY-MM-DD HH:mm:ss ')).toDate()).format('YYYY-MM-DD HH:mm:ss ');  
+            return moment(moment.utc(moment(time).format('YYYY-MM-DD HH:mm:ss ')).toDate()).format('YYYY-MM-DD HH:mm:ss ');  
         }
         schedule.cancelJob = function(id){
             ScheduleModel.cancelJob(id)
