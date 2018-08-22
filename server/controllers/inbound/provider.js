@@ -5,10 +5,7 @@ var Client = require('ftp');
 var csv = require('fast-csv');
 const path = require('path');
 var mongoose = require('mongoose');
-function getHeaders(cb){
-
-  cb()
-}
+var moment = require('moment');
 module.exports = {
     getProvidersDetails : function(req,res){
       mongoose.model('provider').aggregate([{
@@ -58,7 +55,8 @@ module.exports = {
       var date = new Date();
       date.setHours(0);
       date.setMinutes(0);
-      History.find({$and: [{"lastRun" :{"$gte": date}},{"lastRun" :{"$lte": new Date()}}]},function(err,result){
+      date.setSeconds(0);
+      History.find({$and: [{"lastRun" :{"$gte": moment.utc(date).format('YYYY-MM-DD HH:mm:ss') }},{"lastRun" :{"$lte": moment.utc().format('YYYY-MM-DD HH:mm:ss')}}]},function(err,result){
           if(!err)
             res.json(result);
         });

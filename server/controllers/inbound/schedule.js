@@ -14,24 +14,27 @@ function calculateNextLastRun(scheduleObj,added = 0){
     var output = {};
     var hours = scheduleObj.interval;
    
-    output.lastRunDate = new Date(moment.utc(new Date()).format('YYYY-MM-DD HH:mm:ss A')).getTime();
+    output.lastRunDate = new Date(moment.utc().format('YYYY-MM-DD HH:mm:ss')).getTime();
     if(hours == 100)
         output.nextRunDate = output.lastRunDate + (1 * 60 * 1000 );
     else
         output.nextRunDate = output.lastRunDate + ( hours * 60 * 60 * 1000 );
     if(!scheduleObj.isStarted)
         output.lastRunDate = undefined;
-    Provider.updateOne({_id : scheduleObj.providerId},{nextRun : output.nextRunDate, lastRun : output.lastRunDate, added : added  }, function(err,result){ 
-        // if(!err)
-        //     // console.log('Date Updated!');
-            
+   /*  Provider.updateOne({_id : scheduleObj.providerId},{nextRun : output.nextRunDate, lastRun : output.lastRunDate, added : added  }, function(err,result){ 
+       
+    }); */
+    CronSchedule.updateOne({_id : scheduleObj._id},{nextRun : output.nextRunDate, lastRun : output.lastRunDate }, function(err,result){ 
+        Provider.updateOne({_id : scheduleObj.providerId},{nextRun : output.nextRunDate, lastRun : output.lastRunDate, added : added  }, function(err,result){ 
+           console.log('Added Added');
+       })
     });
     return output;
 }
-function updateLastNextRun(providerId,added,providerName){
-    CronSchedule.findOne({providerId : providerId},function(err,result){
+function updateLastNextRun(ftpDetails,added){
+    CronSchedule.findOne({_id : ftpDetails.jobId},function(err,result){
         // var hours = result.interval;
-        // var lastRunDate = new Date(moment.utc(new Date()).format('YYYY-MM-DD HH:mm:ss A')).getTime();
+        // var lastRunDate = new Date(moment.utc(new Date()).format(')).getTime();
         // var nextRunDate;
         // if(hours == 100)
         //     nextRunDate = lastRunDate + (1 * 60 * 1000 );
@@ -42,8 +45,8 @@ function updateLastNextRun(providerId,added,providerName){
         obj['_id'] = new mongoose.Types.ObjectId();
         obj['lastRun'] = calculated.lastRunDate;
         obj['nextRun'] =  calculated.nextRunDate;
-        obj['providerId'] = providerId;
-        obj['providerName'] = providerName;
+        obj['providerId'] = ftpDetails._id;
+        obj['providerName'] = ftpDetails.providerName;
         obj['type'] = 1;
         obj['added'] = added;
         insertHistory(obj);
@@ -62,21 +65,22 @@ function reScheduleJob(job,isStarted = false){
     // console.log('Current Time : ' , new Date());
     // console.log('UTC Start : ' , job.startDate);
 
-    var utcStartDate = moment.utc(job.startDate).toDate();
-    var startDate = moment(utcStartDate).format('YYYY-MM-DD HH:mm:ss A');
+    var utcStartDate = moment.utc(moment(job.startDate).format('YYYY-MM-DD HH:mm:ss')).toDate();
+    var startDate = moment(utcStartDate).format('YYYY-MM-DD HH:mm:ss');
 
     // console.log('Local Start : ' , startDate);
-    cronJobs[job._id] = schedule.scheduleJob({ start: new Date(startDate).getTime(), rule: job.expression },function(providerId){
+    cronJobs[job._id] = schedule.scheduleJob({ start: new Date(startDate).getTime(), rule: job.expression },function(job){
         
         if(!cronJobs[job._id]['isStarted']){
             cronJobs[job._id]['isStarted'] = true;
             updateIsStartedFlag(job._id);
         }
        
-        getProviderFTPDetails(providerId,function(ftpDetails){
+        getProviderFTPDetails(job.providerId,function(ftpDetails){
+            ftpDetails.jobId = job._id;
             readFileFromServer(ftpDetails);
         });
-    }.bind(null,job.providerId));
+    }.bind(null,job));
     // cronJobs[job._id]['isStarted'] = isStarted;
 }
 
@@ -136,7 +140,7 @@ function readFileFromServer(ftpDetails){
                   
                 })
                 .on("end", function() {
-                    updateLastNextRun(ftpDetails._id,added,ftpDetails.providerName);
+                    updateLastNextRun(ftpDetails,added);
                     // pass vehicle object & task Obj to insert into database
                     insertRecordsIntoDB(vehicles );
                 });
@@ -200,14 +204,17 @@ function getProviderFTPDetails(providerId,cb){
 function scheduleFutureJob(job){
     // scheduling new job for provider
     // get local time with respect to utc time stored into db taken from client at time of scheduling
-    var utcStartDate = moment.utc(job.startDate).toDate();
-    var startDate = moment(utcStartDate).format('YYYY-MM-DD HH:mm:ss A');
+   /*  var utcStartDate = moment.utc(job.startDate).toDate();
+    var startDate = moment(utcStartDate).format('YYYY-MM-DD HH:mm:ss'); */
+    var utcStartDate = moment.utc(moment(job.startDate).format('YYYY-MM-DD HH:mm:ss')).toDate();
+    var startDate = moment(utcStartDate).format('YYYY-MM-DD HH:mm:ss');
 
     cronJobs[job._id] = schedule.scheduleJob({ start: new Date(startDate).getTime(), rule:job.expression },function(job){
         if(!cronJobs[job._id]['isStarted']){
             updateIsStartedFlag(job._id);
         }
         getProviderFTPDetails(job.providerId,function(ftpDetails){
+            ftpDetails.jobId = job._id;
             readFileFromServer(ftpDetails);
         });
     }.bind(null,job));  
@@ -239,7 +246,7 @@ module.exports = {
        scheduleObj['_id'] = mongoose.Types.ObjectId();
        scheduleObj['providerId'] = req.body.provider;
     //    scheduleObj['timezone'] = req.body.timezone;
-       scheduleObj['startDate'] = new Date(req.body.utcStartDate).getTime();
+       scheduleObj['startDate'] = req.body.utcStartDate;
 //    scheduleObj['endDate'] = req.body.endDate;
        scheduleObj['interval'] = req.body.interval;
        if(scheduleObj['interval'] == 100)
@@ -249,12 +256,13 @@ module.exports = {
 
        scheduleObj['isActive'] = req.body.status;
        
-       var calculated = calculateNextLastRun(scheduleObj);
 
        scheduleFutureJob(scheduleObj);
        insertJobIntoDB(scheduleObj,function(result){
-           if(result)
+           if(result){
+            var calculated = calculateNextLastRun(scheduleObj);
             res.json({result : true, msg : 'New Inbound Job Scheduled Successfully! ', class: 'success'});
+           }
            else
             res.json({result: false, msg : 'Error While Scheduling Job ',class : 'danger'});
        }) 
