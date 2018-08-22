@@ -34,14 +34,14 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr ng-repeat="provider in feedprovider.providers">
+                        <tr ng-if="provider.providersData.length" ng-repeat="provider in feedprovider.providers">
                             <td>{{ $index + 1 }}</td>
                             <td>{{ provider.providerName }}</td>
                             <td>{{ (provider.providersData[0].isActive)?'Active':'Inactive'}}</td>
                             <td>{{ (provider.providersData[0].isStarted)?'Running':'Not Running'}}</td>
                             <td>{{  provider.providersData[0].interval   }}</td>
-                            <td>{{ provider.lastRun}}</td>
-                            <td>{{ provider.nextRun}}</td>
+                            <td>{{  feedprovider.utcToLocalTime(provider.lastRun); }}</td>
+                            <td>{{ feedprovider.utcToLocalTime(provider.nextRun); }}</td>
                             <!-- <td>{{ provider.lastRun | date:'yyyy-MM-dd h:m:s ' }}</td>
                             <td>{{ provider.lastRun | date:'yyyy-MM-dd h:m:s ' }}</td> -->
                             <td><a href="">View</a> | <a href="">History</a> | <a href="">Run</a> | <a href="">Delete</a></td>   

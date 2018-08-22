@@ -29,7 +29,7 @@
                       <tbody>
                         <tr ng-repeat="provider in feedprovider.todaysProviders">
                                 <td>{{ provider.providerName }}</td>
-                                <td>{{ provider.lastRun}}</td>
+                                <td>{{ feedprovider.utcToLocalTime(provider.lastRun); }}</td>
                                 <td>{{ provider.added}}</td>
                                 <td>N/A</td>
                                 <td>N/A</td>

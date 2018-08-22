@@ -13,8 +13,12 @@ var moment = require('moment');
 function updateLastNextRun(providerId,added,providerName){
     CronSchedule.findOne({providerId : providerId},function(err,result){
         var hours = result.interval;
-        var lastRunDate = new Date().getTime();
-        var nextRunDate = lastRunDate + ( hours * 60 * 60 * 1000 );
+        var lastRunDate = new Date(moment.utc(new Date()).format('YYYY-MM-DD HH:mm:ss A')).getTime();
+        var nextRunDate;
+        if(hours == 100)
+            nextRunDate = lastRunDate + (1 * 60 * 1000 );
+        else
+            nextRunDate = lastRunDate + ( hours * 60 * 60 * 1000 );
         var obj = {};
         obj['_id'] = new mongoose.Types.ObjectId();
         obj['lastRun'] = lastRunDate;
@@ -208,7 +212,7 @@ module.exports = {
        scheduleObj['_id'] = mongoose.Types.ObjectId();
        scheduleObj['providerId'] = req.body.provider;
     //    scheduleObj['timezone'] = req.body.timezone;
-       scheduleObj['startDate'] = req.body.utcStartDate;
+       scheduleObj['startDate'] = new Date(req.body.utcStartDate).getTime();
 //    scheduleObj['endDate'] = req.body.endDate;
        scheduleObj['interval'] = req.body.interval;
        if(scheduleObj['interval'] == 100)

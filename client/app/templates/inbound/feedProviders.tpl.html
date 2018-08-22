@@ -39,8 +39,8 @@
                         <td>{{ provider.providerName }}</td>
                         <td>{{ (provider.providerStatus)?'Active':'Inactive'}}</td>
                         <td>{{ provider.directory }}</td>
-                        <td>{{ provider.lastRun}}</td>
-                        <td>{{ provider.nextRun}}</td>
+                        <td>{{ feedprovider.utcToLocalTime(provider.lastRun); }}</td>
+                        <td>{{feedprovider.utcToLocalTime(provider.nextRun); }}</td>
                         <td>{{ provider.added }}</td>
                         <td>N/A</td>
                         <td>N/A</td>

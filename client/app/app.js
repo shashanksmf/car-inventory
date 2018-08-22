@@ -279,7 +279,9 @@ angular.module('SimpleRESTWebsite', ['angular-storage', 'ui.router','ui.bootstra
                     feedprovider.todaysProviders = response.data;
                 })
         }
-        
+        feedprovider.utcToLocalTime = function(time){
+            return moment(moment.utc(moment(time).format('YYYY-MM-DD HH:mm')).toDate()).format('YYYY-MM-DD HH:mm');
+        }
         feedprovider.hi = function(){
             alert('Hi');
         }
