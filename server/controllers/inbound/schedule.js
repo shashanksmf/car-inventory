@@ -13,9 +13,8 @@ var moment = require('moment');
 function calculateNextLastRun(scheduleObj,added = 0){
     var output = {};
     var hours = scheduleObj.interval;
-    output.lastRunDate = new Date().getTime();
-    if(scheduleObj.isStarted)
-        output.lastRunDate = new Date(moment.utc(new Date()).format('YYYY-MM-DD HH:mm:ss A')).getTime();
+   
+    output.lastRunDate = new Date(moment.utc(new Date()).format('YYYY-MM-DD HH:mm:ss A')).getTime();
     if(hours == 100)
         output.nextRunDate = output.lastRunDate + (1 * 60 * 1000 );
     else
@@ -78,7 +77,7 @@ function reScheduleJob(job,isStarted = false){
             readFileFromServer(ftpDetails);
         });
     }.bind(null,job.providerId));
-    cronJobs[job._id]['isStarted'] = isStarted;
+    // cronJobs[job._id]['isStarted'] = isStarted;
 }
 
 
@@ -164,18 +163,25 @@ function getProviderHeaderFields(providerId,cb){
             
     });
 }
-function updateIsStartedFlag(jobId){
-    CronSchedule.updateOne({_id : jobId},{isStarted : true}, function(err,result){ 
+function updateIsStartedFlag(jobId, flag = true){
+    CronSchedule.updateOne({_id : jobId},{isStarted : flag}, function(err,result){ 
         if(!err)  
             cronJobs[jobId]['isStarted'] = true;
     })
 }
 function updateIsActiveFlag(jobId,cb){
+
     CronSchedule.updateOne({_id : jobId},{isActive : false}, function(err,result){   
         if(!err)  
            { 
-            cronJobs[jobId].cancel();
-             delete cronJobs[jobId];
+             cronJobs[jobId].cancel();
+            // updating db isStarted field to false
+             CronSchedule.updateOne({_id : jobId},{isStarted : false}, function(err,result){ 
+                if(!err)  {
+                    cronJobs[jobId]['isStarted'] = true;
+                    delete cronJobs[jobId];
+                }
+            })
              cb(true);
             }
             else
@@ -254,12 +260,12 @@ module.exports = {
        }) 
     },
     cancelJob : function(req,res){
-        var jobId = req.param.jobId;
+        var jobId = req.params.jobId;
         cancelScheduledJob(jobId,function(result){
             if(result)
                 res.json({result : true, msg : 'Inbound Provider Schedule Canceled Successfully!', class: 'success'});
             else
-                res.json({result : true, msg : 'Error While Canceling Schedule', class: 'danger'});
+                res.json({result : false, msg : 'Error While Canceling Schedule', class: 'danger'});
         });
     },
     reScheduleCronJobs : function(){
@@ -280,5 +286,31 @@ module.exports = {
             if(err) throw err;
             res.json(result);
         })
+    },
+    getProvidersScheduleData : function(req,res){
+        CronSchedule.aggregate(
+            [
+                {
+                    $match: {
+                        isActive : true
+                    }
+                },
+        
+                {
+                    $lookup: {
+                        "from" : "providers",
+                        "localField" : "providerId",
+                        "foreignField" : "_id",
+                        "as" : "providersData"
+                    }
+                }
+        
+            ],function(err,result){
+                if(!err)
+                    res.json({result : true, data : result});
+                else
+                    res.json({result : false, msg : 'Error While Fetching Schedule Data!'});
+            });
+        
     }
 };

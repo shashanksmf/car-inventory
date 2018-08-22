@@ -104,7 +104,9 @@ app.post('/testFTP', ftpCtrl.testFTP);
 app.post('/getProviderHeaders',providerCtrl.getProviderHeaders);
 app.get('/getTodaysProvidersData',providerCtrl.getTodaysProvidersData);
 app.post('/inbound/scheduleJob',scheduleCtrl.scheduleJob);
+app.get('/cancelCronJob/:jobId',scheduleCtrl.cancelJob);
 app.get('/inbound/scheduleJob/getProviders',scheduleCtrl.getproviders);
+app.get('/getProvidersScheduleData',scheduleCtrl.getProvidersScheduleData);
 app.get('/getProvidersData',providerCtrl.getProvidersDetails);
 
 global.currentProvider = {

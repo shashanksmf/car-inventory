@@ -71,14 +71,14 @@ angular.module('SimpleRESTWebsite', ['angular-storage', 'ui.router','ui.bootstra
             .state('outbound/schedule',{
                 url : '/outbound/provider/schedule',
                 templateUrl : 'app/templates/outbound/schedule.tpl.html',
-                controller : 'ScheduleCtrl',
-                controllerAs : 'schedule'
+                controller : 'FeedProviderCtrl',
+                controllerAs : 'feedprovider'
               })
             .state('inbound/schedule/list',{
                 url : '/inbound/provider/schedule/list',
                 templateUrl : 'app/templates/inbound/feedSchedule.tpl.html',
-                controller : 'FeedProviderCtrl',
-                controllerAs : 'feedprovider'
+                controller : 'ScheduleCtrl',
+                controllerAs : 'schedule'
               })
               .state('outbound/schedule/list',{
                 url : '/outbound/provider/schedule/list',
@@ -157,9 +157,11 @@ angular.module('SimpleRESTWebsite', ['angular-storage', 'ui.router','ui.bootstra
         service.getProvidersData = function(){
             return $http.get('/getProvidersData');
         }
+    
         service.getTodaysProvidersData = function(){
             return $http.get('/getTodaysProvidersData')
         }
+       
     })
     .service('VehiclesModel', function ($http, ENDPOINT_URI) {
         var service = this,
@@ -208,6 +210,12 @@ angular.module('SimpleRESTWebsite', ['angular-storage', 'ui.router','ui.bootstra
         }
         service.getProviders = function(){
             return $http.get('/inbound/scheduleJob/getProviders');
+        }
+        service.getProvidersScheduleData = function(){
+            return $http.get('/getProvidersScheduleData');
+        }
+        service.cancelJob = function(id){
+            return $http.get('/cancelCronJob/' + id);
         }
     })
     .service('ProviderModel',function($http){
@@ -280,8 +288,10 @@ angular.module('SimpleRESTWebsite', ['angular-storage', 'ui.router','ui.bootstra
                 })
         }
         feedprovider.utcToLocalTime = function(time){
-            return moment(moment(moment(time).format('YYYY-MM-DD HH:mm:ss ')).toDate()).format('YYYY-MM-DD HH:mm:ss ');
+            return moment(moment(moment(time).format('YYYY-MM-DD HH:mm:ss ')).toDate()).format('YYYY-MM-DD HH:mm:ss ');  
         }
+
+       
         feedprovider.hi = function(){
             alert('Hi');
         }
@@ -365,6 +375,9 @@ angular.module('SimpleRESTWebsite', ['angular-storage', 'ui.router','ui.bootstra
 
                 })
         }
+        $scope.utcToLocalTime = function(time){
+            return moment(moment(moment(time).format('YYYY-MM-DD HH:mm:ss ')).toDate()).format('YYYY-MM-DD HH:mm:ss ');  
+        }
         getVehicles();
     }])
     .controller('ScheduleCtrl', ['ScheduleModel', function (ScheduleModel) {
@@ -415,8 +428,39 @@ angular.module('SimpleRESTWebsite', ['angular-storage', 'ui.router','ui.bootstra
                     schedule.providers = res.data;
                 })
         }
+        schedule.getProvidersScheduleData = function(){
+            ScheduleModel.getProvidersScheduleData()
+                .then(function(res){
+                    if(res.data.result)
+                        schedule.providers = res.data.data;
+                    else
+                        alert(res.data.msg);
+                })
+        }
+        schedule.utcToLocalTime = function(time){
+            return moment(moment(moment(time).format('YYYY-MM-DD HH:mm:ss ')).toDate()).format('YYYY-MM-DD HH:mm:ss ');  
+        }
+        schedule.cancelJob = function(id){
+            ScheduleModel.cancelJob(id)
+                .then(function(res){
+                    if(res.data.result){
+                        alert(res.data.msg);
+                        location.reload();
+                    }
+                })
+        }
+        schedule.getIntervals = function(value){
+            var intervals  = {
+               24 : 'Every 24 Hours',
+               12 : 'Every 12 Hours' ,
+               6 : 'Every 6 Hours',
+               100 : 'Every 1 Minute',
+            }   
 
-        schedule.getProviders();
+            return intervals[value];
+          
+       }
+        
     }])
     .controller('ProviderCtrl',['ProviderModel','$scope',function(ProviderModel,$scope){
         var provider = this;
@@ -453,17 +497,7 @@ angular.module('SimpleRESTWebsite', ['angular-storage', 'ui.router','ui.bootstra
             
         }
 
-       $scope.getIntervals = function(value){
-             var intervals  = {
-                24 : 'Every 24 Hours',
-                12 : 'Every 12 Hours' ,
-                6 : 'Every 6 Hours',
-                100 : 'Every 1 Minute',
-             }   
-
-             return intervals[value];
-           
-        }
+     
         provider.submitProviderForm = function(){
            provider.form.headers = provider.mapppedHeader;
            ProviderModel.submitForm(provider.form)
@@ -526,7 +560,12 @@ angular.module('SimpleRESTWebsite', ['angular-storage', 'ui.router','ui.bootstra
         function uploadFile() {
             console.log("asdsad");
             var file = dashboard.myFile;
-            dashboard.uploading = true;
+            console.log('File', file);
+            
+            if(!file){
+                alert('Please Select File !');
+            }else{
+                dashboard.uploading = true;
             dashboard.uploadTxt = 'Uploading...';
 
             console.log('file is ');
@@ -546,6 +585,8 @@ angular.module('SimpleRESTWebsite', ['angular-storage', 'ui.router','ui.bootstra
                     console.log("data", data);
                     alert("error uploading file")
                 });
+            }
+            
         };
 
         dashboard.uploadFile = uploadFile;

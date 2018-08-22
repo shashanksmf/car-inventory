@@ -21,6 +21,12 @@ module.exports = {
           "foreignField": "providerId",
           "as": "providersData"
       }
+    //   $lookup: {
+    //     "from": "providers",
+    //     "localField": "_id",
+    //     "foreignField": "providerId",
+    //     "as": "providersData"
+    // }
     },
     ], function(err, result){
       res.json(result);
