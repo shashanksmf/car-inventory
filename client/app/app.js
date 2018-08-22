@@ -280,7 +280,7 @@ angular.module('SimpleRESTWebsite', ['angular-storage', 'ui.router','ui.bootstra
                 })
         }
         feedprovider.utcToLocalTime = function(time){
-            return moment(moment.utc(moment(time).format('YYYY-MM-DD HH:mm:ss')).toDate()).format('YYYY-MM-DD HH:mm:ss');
+            return moment(moment(moment(time).format('YYYY-MM-DD HH:mm:ss ')).toDate()).format('YYYY-MM-DD HH:mm:ss ');
         }
         feedprovider.hi = function(){
             alert('Hi');
