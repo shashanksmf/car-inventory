@@ -9,6 +9,12 @@ var cronScheduleSchema = new mongoose.Schema({
   endDate: {
     type: Date
   },
+  lastRun : {
+    type : Date,
+  },
+  nextRun : {
+    type : Date
+  }, 
   status: {
     type: Date
   },
