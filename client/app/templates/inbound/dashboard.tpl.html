@@ -16,26 +16,28 @@
                     </h4>
                     <hr>
 
-                  <table class="table table-striped table-bordered">
-                      <thead>
-                          <tr>
-                              <th>Provider</th>
-                              <th>Run Time</th>
-                              <th>Added</th>
-                              <th>Updated</th>
-                              <th>Error</th>
+              <div class="table-responsive">
+                <table class="table table-striped table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Provider</th>
+                            <th>Run Time</th>
+                            <th>Added</th>
+                            <th>Updated</th>
+                            <th>Error</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                      <tr ng-repeat="provider in feedprovider.todaysProviders">
+                              <td>{{ provider.providerName }}</td>
+                              <td>{{ (provider.lastRun)? feedprovider.utcToLocalTime(provider.lastRun):'N/A' }}</td>
+                              <td>{{ provider.added}}</td>
+                              <td>N/A</td>
+                              <td>N/A</td>
                           </tr>
-                      </thead>
-                      <tbody>
-                        <tr ng-repeat="provider in feedprovider.todaysProviders">
-                                <td>{{ provider.providerName }}</td>
-                                <td>{{ (provider.lastRun)? feedprovider.utcToLocalTime(provider.lastRun):'N/A' }}</td>
-                                <td>{{ provider.added}}</td>
-                                <td>N/A</td>
-                                <td>N/A</td>
-                            </tr>
-                      </tbody>
-                  </table>
+                    </tbody>
+                </table>
+              </div>
                 </div>
                 <div class="col-md-6">
                         <h4>
