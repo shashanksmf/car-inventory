@@ -42,8 +42,8 @@
                             <td>{{ (provider.isActive)?'Active':'Inactive'}}</td>
                             <td>{{ (provider.isStarted)?'Running':'Not Running'}}</td>
                             <td>{{  schedule.getIntervals(provider.interval)   }}</td>
-                            <td>{{  (provider.providersData[0].lastRun)? schedule.utcToLocalTime(provider.providersData[0].lastRun):'N/A' }}</td>
-                            <td>{{ schedule.utcToLocalTime(provider.providersData[0].nextRun); }}</td>
+                            <td>{{  (provider.lastRun)? schedule.utcToLocalTime(provider.lastRun):'N/A' }}</td>
+                            <td>{{ schedule.utcToLocalTime(provider.nextRun); }}</td>
                             <!-- <td>{{ provider.lastRun | date:'yyyy-MM-dd h:m:s ' }}</td>
                             <td>{{ provider.lastRun | date:'yyyy-MM-dd h:m:s ' }}</td> -->
                             <td><a href="">View</a> | <a href="">History</a> | <a href="">Run</a> | <a href="" ng-click="schedule.cancelJob(provider._id)">Delete</a></td>   
