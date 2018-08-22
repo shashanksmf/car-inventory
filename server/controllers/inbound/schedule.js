@@ -10,29 +10,49 @@ var Client = require('ftp');
 var mongoose = require('mongoose');
 var moment = require('moment');
 
+function calculateNextLastRun(scheduleObj,added = 0){
+    var output = {};
+    var hours = scheduleObj.interval;
+    output.lastRunDate = new Date().getTime();
+    if(scheduleObj.isStarted)
+        output.lastRunDate = new Date(moment.utc(new Date()).format('YYYY-MM-DD HH:mm:ss A')).getTime();
+    if(hours == 100)
+        output.nextRunDate = output.lastRunDate + (1 * 60 * 1000 );
+    else
+        output.nextRunDate = output.lastRunDate + ( hours * 60 * 60 * 1000 );
+    if(!scheduleObj.isStarted)
+        output.lastRunDate = undefined;
+    Provider.updateOne({_id : scheduleObj.providerId},{nextRun : output.nextRunDate, lastRun : output.lastRunDate, added : added  }, function(err,result){ 
+        // if(!err)
+        //     // console.log('Date Updated!');
+            
+    });
+    return output;
+}
 function updateLastNextRun(providerId,added,providerName){
     CronSchedule.findOne({providerId : providerId},function(err,result){
-        var hours = result.interval;
-        var lastRunDate = new Date(moment.utc(new Date()).format('YYYY-MM-DD HH:mm:ss A')).getTime();
-        var nextRunDate;
-        if(hours == 100)
-            nextRunDate = lastRunDate + (1 * 60 * 1000 );
-        else
-            nextRunDate = lastRunDate + ( hours * 60 * 60 * 1000 );
+        // var hours = result.interval;
+        // var lastRunDate = new Date(moment.utc(new Date()).format('YYYY-MM-DD HH:mm:ss A')).getTime();
+        // var nextRunDate;
+        // if(hours == 100)
+        //     nextRunDate = lastRunDate + (1 * 60 * 1000 );
+        // else
+        //     nextRunDate = lastRunDate + ( hours * 60 * 60 * 1000 );
+        var calculated = calculateNextLastRun(result,added);
         var obj = {};
         obj['_id'] = new mongoose.Types.ObjectId();
-        obj['lastRun'] = lastRunDate;
-        obj['nextRun'] = nextRunDate;
+        obj['lastRun'] = calculated.lastRunDate;
+        obj['nextRun'] =  calculated.nextRunDate;
         obj['providerId'] = providerId;
         obj['providerName'] = providerName;
         obj['type'] = 1;
         obj['added'] = added;
         insertHistory(obj);
-        Provider.updateOne({_id : providerId},{nextRun : nextRunDate, lastRun : lastRunDate, added : added  }, function(err,result){ 
+        /* Provider.updateOne({_id : providerId},{nextRun : calculated.nextRunDate, lastRun : calculated.lastRunDate, added : added  }, function(err,result){ 
             // if(!err)
             //     // console.log('Date Updated!');
                 
-        });
+        }); */
     })
 }
 
@@ -40,12 +60,13 @@ function reScheduleJob(job,isStarted = false){
    // for re scheduling already  jobs which are vanished because server is restarted;
    
    // get local time with respect to utc time stored into db taken from client at time of scheduling
+    // console.log('Current Time : ' , new Date());
+    // console.log('UTC Start : ' , job.startDate);
+
     var utcStartDate = moment.utc(job.startDate).toDate();
-    console.log('UTC Start : ' , job.startDate);
-    
     var startDate = moment(utcStartDate).format('YYYY-MM-DD HH:mm:ss A');
 
-    console.log('Local Start : ' , startDate);
+    // console.log('Local Start : ' , startDate);
     cronJobs[job._id] = schedule.scheduleJob({ start: new Date(startDate).getTime(), rule: job.expression },function(providerId){
         
         if(!cronJobs[job._id]['isStarted']){
@@ -222,6 +243,8 @@ module.exports = {
 
        scheduleObj['isActive'] = req.body.status;
        
+       var calculated = calculateNextLastRun(scheduleObj);
+
        scheduleFutureJob(scheduleObj);
        insertJobIntoDB(scheduleObj,function(result){
            if(result)

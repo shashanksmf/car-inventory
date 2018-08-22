@@ -4,6 +4,47 @@ var fs = require('fs');
 var c = new Client();
 
 module.exports = {
+    getDirectoryFiles : function(req,res){
+      var c = new Client();
+      c.on('ready', function() {
+        c.list(req.query.directory,function(err, list) {
+          if (err) {
+            res.json({
+              result: 0,
+              msg: err,
+              class: 'danger'
+            });
+          }
+         
+          console.log('Files ', list);
+          
+          c.end();
+          res.json({
+            result: 1,
+            msg: 'Connection Successfully Established !',
+            class: 'success',
+            list: list
+          });
+        });
+    
+    
+      });
+
+      c.on('error', function(err) {
+        console.log("err", err)
+        res.json({
+          result: 0,
+          msg: 'FTP Connection Failed!',
+          class: 'danger'
+        });
+      });
+      c.connect({
+                host: req.body.host,
+                port: 21,
+                user: req.body.uname,
+                password: req.body.password
+              });
+    },
     testFTP :  function(req, res) {
         var c = new Client();
       
@@ -16,6 +57,9 @@ module.exports = {
                 class: 'danger'
               });
             }
+           
+            // console.log('Files ', list);
+            
             c.end();
             res.json({
               result: 1,
