@@ -73,12 +73,14 @@ app.post('/vehicles', function(req, res) {
   // // console.log(req);
   // res.json(req.body);
   var vehicle = req.body;
-  console.log('vehicle-->', vehicle);
+  // console.log('vehicle-->', vehicle);
   vehicle['_id'] = new mongoose.Types.ObjectId();
 
-  Vehicle.create([vehicle], function(err, result) {
-    console.log(err, result);
-    res.json(result);
+  Vehicle.create(vehicle, function(err, result) {
+    if(err)           
+      res.json({result : false, msg : 'Error While Inserting Vehicle Data!'});
+    else
+      res.json({result : true, msg : 'Vehicle Data Added Successfully!'});  
   });
 });
 app.get('/tasks', function(req, res) {

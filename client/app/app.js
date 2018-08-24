@@ -477,6 +477,7 @@ angular.module('SimpleRESTWebsite', ['angular-storage', 'ui.router','ui.bootstra
         provider.form.ftpHost = '195.201.243.232';
         provider.form.ftpUsername = 'test@ajayssj4.tk';
         provider.form.ftpPassword = 'password123';
+        provider.headersFetched = true;
         function getOrignalHeaders(){
             ProviderModel.getOrignalHeaders()
                 .then(function(response){
@@ -534,8 +535,10 @@ angular.module('SimpleRESTWebsite', ['angular-storage', 'ui.router','ui.bootstra
         provider.getProviderHeaders =  function(){
             if(provider.isFTPTested){
                if(provider.form.directory != undefined && provider.form.filename != undefined ){
+                provider.headersFetched = false;
                 ProviderModel.getProviderHeaders(provider.form)
                 .then(function(res){
+                    provider.headersFetched = true;
                    if(res.data.result)
                     provider.providerHeaders = res.data.headers;
                     else
@@ -600,9 +603,11 @@ angular.module('SimpleRESTWebsite', ['angular-storage', 'ui.router','ui.bootstra
 
         function createVehicle(vehicle) {
             VehiclesModel.create(vehicle)
-                .then(function (result) {
-                    initCreateForm();
-                    getVehicles();
+                 .then(function (res) {
+                    alert(res.data.msg);
+                    if(res.data.result){
+                        initCreateForm();
+                    }
                 });
         }
 
@@ -703,7 +708,7 @@ angular.module('SimpleRESTWebsite', ['angular-storage', 'ui.router','ui.bootstra
         dashboard.cancelEditing = cancelEditing;
 
         initCreateForm();
-        getVehicles();
+        // getVehicles();
 
 
     }])

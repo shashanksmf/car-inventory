@@ -17,17 +17,17 @@
 				<div ng-if="!dashboard.isEditing" class="col-xs-12">
 					<h4>Create a New vehicle</h4>
 					<hr/>
-					<form class="create-form" role="form"
-						  ng-submit="dashboard.createVehicle(dashboard.newVehicle)" novalidate>
+					<form id="vehicleForm" class="create-form" role="form"
+						  ng-submit="dashboard.createVehicle(dashboard.newVehicle)">
 						<div class="form-group">
 							<label>Dealer ID</label>
-							<input type="text" class="form-control"
+							<input required type="text" class="form-control"
 								   ng-model="dashboard.newVehicle.DealerId"
 								   placeholder="Enter Dealer ID">
 						</div>
 						<div class="form-group">
 							<label>Dealer Name</label>
-							<input type="text" class="form-control"
+							<input required type="text" class="form-control"
 								   ng-model="dashboard.newVehicle.dealerName"
 								   placeholder="Enter Dealer Name">
 						</div>
