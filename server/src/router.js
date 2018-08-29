@@ -1,4 +1,5 @@
 var Routes = {};
+var bodyParser = require('body-parser');
 
 Routes.bindRoutes = function () {
   Routes.middlewares();
@@ -8,22 +9,25 @@ Routes.bindRoutes = function () {
   Routes.errorHandler();
 }
 Routes.api = function() {
-  app.use('/api/inbound', require('./controllers/inbound').router);
-  // app.use('/api/outbound', require('./controllers/outbound').router);
-  // app.use('/api/provider', require('./controllers/provider').router);
-  // app.use('/api/schedule', require('./controllers/schedule').router);
-  app.use('/api/vehicle', require('./controllers/vehicle').router);
+  
+  app.use('/inbound', require('./controllers/inbound').router);
+  app.use('/outbound', require('./controllers/outbound').router);
+  // app.use('/provider', require('./controllers/provider').router);
+  app.use('/task', require('./controllers/task').router);
+  app.use('/vehicle', require('./controllers/vehicle').router);
+  app.use('/ftp', require('./controllers/ftp').router);
+
 }
 
 Routes.utils = function () {
-
   var template = require('./utils/template');
   app.get('/template', template.get);
 };
 
 
 Routes.middlewares = function () {
-
+  app.use(bodyParser.urlencoded({extended: false}));
+  app.use(bodyParser.json());
 
 
 };

@@ -1,15 +1,14 @@
 var mongoose = require('mongoose');
 var testDatas = {
-  schema:{
+  schema: {
     _id: mongoose.Schema.Types.ObjectId,
-    headers : {
-        type : Object
+    headers: {
+      type: Object
     },
     taskID: mongoose.Schema.Types.ObjectId
 
-
-  }, options: {collection: 'testdatas'}
-  };
+  }, options: { collection: 'testData' }
+};
 
 
 

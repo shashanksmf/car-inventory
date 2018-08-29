@@ -15,6 +15,8 @@
     
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
     <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery-form-validator/2.3.26/jquery.form-validator.min.js"></script>
+
     <link href="//cdn.rawgit.com/Eonasdan/bootstrap-datetimepicker/e8bddc60e73c1ec2475f827be36e1957af72e2ea/build/css/bootstrap-datetimepicker.css"
         rel="stylesheet">
     <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.9.0/moment-with-locales.js"></script>
@@ -48,10 +50,11 @@
                   </button>
               </div>
               <ul class="nav navbar-nav collapse navbar-collapse"  id="myNavbar">
-                <li><a href="#/dashboard">Feed Dashboard</a></li>
+                  <li class="{{ (main.activeItem == $index )?'active' : '' }}" ng-repeat="item in main.navList" ng-click="main.navClicked($index)"><a href="{{item.href}}"> {{ item.title}}</a></li>
+                <!-- <li><a href="#/dashboard">Feed Dashboard</a></li>
                 <li class="active"><a href="#/inbound/dashboard">Inbound</a></li>
                 <li><a href="#/outbound/dashboard">Outbound</a></li>
-                <li><a href="#/vehicle">Vehicle</a></li>
+                <li><a href="#/vehicle">Vehicle</a></li> -->
                 <button ng-if="main.currentUser" class="btn btn-default navbar-btn" ng-click="main.logout()">Logout
                         <strong>{{main.currentUser.email}}</strong>
                     </button>
@@ -64,29 +67,32 @@
         </div>
     </div>
 
-    <script src="app/app.js"></script>
+    <script src="app/appNew.js"></script>
     
     <script type="text/javascript" src="app/assets/js/datetimepicker.js"></script>
     <script type="text/javascript" src="app/assets/js/datetimepicker.templates.js"></script>
+    
     <!-- <script src="app/src/app.js"></script>
 
     <script src="app/src/routes/index.js"></script>
 
     <script src="app/src/services/dashboard/user.srv.js"></script>
     <script src="app/src/services/dashboard/login.srv.js"></script>
-    <script src="app/src/services/inbound/provider.srv.js"></script>
-    <script src="app/src/services/dashboard/dashboard.srv.js"></script>
+    <script src="app/src/services/inbound/feedprovider.srv.js"></script>
+    <script src="app/src/services/dashboard/vehicle.srv.js"></script>
+    <script src="app/src/services/dashboard/task.srv.js"></script>
     <script src="app/src/services/inbound/schedule.srv.js"></script>
+    <script src="app/src/services/inbound/provider.srv.js"></script>
     <script src="app/src/services/dashboard/fileupload.srv.js"></script>
-
     <script src="app/src/directives/file.drct.js"></script>
-
-    <script src="app/src/controllers/main.ctrl.js"></script>
+    <script src="app/src/controllers/inbound/feedprovider.ctrl.js"></script>
     <script src="app/src/controllers/dashboard/login.ctrl.js"></script>
-    <script src="app/src/controllers/inbound/provider.ctrl.js"></script>
-    <script src="app/src/controllers/dashboard/dashboard.ctrl.js"></script>
+    <script src="app/src/controllers/main.ctrl.js"></script>
+    <script src="app/src/controllers/dashboard/appdashboard.ctrl.js"></script>
     <script src="app/src/controllers/dashboard/task.ctrl.js"></script>
-    <script src="app/src/controllers/inbound/schedule.ctrl.js"></script> -->
+    <script src="app/src/controllers/inbound/schedule.ctrl.js"></script>
+    <script src="app/src/controllers/inbound/provider.ctrl.js"></script>
+    <script src="app/src/controllers/dashboard/dashboard.ctrl.js"></script> -->
 
 
 

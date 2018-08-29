@@ -1,13 +1,19 @@
 var app = require('express')
 var router = app.Router();
-var helpers = require('./helpers');
+// var helpers = require('.sch/helpers');
 
-router.post("/portal-active", function (req, res) {
-    res.send('data');
-});
-router.get('/portal-status', function (req, res) {
-    res.send('data[0]');
-})
+var schedule = require("./schedule/schedule.js");
+var provider = require("./provider/provider.js");
+
+// var provider = require("./provider");
+// var schedule = require("./schedule");
+// var schedule = require("./schedule");
+
+schedule.bindRoutes(router);
+provider.bindRoutes(router);
+// schedule.bindRoutes(router);
+// schedule.bindRoutes(router);
+// schedule.bindRoutes(router);
 
 
 module.exports = {router, api: []}

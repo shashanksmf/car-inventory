@@ -1,4 +1,4 @@
-<div class="container" ng-init="feedprovider.getProvidersData();">
+<div class="container" ng-init="feedprovider.getOutboundProvidersData();">
         <div class="row">
                 <ul class="nav nav-pills">
                         <li ><a href="#/outbound/dashboard">Dashboard</a></li>
@@ -10,7 +10,7 @@
         <div class="col-md-12 ">
             <div class="col-md-6">
                 <h4>
-                    Inbound Feed Providers
+                    Outbound Feed Providers
                 </h4>
             </div>
             <div class="col-md-6" style="text-align: right;">
@@ -24,23 +24,26 @@
                             <th>Provider ID</th>
                             
                             <th>Name</th>
-                            <th>Next Run</th>
                             <th>Last Run</th>
+                            <th>Next Run</th>
                             <th>Last-Run Vehicles</th>
                             <th>Last-Run Images</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr >
-                          <td></td>
-                          <td></td>
-                          <td></td>
-                          <td></td>
-                          <td></td>
-                          <td></td>
-                          <td><a href="">view</a></td>
-                        </tr>
+                        <tr ng-if="feedprovider.providers[0].providerName == undefined" >
+                                <td style="text-align: center" colspan="9">No Data Found</td>
+                            </tr>
+                        <tr ng-repeat="provider in feedprovider.providers">
+                                <td>{{ $index + 1 }}</td>
+                                <td>{{ provider.providerName }}</td>
+                                <td>{{ (provider.lastRun)? feedprovider.utcToLocalTime(provider.lastRun):'N/A' }}</td>
+                                <td>{{feedprovider.utcToLocalTime(provider.nextRun); }}</td>
+                                <td>N/A</td>
+                                <td>N/A</td>
+                                <td><a href="">View</a></td>
+                            </tr>
                     </tbody>
                 </table>
             </div>

@@ -1,17 +1,21 @@
-angular.module('SimpleRESTWebsite',[]).controller('ProviderCtrl',['ProviderService','$scope','$stateParams',function(ProviderService,$scope,$stateParams){
+angular.module('SimpleRESTWebsite',[]).controller('ProviderCtrl',['ProviderModel','$scope',function(ProviderModel,$scope){
     var provider = this;
     provider.name = "AJay";
     provider.mapppedHeader = {};
     provider.orignalHeaders = [];
     provider.providerHeaders = [];
-    provider.providers = [];
     provider.res = {};
     provider.alert = false;
     provider.isFTPTested =  false;
     provider.testingFTP = false;
 
-    provider.getOrignalHeaders = function(){
-        ProviderService.getOrignalHeaders()
+    provider.form = {};
+    provider.form.ftpHost = '195.201.243.232';
+    provider.form.ftpUsername = 'test@ajayssj4.tk';
+    provider.form.ftpPassword = 'password123';
+    provider.headersFetched = true;
+    function getOrignalHeaders(){
+        ProviderModel.getOrignalHeaders()
             .then(function(response){
                 for(header in response.data){
                     provider.orignalHeaders.push(header);
@@ -21,15 +25,6 @@ angular.module('SimpleRESTWebsite',[]).controller('ProviderCtrl',['ProviderServi
                 
             });
     }
-
-    provider.getProvidersData = function(){
-        ProviderService.getProvidersData()
-        .then(function(response){
-            console.log(response.data);
-            provider.providers = response.data;
-        });
-    }
-
     provider.checkmapabc = function(){
         console.log("provider.mapppedHeader",provider.mapppedHeader);
     }
@@ -38,9 +33,11 @@ angular.module('SimpleRESTWebsite',[]).controller('ProviderCtrl',['ProviderServi
         console.log('Status : ' + $scope.providerStatus);
         
     }
+
+ 
     provider.submitProviderForm = function(){
        provider.form.headers = provider.mapppedHeader;
-       ProviderService.submitForm(provider.form)
+       ProviderModel.submitForm(provider.form)
             .then(function(response){
                 var result = response.data;
                 if(result.result){
@@ -52,26 +49,36 @@ angular.module('SimpleRESTWebsite',[]).controller('ProviderCtrl',['ProviderServi
             });
     }
     provider.testFTPConnection = function(){
-        provider.testingFTP = true;
-        ProviderService.testFTPConnection(provider.form)
-            .then(function(res){
-                provider.res = res.data;
-                if(provider.res.result){
-                    provider.directories = provider.res.list;
-                    provider.isFTPTested =  true;
-                }
-                provider.alert = true;
-                provider.testingFTP = false;
+        if(!provider.form.ftpHost && !provider.form.ftpUsername && !provider.form.ftpPassword){
+            alert('Enter FTP Authentication Details First!')
+        }else{
+            provider.testingFTP = true;
+            ProviderModel.testFTPConnection(provider.form)
+                .then(function(res){
+                    provider.res = res.data;
+                    if(provider.res.result){
+                        provider.directories = provider.res.list;
+                        provider.isFTPTested =  true;
+                    }
+                    provider.alert = true;
+                    provider.testingFTP = false;
 
-            })
+                })
+        }
+       
     }
 
     provider.getProviderHeaders =  function(){
         if(provider.isFTPTested){
            if(provider.form.directory != undefined && provider.form.filename != undefined ){
-            ProviderService.getProviderHeaders(provider.form)
+            provider.headersFetched = false;
+            ProviderModel.getProviderHeaders(provider.form)
             .then(function(res){
-               provider.providerHeaders = res.data;
+                provider.headersFetched = true;
+               if(res.data.result)
+                    provider.providerHeaders = res.data.headers;
+                else
+                    alert(res.data.msg);
             });   
            }else{
             alert('Select FTP Directory And Filename!');
@@ -81,9 +88,5 @@ angular.module('SimpleRESTWebsite',[]).controller('ProviderCtrl',['ProviderServi
             alert('Connect To FTP Server First!')
         }
     }
-
-    if($stateParams.ctrl)
-        provider.getProvidersData();
-    else
-        provider.getOrignalHeaders();
+    getOrignalHeaders();
 }])

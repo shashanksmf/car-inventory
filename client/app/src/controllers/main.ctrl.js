@@ -1,4 +1,4 @@
-angular.module('SimpleRESTWebsite',[]).controller('MainCtrl', ['$rootScope', '$state', 'LoginService', 'UserService',function ($rootScope, $state, LoginService, UserService) {
+angular.module('SimpleRESTWebsite',[]).controller('MainCtrl', function ($rootScope, $state, LoginService, UserService) {
     var main = this;
 
     console.log("main controller")
@@ -25,4 +25,4 @@ angular.module('SimpleRESTWebsite',[]).controller('MainCtrl', ['$rootScope', '$s
     main.currentUser = UserService.getCurrentUser();
 
 
-}])
+})

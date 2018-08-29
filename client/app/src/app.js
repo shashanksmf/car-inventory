@@ -1,17 +1,20 @@
 var app = angular.module('SimpleRESTWebsite', ['angular-storage', 'ui.router',
 'UserService',
 'LoginService',
-'DashboardService',
-'ScheduleService',
-'ProviderService',
+'FeedProviderModel',
+'VehiclesModel',
+'TasksModel',
+'ScheduleModel',
+'ProviderModel',
 'fileUpload' ,
 'fileModel', 
-'MainCtrl',
+'FeedProviderCtrl',
 'LoginCtrl',
-'ProviderCtrl',
-'DashboardCtrl',
+'MainCtrl',
+'appdashboardCtrl',
 'TaskCtrl',
-'ScheduleCtrl'
-                            ])
-    .constant('ENDPOINT_URI', 'https://car-data-base.mybluemix.net/api/');
+'ScheduleCtrl',
+'ProviderCtrl',
+'DashboardCtrl'
+                ]).constant('ENDPOINT_URI', 'https://car-data-base.mybluemix.net/api/');
 

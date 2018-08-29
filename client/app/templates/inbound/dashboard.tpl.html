@@ -29,6 +29,9 @@
                         </tr>
                     </thead>
                     <tbody>
+                        <tr ng-if="feedprovider.todaysProviders[0].providerName == undefined" >
+                                <td style="text-align: center" colspan="9">No Data Found</td>
+                            </tr>
                       <tr ng-repeat="provider in feedprovider.todaysProviders">
                               <td>{{ provider.providerName }}</td>
                               <td>{{ (provider.lastRun)? feedprovider.utcToLocalTime(provider.lastRun):'N/A' }}</td>
@@ -56,7 +59,9 @@
                               </tr>
                           </thead>
                           <tbody>
-                           
+                                <tr >
+                                        <td style="text-align: center" colspan="9">No Data Found</td>
+                                    </tr>
                           </tbody>
                       </table>
                 </div>

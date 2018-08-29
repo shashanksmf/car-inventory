@@ -229,8 +229,9 @@
         </div>
       </div>
       <div class="col-md-4" style="padding: 23px;">
+        <!-- <p>{{ provider.headersFetched }}</p> -->
         <div class="form-group">
-            <button type="button" class="btn btn-primary" ng-click="provider.getProviderHeaders()">Click To Fetch File For Header Mapping</button>
+            <button type="button" ng-attr-disabled="!provider.headersFetched" class="btn btn-{{ provider.headersFetched && ('primary') || 'success'}}" ng-click="provider.getProviderHeaders()">{{ provider.headersFetched && ('Click To Fetch File For Header Mapping') || 'Fetching Headers .....'}}</button>
           </div>
       </div>
       <div class="col-md-12">
@@ -251,6 +252,7 @@
                     <td>{{ orignalHeader }}</td>
                     <td>
                       <select class="form-control" ng-model="provider.mapppedHeader[orignalHeader]">
+                        <option value="" ng-if="!provider.headersFetched">Fetching Headers..</option>
                         <option value="{{ providerHeader}}" ng-repeat="providerHeader in provider.providerHeaders track by $index">{{ providerHeader }}</option>
                       </select>
                     </td>

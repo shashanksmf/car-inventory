@@ -26,7 +26,7 @@ function calculateNextLastRun(scheduleObj,added = 0){
     }); */
     CronSchedule.updateOne({_id : scheduleObj._id},{nextRun : output.nextRunDate, lastRun : output.lastRunDate }, function(err,result){ 
         Provider.updateOne({_id : scheduleObj.providerId},{nextRun : output.nextRunDate, lastRun : output.lastRunDate, added : added  }, function(err,result){ 
-           console.log('Added Added');
+        //    console.log('Added Added');
        })
     });
     return output;
@@ -277,15 +277,13 @@ module.exports = {
         });
     },
     reScheduleCronJobs : function(){
-        CronSchedule.find(function(err,result){
+        CronSchedule.find({ "isActive": true },function(err,result){
             if(err) throw err;
             result.forEach(function(job){
-                if(job.isActive){
-                    if(job.isStarted)
-                        reScheduleJob(job,true);
-                    else
-                        reScheduleJob(job);
-                }
+                if(job.isStarted)
+                    reScheduleJob(job,true);
+                else
+                    reScheduleJob(job);
             })
         })
     },

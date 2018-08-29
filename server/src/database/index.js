@@ -12,10 +12,13 @@ var Database = {};
 
 Database.loadDb = function(callback) {
   DbSchema.loadSchemas(function () {
-
+    var InboundSchedule = require('./../controllers/inbound/schedule/helpers');
+    var outboundSchedule = require('./../controllers/outbound/schedule/helpers');
+    InboundSchedule.reScheduleCronJobs();
+    outboundSchedule.reScheduleCronJobs();
   });
 
-  if (env.APP == "LIVE") {
+  if (env.APP == "LOCAL") {
     mongoose.connect(env.DB_URL);
   } else {
     mongoose.connect(env.DB_URL_LIVE, {useNewUrlParser: false} );

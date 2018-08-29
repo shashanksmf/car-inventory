@@ -1,5 +1,4 @@
 var mongoose = require('mongoose');
-// new mongoose.Schema(schema, options)
 
 var testSchema = {
   schema: {
@@ -25,7 +24,7 @@ var testSchema = {
     }
 
   },
-  options: {collection: 'tasks'},
+  options: {collection: 'task'},
 }
 // var taskSchema = new mongoose.Schema();
 

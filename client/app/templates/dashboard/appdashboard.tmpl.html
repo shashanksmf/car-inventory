@@ -1,14 +1,6 @@
 
 <div class="container">
-    <div class="row">
-        <ul class="nav nav-pills">
-                <li class="active" ><a href="#/dashboard">Dashboard</a></li>
-                <li><a href="#/inbound/provider/feed/list">Provider</a></li>
-                <li ><a href="#/inbound/provider/schedule/list">Schedule</a></li>
-                <li><a >Errors-ToDo</a></li>
-                <li><a href="#/inbound/provider/feed/add">Add New Provider</a></li>
-              </ul>
-</div>
+
   <h3 class="page-heading">Dashboard</h3>
   <div ng-view></div>
 
@@ -29,7 +21,9 @@
           </tr>
         </thead>
         <tbody>
-          <p>{{ JSON.strinify(tasks); }}</p>
+          <tr ng-if="appdashboard.tasks[0].file == undefined" >
+              <td style="text-align: center" colspan="9">No Task Found</td>
+          </tr>
           <tr ng-repeat="task in appdashboard.tasks">
             <td>{{$index +1 }}</td>
             <td><a href="#/task/{{ task._id }}">{{ task.file}}</a></td>

@@ -37,6 +37,9 @@
                     </tr>
                 </thead>
                 <tbody>
+                        <tr ng-if="feedprovider.providers[0].providerName == undefined" >
+                                <td style="text-align: center" colspan="9">No Providers Found</td>
+                            </tr>
                     <tr ng-repeat="provider in feedprovider.providers">
                         <td>{{ $index + 1 }}</td>
                         <td>{{ provider.providerName }}</td>

@@ -1,4 +1,4 @@
-<div class="container" ng-init="feedprovider.getProvidersData()">
+<div class="container" ng-init="schedule.getOutboundProvidersScheduleData()">
         <div class="row">
                 <ul class="nav nav-pills">
                         <li ><a href="#/outbound/dashboard">Dashboard</a></li>
@@ -10,7 +10,7 @@
             <div class="col-md-10 col-md-offset-1">
                 <div class="col-md-6">
                     <h4>
-                        Inbound Feed Providers
+                        Outbound Provider Schedule
                     </h4>
                 </div>
                 <div class="col-md-6" style="text-align: right;">
@@ -33,16 +33,19 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                        </tr>
+                        <tr ng-if="schedule.providers[0].isActive == undefined" >
+                                <td style="text-align: center" colspan="9">No Data Found</td>
+                            </tr>
+                        <tr  ng-repeat="provider in schedule.providers">
+                                <td>{{ $index + 1 }}</td>
+                                <td>{{ provider.providersData[0].providerName }}</td>
+                                <td>{{ (provider.isActive)?'Active':'Inactive'}}</td>
+                                <td>{{ (provider.isStarted)?'Running':'Not Running'}}</td>
+                                <td>{{  schedule.getIntervals(provider.interval)   }}</td>
+                                <td>{{  (provider.lastRun)? schedule.utcToLocalTime(provider.lastRun):'N/A' }}</td>
+                                <td>{{ schedule.utcToLocalTime(provider.nextRun); }}</td>
+                                <td><a href="">View</a> | <a href="">History</a> | <a href="">Run</a> | <a href="" ng-click="schedule.cancelOutboundJob(provider._id)">Deativate</a></td>   
+                            </tr>
                     </tbody>
                 </table>
             </div>

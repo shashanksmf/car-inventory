@@ -1,13 +1,30 @@
-angular.module('SimpleRESTWebsite',[]).controller('DashboardCtrl', ['DashboardService', 'fileUpload', function (DashboardService, fileUpload) {
+angular.module('SimpleRESTWebsite',[]).controller('DashboardCtrl', ['VehiclesModel', 'fileUpload', function (VehiclesModel, fileUpload) {
 
     var dashboard = this;
+    $.validate({
+        modules : 'security',
+        form : '#vehicleForm',
+        onSuccess : function(form){
+            alert('Success');
+            dashboard.createVehicle(dashboard.newVehicle);
+            return false;
+        },
+        onError :function(err){
+            alert('Error', err)
+        }
+    });
     dashboard.uploadTxt = 'Upload';
     dashboard.uploading = false;
     console.log("dashboard controller")
     function uploadFile() {
         console.log("asdsad");
         var file = dashboard.myFile;
-        dashboard.uploading = true;
+        console.log('File', file);
+        
+        if(!file){
+            alert('Please Select File !');
+        }else{
+            dashboard.uploading = true;
         dashboard.uploadTxt = 'Uploading...';
 
         console.log('file is ');
@@ -27,27 +44,31 @@ angular.module('SimpleRESTWebsite',[]).controller('DashboardCtrl', ['DashboardSe
                 console.log("data", data);
                 alert("error uploading file")
             });
+        }
+        
     };
 
     dashboard.uploadFile = uploadFile;
 
     function getVehicles() {
-        DashboardService.all()
+        VehiclesModel.all()
             .then(function (result) {
                 dashboard.vehicles = result.data;
             });
     }
 
     function createVehicle(vehicle) {
-        DashboardService.create(vehicle)
-            .then(function (result) {
-                initCreateForm();
-                getVehicles();
+        VehiclesModel.create(vehicle)
+            .then(function (res) {
+                alert(res.data.msg);
+                if(res.data.result){
+                    initCreateForm();
+                }
             });
     }
 
     function updateVehicle(vehicle) {
-        DashboardService.update(vehicle.id, vehicle)
+        VehiclesModel.update(vehicle.id, vehicle)
             .then(function (result) {
                 cancelEditing();
                 getVehicles();
@@ -55,7 +76,7 @@ angular.module('SimpleRESTWebsite',[]).controller('DashboardCtrl', ['DashboardSe
     }
 
     function deleteVehicle(vehicleId) {
-        DashboardService.destroy(vehicleId)
+        VehiclesModel.destroy(vehicleId)
             .then(function (result) {
                 cancelEditing();
                 getVehicles();
@@ -143,7 +164,7 @@ angular.module('SimpleRESTWebsite',[]).controller('DashboardCtrl', ['DashboardSe
     dashboard.cancelEditing = cancelEditing;
 
     initCreateForm();
-    getVehicles();
+    // getVehicles();
 
 
 }])

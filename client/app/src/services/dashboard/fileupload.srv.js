@@ -3,9 +3,9 @@ angular.module('SimpleRESTWebsite',[]).service('fileUpload', ['$http', function 
         var fd = new FormData();
         fd.append('file', file);
 
-        return $http.post('/uploadcsv', fd, {
+        return $http.post('/vehicle/uploadcsv', fd, {
             transformRequest: angular.identity,
             headers: { 'Content-Type': undefined }
         });
     }
-}]);
+}])

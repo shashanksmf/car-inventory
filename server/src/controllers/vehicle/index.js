@@ -1,13 +1,11 @@
 var app = require('express')
+
 var router = app.Router();
+
 var helpers = require('./helpers');
 
-router.post("/portal-active", function (req, res) {
-    res.send('data');
-});
-router.get('/portal-status', function (req, res) {
-    res.send('data[0]');
-})
+router.post('/uploadcsv', helpers.uploadCSV);
+router.post('/add', helpers.addVehicle);
 
 
-module.exports = {router, api: []}
+module.exports = { router, api: [] }

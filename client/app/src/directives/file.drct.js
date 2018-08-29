@@ -12,4 +12,4 @@ angular.module('SimpleRESTWebsite',[]).directive('fileModel', ['$parse', functio
             });
         }
     };
-}]);
+}])
