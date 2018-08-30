@@ -6,8 +6,11 @@ var c = new Client();
 module.exports = {
     getDirectoryFiles : function(req,res){
       var c = new Client();
+      // console.log('Query', req.query);
+      if(req.query.dir == 'parent directory')
+        req.query.dir = '..';
       c.on('ready', function() {
-        c.list(req.query.directory,function(err, list) {
+        c.list(req.query.dir,function(err, list) {
           if (err) {
             res.json({
               result: 0,
@@ -15,23 +18,25 @@ module.exports = {
               class: 'danger'
             });
           }
+          else{
+            list.splice(0, 0, { name : 'parent directory',type : 'd'});
+            res.json({
+              result: 1,
+              msg: 'Connection Successfully Established !',
+              class: 'success',
+              list: list
+            });
+
+            
+          }
          
-          console.log('Files ', list);
-          
           c.end();
-          res.json({
-            result: 1,
-            msg: 'Connection Successfully Established !',
-            class: 'success',
-            list: list
-          });
+         
         });
-    
-    
       });
 
       c.on('error', function(err) {
-        console.log("err", err)
+        // console.log("err", err)
         res.json({
           result: 0,
           msg: 'FTP Connection Failed!',
@@ -39,14 +44,14 @@ module.exports = {
         });
       });
       c.connect({
-                host: req.body.host,
+                host: req.query.host,
                 port: 21,
-                user: req.body.uname,
-                password: req.body.password
+                user: req.query.uname,
+                password: req.query.password
               });
     },
     testFTP :  function(req, res) {
-        var c = new Client();
+        var c = new Client(); 
       
         c.on('ready', function() {
           c.list(function(err, list) {
@@ -72,7 +77,7 @@ module.exports = {
       
         });
         c.on('error', function(err) {
-            console.log("err", err, 'Body ' , req.body)
+            // console.log("err", err, 'Body ' , req.body)
             res.json({
               result: 0,
               msg: 'FTP Connection Failed!',

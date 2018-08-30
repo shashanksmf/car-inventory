@@ -5,7 +5,7 @@ const testdatas = require('./testdatas');
 const providers = require('./providers');
 const schedules = require('./schedules');
 const history = require('./history');
-
+const dealer = require('./dealers');
 var Schema = {};
 var schemaTemplate = {};
 Schema.loadSchemas = function(callback) {
@@ -20,6 +20,7 @@ Schema.loadSchemas = function(callback) {
   var providersSchema = new mongoose.Schema(providers.schema, providers.options);
   var schedulesSchema = new mongoose.Schema(schedules.schema, schedules.options);
   var historySchema = new mongoose.Schema(history.schema, history.options);
+  var dealerSchema = new mongoose.Schema(dealer.schema, dealer.options);
 
   schemaTemplate[tasks.options.collection] = mongoose.model('tasksModal', taskSchema);
   schemaTemplate[testdatas.options.collection] = mongoose.model('testdatasModal', testdatasSchema);
@@ -27,6 +28,7 @@ Schema.loadSchemas = function(callback) {
   schemaTemplate[providers.options.collection] = mongoose.model('providersModal', providersSchema);
   schemaTemplate[schedules.options.collection] = mongoose.model('schedulesModal', schedulesSchema);
   schemaTemplate[history.options.collection] = mongoose.model('historyModal', historySchema);
+  schemaTemplate[dealer.options.collection] = mongoose.model('dealerModal', dealerSchema);
 
   
   callback();

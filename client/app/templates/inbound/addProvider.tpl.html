@@ -55,10 +55,10 @@
                 <input required ng-model="provider.form.ftpPassword" value="ajayajay" type="password" class="form-control">
               </div>
             </div>
-            <div ng-if="provider.isFTPTested" class="form-group row">
+            <!-- <div ng-if="provider.isFTPTested" class="form-group row">
                 <label for="" class="col-sm-2 col-form-label">Directory Path</label>
                 <div class="col-sm-10">
-                  <select required class="form-control" ng-model="provider.form.directory"> 
+                  <select ng-change="provider.directoryChange()" required class="form-control" ng-model="provider.form.directory"> 
                     <option value="{{directory.name}}" ng-if="directory.type == 'd' &&  (directory.name != '.' && directory.name != '..')"  ng-repeat="directory in provider.directories">{{ directory.name }}</option>
                   </select>
                 </div>
@@ -70,7 +70,7 @@
                         <option  value="{{directory.name}}" ng-if="directory.type == '-'"  ng-repeat="directory in provider.directories">{{ directory.name }}</option>
                       </select>
                 </div>
-            </div>
+            </div> -->
             <div class="form-group row">
                 <div ng-if="provider.alert" class="alert alert-{{ provider.res.class }}" >
                     <!-- <a class="close" data-dismiss="alert" aria-label="close">&times;</a> -->
@@ -231,7 +231,8 @@
       <div class="col-md-4" style="padding: 23px;">
         <!-- <p>{{ provider.headersFetched }}</p> -->
         <div class="form-group">
-            <button type="button" ng-attr-disabled="!provider.headersFetched" class="btn btn-{{ provider.headersFetched && ('primary') || 'success'}}" ng-click="provider.getProviderHeaders()">{{ provider.headersFetched && ('Click To Fetch File For Header Mapping') || 'Fetching Headers .....'}}</button>
+            <button type="button" data-toggle="modal" data-target="#myModal" class="btn btn-primary">Click To Fetch File For Header Mapping</button>
+            <!-- <button type="button" data-toggle="modal" data-target="#myModal">Test</button> -->
           </div>
       </div>
       <div class="col-md-12">
@@ -379,4 +380,39 @@
       </div>
     </div>
   </form>
+  <!-- Modal -->
+<div id="myModal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Select FTP Directory And File</h4>
+      </div>
+      <div class="modal-body">
+        <form>
+          <div ng-if="provider.isFTPTested">
+                <div  class="form-group row">
+                <label for="" class="col-sm-2 col-form-label">Path To File</label>
+                <div class="col-sm-10">
+                  <input type="text" class="form-control" ng-model="provider.form.directory" placeholder="/files/smaall-inventory.csv">
+                </div>
+            </div>
+          </div> 
+          <div ng-if="!provider.isFTPTested">
+            <h3> First Test FTP Connection First</h3>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <!-- <button type="button" class="btn btn-primary">Fetch Headers</button> -->
+        <button ng-if="provider.isFTPTested" type="button" class="btn btn-{{ provider.headersFetched && ('primary') || 'success'}}" ng-click="provider.getProviderHeaders()">{{ provider.headersFetched && ('Fetch Headers') || 'Fetching Headers .....'}}</button>
+
+      </div>
+    </div>
+
+  </div>
+</div>
 </div>

@@ -75,7 +75,7 @@ module.exports = {
         taskObj['startTime'] = Date.now();
         var isFirstLine = true;
         c.on('ready', function() {
-          c.get(path.join(directoryPath, req.body.filename), function(err, stream) {
+          c.get(path.join(directoryPath), function(err, stream) {
             if (err){
               console.log("err ", err );
               return  res.json({result : 0 ,msg : 'File Or Directory Not Found!', class : 'danger'});

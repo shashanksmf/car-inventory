@@ -259,6 +259,10 @@ angular.module('SimpleRESTWebsite', ['angular-storage', 'ui.router','ui.bootstra
                 filename : formData.filename
             });
         }
+
+        service.getDirectoryFiles = function(formData){
+            return $http.get('ftp/getDirectoryFiles', {params : formData});
+        }
         
     })
     .service('fileUpload', ['$http', function ($http) {
@@ -579,29 +583,42 @@ angular.module('SimpleRESTWebsite', ['angular-storage', 'ui.router','ui.bootstra
      
         provider.submitProviderForm = function(){
            provider.form.headers = provider.mapppedHeader;
-           ProviderModel.submitForm(provider.form)
-                .then(function(response){
-                    var result = response.data;
-                    if(result.result){
-                        alert(result.msg);
-                        location.reload();
-                    }else{
-                        alert(result.msg);
-                    }
-                });
+           if(provider.isFTPTested){
+                ProviderModel.submitForm(provider.form)
+                        .then(function(response){
+                            var result = response.data;
+                            if(result.result){
+                                alert(result.msg);
+                                location.reload();
+                            }else{
+                                alert(result.msg);
+                            }
+                        });
+                }else{
+                    alert('Connect To FTP Server First!')
+                }
         }
-
+      
         provider.submitOutboundProviderForm = function(){
-           ProviderModel.submitOutboundForm(provider.form2)
-                .then(function(response){
-                    var result = response.data;
-                    if(result.result){
-                        alert(result.msg);
-                        location.reload();
-                    }else{
-                        alert(result.msg);
-                    }
-                });
+            if(provider.isFTPTested){
+                if(provider.form.directory != undefined){
+                    ProviderModel.submitOutboundForm(provider.form)
+                    .then(function(response){
+                        var result = response.data;
+                        if(result.result){
+                            alert(result.msg);
+                            location.reload();
+                        }else{
+                            alert(result.msg);
+                        }
+                    });
+                }else{
+                    alert('Please Select FTP Directory!');
+                }
+         
+          }else{
+            alert('Connect To FTP Server First!')
+            }
         }
         provider.testFTPConnection = function(){
             if(!provider.form.ftpHost && !provider.form.ftpUsername && !provider.form.ftpPassword){
@@ -625,14 +642,15 @@ angular.module('SimpleRESTWebsite', ['angular-storage', 'ui.router','ui.bootstra
 
         provider.getProviderHeaders =  function(){
             if(provider.isFTPTested){
-               if(provider.form.directory != undefined && provider.form.filename != undefined ){
+               if(provider.form.directory != undefined ){
                 provider.headersFetched = false;
                 ProviderModel.getProviderHeaders(provider.form)
                 .then(function(res){
                     provider.headersFetched = true;
-                   if(res.data.result)
+                   if(res.data.result){
                         provider.providerHeaders = res.data.headers;
-                    else
+                        $('#myModal').modal('hide');
+                    }else
                         alert(res.data.msg);
                 });   
                }else{
@@ -643,6 +661,26 @@ angular.module('SimpleRESTWebsite', ['angular-storage', 'ui.router','ui.bootstra
                 alert('Connect To FTP Server First!')
             }
         }
+        provider.directoryChange = function(){
+            var formData = { dir : provider.form.directory,
+                uname : provider.form.ftpUsername,
+                password : provider.form.ftpPassword,
+                host : provider.form.ftpHost }
+            ProviderModel.getDirectoryFiles(formData)
+                .then(function(res){
+                    if(res.data.result){
+                        console.log(res.data.list);
+                        provider.directories = [];
+                        provider.directories = res.data.list;
+                    }else{
+                        console.log(res.data.msg);
+                    }
+                })
+        }
+        // provider.resetForm = function(){
+        //     provider.form = {};
+        //     provider.isFTPTested = 
+        // }
         getOrignalHeaders();
     }])
     .controller('DashboardCtrl', ['VehiclesModel', 'fileUpload', function (VehiclesModel, fileUpload) {

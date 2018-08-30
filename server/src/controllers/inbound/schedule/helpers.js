@@ -7,7 +7,7 @@ var Schedule = Database.getcollectionSchema('schedule');
 var Provider = Database.getcollectionSchema('provider');
 var History = Database.getcollectionSchema('history');
 var Vehicle = Database.getcollectionSchema('vehicle');
-
+var Dealer = Database.getcollectionSchema('dealer');
 var csv = require('fast-csv');
 var Client = require('ftp');
 var mongoose = require('mongoose');
@@ -86,11 +86,14 @@ function reScheduleJob(job,isStarted = false){
 }
 
 
-function insertRecordsIntoDB(vehicles){
+function insertRecordsIntoDB(vehicles, dealerObj){
     // inserting vehicle and task obj
     Vehicle.create(vehicles, function (err, result) {
             if (err) return err;
       });
+    Dealer.create(dealerObj, function(err, result){
+        if (err) throw err;
+    })
 }
 function readFileFromServer(ftpDetails){
     var c = new Client();
@@ -110,7 +113,9 @@ function readFileFromServer(ftpDetails){
           c.on('ready', function() {
             var vehicles = [];
             var isFirstLine = true;
-            c.get(ftpDetails.directory + '/' + ftpDetails.filename, function(err, stream) {
+            var dealersIds = {};
+            var index = 0;
+            c.get(ftpDetails.directory, function(err, stream) {
               var dataD ;
               if (err) {
                 // handle error here   
@@ -125,12 +130,21 @@ function readFileFromServer(ftpDetails){
                 headers: true,
                 ignoreEmpty: true,
               })
-                .on("data", function(data) {
-                   
+                .on("data",  function(data2) {
+                    var data = {};
+                    for(var key in data2){
+                        data[key.replace(/['"]+/g, '').trim()] = data2[key];
+                    }
                     var vehicleObj = {};
                     for(var key in providerHeaders){
-                        if(providerHeaders[key])
-                            vehicleObj[headers[key]] = data[providerHeaders[key]];
+                        if(providerHeaders[key]){
+                            var value = data[providerHeaders[key]];
+                            vehicleObj[headers[key]] = value;
+                            if(key == 'DealerId')
+                                dealersIds[value.trim()] = value.trim();
+                        }
+                        
+
                     }
                     vehicleObj["_id"] = mongoose.Types.ObjectId();
                     vehicleObj['providerId'] = ftpDetails._id;
@@ -141,10 +155,33 @@ function readFileFromServer(ftpDetails){
                     added++;
                   
                 })
-                .on("end", function() {
+                .on("end", async function() {
+                    var dealerObj = [];
+                    for(var key in dealersIds){
+                        var result =  await Dealer.findOne({
+                                            dealerId : dealersIds[key],
+                                            providerId : { $ne : ftpDetails._id } });
+                        if(result){
+                            console.log(' is duplicate ');
+                            delete dealersIds[key];
+                        }else{
+                            var result2 =  await Dealer.findOne({
+                                dealerId : dealersIds[key],
+                                providerId : ftpDetails._id });
+                            if(!result2)
+                                dealerObj.push({_id : mongoose.Types.ObjectId() ,providerId : ftpDetails._id, dealerId : dealersIds[key]})
+                        }
+                    }
+                    var vehicleNew = []; 
+                    vehicles.forEach(function(item,j){
+                        if(dealersIds[item.DealerId]) {
+                            vehicleNew.push(item);
+                        }
+                    });
+
                     updateLastNextRun(ftpDetails,added);
                     // pass vehicle object & task Obj to insert into database
-                    insertRecordsIntoDB(vehicles );
+                    insertRecordsIntoDB(vehicleNew, dealerObj);
                 });
         
             });
@@ -155,6 +192,7 @@ function readFileFromServer(ftpDetails){
           });
     })   
 }
+
 function insertHistory(obj){
     History.create(obj,function(err,result){
         

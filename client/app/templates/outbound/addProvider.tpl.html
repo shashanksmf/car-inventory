@@ -14,7 +14,7 @@
   </div>
   <form ng-submit="provider.submitOutboundProviderForm()">
     <div class="">
-      <h3>Add A New Outbound Feed Provider</h3>
+      <h3>Add A New Outbound Feed Provider</h3> 
       <hr>
     </div>
     <div class="row">
@@ -22,23 +22,34 @@
         <div class="row">
           <div class="col-sm-6">
             <div class="">
-              <label for="">Provider Info</label>
+              <label for="">Provider Info</label> 
               <hr>
             </div>
             <div class="form-group row">
               <label for="" class="col-sm-2 col-form-label">Provider Name</label>
               <div class="col-sm-10">
-                <input required type="text" ng-model="provider.form2.providerName" class="form-control">
+                <input required type="text" ng-model="provider.form.providerName" class="form-control">
               </div>
             </div>
             <div class="form-group row">
               <label for="" class="col-sm-2 col-form-label">Provider Status</label>
               <div class="col-sm-10">
-                <select required class="form-control" ng-model="provider.form2.providerStatus">
+                <select required class="form-control" ng-model="provider.form.providerStatus">
                   <option value="">Select A Status</option>
                   <option value="true">Active</option>
                   <option value="false">Inactive</option>
                 </select>
+              </div>
+            </div>
+            <div class="form-group row">
+              <div ng-if="provider.alert" class="alert alert-{{ provider.res.class }}">
+                <!-- <a class="close" data-dismiss="alert" aria-label="close">&times;</a> -->
+                {{ provider.res.msg }}
+              </div>
+              <label for="" class="col-sm-2 col-form-label"></label>
+              <div class="col-sm-10">
+                <input ng-click="provider.testFTPConnection()" type="button" class="btn btn-success" value="{{(!provider.testingFTP)?'Test FTP Connection':'Testing ...'}}"
+                  class="form-control">
               </div>
             </div>
           </div>
@@ -48,41 +59,60 @@
               <label for="">FTP Info</label>
               <hr>
             </div>
+            <div  class="alert alert-warning">
+              <a class="close" data-dismiss="alert" aria-label="close">&times;</a>
+              FTP server must have create and delete files permissions.
+            </div>
+            <div class="form-group row">
+              <label for="" class="col-sm-2 col-form-label">FTP URL</label>
+              <div class="col-sm-10">
+                <input required ng-model="provider.form.ftpHost" value="ajayajay" type="text" class="form-control">
+              </div>
+            </div>
             <div class="form-group row">
               <label for="" class="col-sm-2 col-form-label">FTP Username</label>
               <div class="col-sm-10">
-                <input required ng-model="provider.form2.ftpUsername" value="Ajayssj" type="text" class="form-control">
+                <input required ng-model="provider.form.ftpUsername" value="Ajayssj" type="text" class="form-control">
               </div>
             </div>
             <div class="form-group row">
               <label for="" class="col-sm-2 col-form-label">FTP Password</label>
               <div class="col-sm-10">
-                <input required ng-model="provider.form2.ftpPassword" value="ajayajay" type="password" class="form-control">
+                <input required ng-model="provider.form.ftpPassword" value="ajayajay" type="password" class="form-control">
               </div>
             </div>
-            <div class="form-group row">
-              <label for="" class="col-sm-2 col-form-label">FTP URL</label>
-              <div class="col-sm-10">
-                  <input required ng-model="provider.form2.ftpHost" value="ajayajay" type="text" class="form-control">
-              </div>
-            </div>
-            <div class="form-group row">
+            <div ng-if="provider.isFTPTested" class="form-group row">
               <label for="" class="col-sm-2 col-form-label">FTP Directory</label>
               <div class="col-sm-10">
-                  <input required ng-model="provider.form2.directory" value="ajayajay" type="text" class="form-control">
+                <select required class="form-control" ng-model="provider.form.directory">
+                  <option value="{{directory.name}}" ng-if="directory.type == 'd' &&  (directory.name != '.' && directory.name != '..')" ng-repeat="directory in provider.directories">{{ directory.name }}</option>
+                </select>
               </div>
             </div>
-            <div class="form-group row">
+            <!-- <div class="form-group row">
+              <label for="" class="col-sm-2 col-form-label">FTP Directory</label>
+              <div class="col-sm-10">
+                  <input required ng-model="provider.form.directory" value="ajayajay" type="text" class="form-control">
+              </div>
+            </div> -->
+            <!-- <div class="form-group row">
               <label for="" class="col-sm-2 col-form-label">FTP Alt Directory</label>
               <div class="col-sm-10">
-                  <input   value="" type="text" class="form-control">
-
+                <input value="" type="text" class="form-control">
               </div>
+            </div> -->
+            <div ng-if="provider.isFTPTested" class="form-group row">
+              <label for="" class="col-sm-2 col-form-label">FTP Alt Directory</label>
+              <div class="col-sm-10">
+                <select  class="form-control" ng-model="provider.form.directoryAlt">
+                  <option value="{{directory.name}}" ng-if="directory.type == 'd' &&  (directory.name != '.' && directory.name != '..')" ng-repeat="directory in provider.directories">{{ directory.name }}</option>
+                </select>
+              </div>  
             </div>
             <div class="form-group row">
               <label for="" class="col-sm-2 col-form-label">FTP Transfer Type</label>
               <div class="col-sm-10">
-                <select  class="form-control" ng-model="provider.form2.filename">
+                <select class="form-control">
                   <option value="1">FTP_BINARY</option>
                 </select>
               </div>
@@ -90,7 +120,7 @@
             <div class="form-group row">
               <label for="" class="col-sm-2 col-form-label">FTP PASV</label>
               <div class="col-sm-10">
-                <select  class="form-control" ng-model="provider.form2.filename">
+                <select class="form-control">
                   <option value="0">NO</option>
                   <option value="1">YES</option>
 

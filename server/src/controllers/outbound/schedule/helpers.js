@@ -8,10 +8,12 @@ var Provider = Database.getcollectionSchema('provider');
 var History = Database.getcollectionSchema('history');
 var Vehicle = Database.getcollectionSchema('vehicle');
 
-var csv = require('fast-csv');
+var path = require('path');
 var Client = require('ftp');
 var mongoose = require('mongoose');
 var moment = require('moment');
+var fs = require('fs');
+
 
 function calculateNextLastRun(scheduleObj,added = 0){
     var output = {};
@@ -87,11 +89,6 @@ function insertRecordsIntoDB(vehicles){
 function readFileFromServer(ftpDetails){
     var c = new Client();
     var added = 0;
-    getProviderHeaderFields(ftpDetails._id,function(providerHeaders){
-        // if(currentProvider.id != ftpDetails._id){
-        //     currentProvider.id = ftpDetails._id;
-        //     currentProvider.added = 0;
-        // }
 
         c.connect({
             host: ftpDetails.ftpHost,
@@ -100,51 +97,52 @@ function readFileFromServer(ftpDetails){
             password: ftpDetails.ftpPassword
           });
           c.on('ready', function() {
-            var vehicles = [];
-            var isFirstLine = true;
+           
             c.get(ftpDetails.directory + '/' + ftpDetails.filename, function(err, stream) {
-              var dataD ;
+             
               if (err) {
                 // handle error here   
               }
     
-              stream.once('close', function() {
-                // close connection once stream is closed
-                c.end();
-              });
-              
-              csv.fromStream(stream, {
-                headers: true,
-                ignoreEmpty: true,
-              })
-                .on("data", function(data) {
-                   
-                    var vehicleObj = {};
-                    for(var key in providerHeaders){
-                        if(providerHeaders[key])
-                            vehicleObj[headers[key]] = data[providerHeaders[key]];
-                    }
-                    vehicleObj["_id"] = mongoose.Types.ObjectId();
-                    // Push Records Into global Array
-
-                    vehicles.push(vehicleObj);
-                    // currentProvider.added++;
-                    added++;
-                  
-                })
-                .on("end", function() {
-                    updateLastNextRun(ftpDetails,added);
-                    // pass vehicle object & task Obj to insert into database
-                    insertRecordsIntoDB(vehicles );
-                });
-        
+              stream.once('close', function() {c.end();});
+              var localPath = path.join(__baseDir , 'inboundFiles' , ftpDetails.filename);
+              stream.pipe( fs.createWriteStream(localPath).on('close',function(){
+                  console.log('File Downloaded And Saved Successfully!');
+                //   uploadFile(ftpDetails,localPath)
+                    getProviderFTPDetails('5b8622699893d43ad82a3672',function(result){
+                        uploadFile(result,localPath,ftpDetails.filename);
+                    })
+              }));
             });
           });
           c.on('error', function(err) {
             console.log("err", err)
             
           });
-    })   
+}
+
+
+function uploadFile(ftpDetails,localPath,filename){
+    var c = new Client();
+    c.connect({
+        host: ftpDetails.ftpHost,
+        port: 21,
+        user: ftpDetails.ftpUsername,
+        password: ftpDetails.ftpPassword
+      });
+      c.on('ready', function() {
+        c.put(localPath, path.join(ftpDetails.directory,filename), function(err) {
+            if (err)
+                console.log('Upload Error : ', err);
+            else
+                console.log('File Uploaded Successfully!');
+            c.end();
+          });
+      });
+
+      c.on('error', function(err){
+        console.log('Wrong Outbound FTP Details : ', err);
+      })
 }
 function insertHistory(obj){
     History.create(obj,function(err,result){
