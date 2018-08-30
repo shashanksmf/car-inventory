@@ -179,7 +179,7 @@ function readFileFromServer(ftpDetails){
                         }
                     });
 
-                    updateLastNextRun(ftpDetails,added);
+                    updateLastNextRun(ftpDetails,vehicleNew.length);
                     // pass vehicle object & task Obj to insert into database
                     insertRecordsIntoDB(vehicleNew, dealerObj);
                 });
