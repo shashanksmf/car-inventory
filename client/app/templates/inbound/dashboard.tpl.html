@@ -37,7 +37,7 @@
                               <td>{{ (provider.lastRun)? feedprovider.utcToLocalTime(provider.lastRun):'N/A' }}</td>
                               <td>{{ provider.added}}</td>
                               <td>N/A</td>
-                              <td>N/A</td>
+                              <td><a href="#/inbound/schedule/error/{{ provider.providerName + '/' + provider._id}}">{{ provider.error}}</a></td>
                           </tr>
                     </tbody>
                 </table>

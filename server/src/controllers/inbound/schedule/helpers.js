@@ -8,6 +8,7 @@ var Provider = Database.getcollectionSchema('provider');
 var History = Database.getcollectionSchema('history');
 var Vehicle = Database.getcollectionSchema('vehicle');
 var Dealer = Database.getcollectionSchema('dealer');
+var Error = Database.getcollectionSchema('error');
 var csv = require('fast-csv');
 var Client = require('ftp');
 var mongoose = require('mongoose');
@@ -34,7 +35,7 @@ function calculateNextLastRun(scheduleObj,added = 0){
     });
     return output;
 }
-function updateLastNextRun(ftpDetails,added){
+function updateLastNextRun(ftpDetails,added,error,errorObj){
     Schedule.findOne({_id : ftpDetails.jobId},function(err,result){
         // var hours = result.interval;
         // var lastRunDate = new Date(moment.utc(new Date()).format(')).getTime();
@@ -51,9 +52,10 @@ function updateLastNextRun(ftpDetails,added){
         obj['providerId'] = ftpDetails._id;
         obj['providerName'] = ftpDetails.providerName;
         obj['type'] = 1;
+        obj['error'] = error;
         obj['added'] = added;
         obj['providerType'] = 1;
-        insertHistory(obj);
+        insertHistory(obj,errorObj);
         /* Provider.updateOne({_id : providerId},{nextRun : calculated.nextRunDate, lastRun : calculated.lastRunDate, added : added  }, function(err,result){ 
             // if(!err)
             //     // console.log('Date Updated!');
@@ -157,30 +159,36 @@ function readFileFromServer(ftpDetails){
                 })
                 .on("end", async function() {
                     var dealerObj = [];
+                    var errorObj = [];
+
                     for(var key in dealersIds){
                         var result =  await Dealer.findOne({
                                             dealerId : dealersIds[key],
                                             providerId : { $ne : ftpDetails._id } });
                         if(result){
-                            console.log(' is duplicate ');
                             delete dealersIds[key];
                         }else{
                             var result2 =  await Dealer.findOne({
                                 dealerId : dealersIds[key],
                                 providerId : ftpDetails._id });
                             if(!result2)
-                                dealerObj.push({_id : mongoose.Types.ObjectId() ,providerId : ftpDetails._id, dealerId : dealersIds[key]})
+                                dealerObj.push({_id : mongoose.Types.ObjectId() ,providerId : ftpDetails._id, dealerId : dealersIds[key]});
                         }
                     }
                     var vehicleNew = []; 
+                    var error = 0;
                     vehicles.forEach(function(item,j){
                         if(dealersIds[item.DealerId]) {
                             vehicleNew.push(item);
+                        }else{
+                            error++;
+                            errorObj.push({ _id :  mongoose.Types.ObjectId(), 
+                                error : item.DealerId + ' DealerId Is Already Belongs To other Provider. ',
+                                directory : ftpDetails.directory,
+                                rowNo : j });
                         }
                     });
-
-                    updateLastNextRun(ftpDetails,vehicleNew.length);
-                    // pass vehicle object & task Obj to insert into database
+                    updateLastNextRun(ftpDetails,vehicleNew.length, error, errorObj);
                     insertRecordsIntoDB(vehicleNew, dealerObj);
                 });
         
@@ -193,9 +201,18 @@ function readFileFromServer(ftpDetails){
     })   
 }
 
-function insertHistory(obj){
+function insertHistory(obj,errorObj){
     History.create(obj,function(err,result){
-        
+        if(!err)
+            insertErrors(errorObj,obj['_id']);
+
+    });
+}
+function insertErrors(errorObj,historyId){
+    errorObj.forEach(function(item,i){
+        errorObj[i]['historyId'] = historyId;
+    });
+    Error.create(errorObj,function(err,result){
     });
 }
 function getProviderHeaderFields(providerId,cb){
@@ -334,6 +351,15 @@ module.exports = {
             if(err) throw err;
             res.json(result);
         })
+    },
+    getErrors : function(req,res){
+        var historyId = req.query.historyId;
+        Error.find({historyId: historyId},function(err,result){
+            if(err)
+                res.json({result : 0, msg : 'No errors found'});
+            else
+                res.json({result : 1, error : result});
+        });
     },
     getProvidersScheduleData : function(req,res){
         Schedule.aggregate(

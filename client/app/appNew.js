@@ -38,6 +38,12 @@ angular.module('SimpleRESTWebsite', ['angular-storage', 'ui.router','ui.bootstra
                 controller: 'TaskCtrl',
                 controllerAs: 'task'
             })
+            .state('error', {
+                url: '/inbound/schedule/error/:providerName/:historyId',
+                templateUrl: 'app/templates/inbound/errors.tpl.html',
+                controller: 'FeedProviderCtrl',
+                controllerAs: 'feedprovider'
+            })
             .state('inbound/add',{
                 url : '/inbound/provider/feed/add',
                 templateUrl : 'app/templates/inbound/addProvider.tpl.html',
@@ -167,6 +173,9 @@ angular.module('SimpleRESTWebsite', ['angular-storage', 'ui.router','ui.bootstra
         service.getTodaysOutboundProvidersData = function(){
             return $http.get('/outbound/provider/data/processed/today') 
         }
+        service.getErrors = function(historyId){
+            return $http.get('/inbound/schedule/errors',{params : { historyId : historyId}})
+        }
     })
     .service('VehiclesModel', function ($http, ENDPOINT_URI) {
         var service = this,
@@ -291,10 +300,12 @@ angular.module('SimpleRESTWebsite', ['angular-storage', 'ui.router','ui.bootstra
             }
         };
     }])
-    .controller('FeedProviderCtrl', ['FeedProviderModel',function (FeedProviderModel) {
+    .controller('FeedProviderCtrl', ['FeedProviderModel','$scope', '$state', '$stateParams',function (FeedProviderModel,$scope,$state,$stateParams) {
         var feedprovider = this;
         feedprovider.providers = [];
         feedprovider.todaysProviders = [];
+        feedprovider.errors = [];
+        feedprovider.pname = '';
         feedprovider.getProvidersData = function(){
             FeedProviderModel.getProvidersData()
                     .then(function(response){
@@ -324,7 +335,16 @@ angular.module('SimpleRESTWebsite', ['angular-storage', 'ui.router','ui.bootstra
         feedprovider.utcToLocalTime = function(time){
             return moment(moment(moment(time).format('YYYY-MM-DD HH:mm:ss ')).toDate()).format('YYYY-MM-DD HH:mm:ss ');  
         }
-
+        feedprovider.getErrors = function(){
+            feedprovider.pname = $stateParams.providerName;
+            FeedProviderModel.getErrors($stateParams.historyId)
+                .then(function(response){
+                    if(response.data.result)
+                        feedprovider.errors= response.data.error;
+                    else
+                        alert(response.data.msg);
+                })
+        }
        
         feedprovider.hi = function(){
             alert('Hi');

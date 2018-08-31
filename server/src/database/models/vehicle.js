@@ -3,6 +3,7 @@ var mongoose = require('mongoose');
 var vehicleSchema = {
   schema: {
     _id: mongoose.Schema.Types.ObjectId,
+    historyId: mongoose.Schema.Types.ObjectId,
     /* providerName : {
       type : String
     },
