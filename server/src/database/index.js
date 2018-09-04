@@ -21,7 +21,7 @@ Database.loadDb = function(callback) {
   if (env.APP == "LOCAL") {
     mongoose.connect(env.DB_URL);
   } else {
-    mongoose.connect(env.DB_URL_LIVE, {useNewUrlParser: true} );
+    mongoose.connect(env.DB_URL_LIVE, {useNewUrlParser: false} );
   }
 
   mongoose.connection.on('connected', function() {
