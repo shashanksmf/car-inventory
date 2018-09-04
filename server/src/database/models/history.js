@@ -5,6 +5,7 @@ var historySchema = {
         _id: mongoose.Schema.Types.ObjectId,
         providerId: mongoose.Schema.Types.ObjectId,
         taskId: mongoose.Schema.Types.ObjectId,
+        scheduleId : mongoose.Schema.Types.ObjectId,
         providerName: {
             type: String,
         },

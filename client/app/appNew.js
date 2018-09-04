@@ -68,18 +68,39 @@ angular.module('SimpleRESTWebsite', ['angular-storage', 'ui.router','ui.bootstra
                 controller : 'FeedProviderCtrl',
                 controllerAs : 'feedprovider'
             })
-            .state('inbound/schedule',{
-              url : '/inbound/provider/schedule',
-              templateUrl : 'app/templates/inbound/schedule.tpl.html',
-              controller : 'ScheduleCtrl',
-              controllerAs : 'schedule'
+            .state('inbound/schedule', {
+                url: '/inbound/provider/schedule/s/:state/:scheduleId',
+                templateUrl: 'app/templates/inbound/schedule.tpl.html',
+                controller: 'ScheduleCtrl',
+                controllerAs: 'schedule',
+                params: {
+                    state : { squash: true, value: null },
+                    scheduleId : { squash: true, value: null }
+                }
             })
-            .state('outbound/schedule',{
-                url : '/outbound/provider/schedule',
-                templateUrl : 'app/templates/outbound/schedule.tpl.html',
-                controller : 'ScheduleCtrl',
-                controllerAs : 'schedule'
-              })
+            .state('inbound/schedule/history', {
+                url: '/inbound/provider/schedule/history/:scheduleId',
+                templateUrl: 'app/templates/inbound/scheduleHistory.tpl.html',
+                controller: 'ScheduleCtrl',
+                controllerAs: 'schedule'
+            })
+            .state('outbound/schedule', {
+                url: '/outbound/provider/schedule/s/:state/:scheduleId',
+                templateUrl: 'app/templates/outbound/schedule.tpl.html',
+                controller: 'ScheduleCtrl',
+                controllerAs: 'schedule',
+                params: {
+                    state : { squash: true, value: null },
+                    scheduleId : { squash: true, value: null }
+                }
+            })
+            .state('outbound/schedule/history', {
+                url: '/outbound/provider/schedule/history/:scheduleId',
+                templateUrl: 'app/templates/outbound/scheduleHistory.tpl.html',
+                controller: 'ScheduleCtrl',
+                controllerAs: 'schedule'
+            })
+              
             .state('inbound/schedule/list',{
                 url : '/inbound/provider/schedule/list',
                 templateUrl : 'app/templates/inbound/feedSchedule.tpl.html',
@@ -228,6 +249,10 @@ angular.module('SimpleRESTWebsite', ['angular-storage', 'ui.router','ui.bootstra
         service.getProviders = function(){
             return $http.get('/inbound/schedule/providers');
         }
+
+        service.getBothProviders = function(){
+            return $http.get('/outbound/schedule/providers');
+        }
         service.getProvidersScheduleData = function(){
             return $http.get('/inbound/schedule/providers/data');
         }
@@ -239,6 +264,15 @@ angular.module('SimpleRESTWebsite', ['angular-storage', 'ui.router','ui.bootstra
         }
         service.cancelOutboundJob = function(id){
             return $http.get('/outbound/schedule/job/cancel/' + id);
+        }
+        service.getScheduleHistory = function (scheduleId) {
+            return $http.get('/inbound/schedule/history/' + scheduleId);
+        }
+        service.getScheduleDetails = function (scheduleId) {
+            return $http.get('/inbound/schedule/details/' + scheduleId);
+        }
+        service.runSchedule = function(scheduleId){
+            return $http.get('/inbound/schedule/run/' + scheduleId);   
         }
     })
     .service('ProviderModel',function($http){
@@ -300,7 +334,13 @@ angular.module('SimpleRESTWebsite', ['angular-storage', 'ui.router','ui.bootstra
             }
         };
     }])
-    .controller('FeedProviderCtrl', ['FeedProviderModel','$scope', '$state', '$stateParams',function (FeedProviderModel,$scope,$state,$stateParams) {
+    .controller('FeedProviderCtrl', ['FeedProviderModel','$scope', '$state', '$stateParams','$rootScope',function (FeedProviderModel,$scope,$state,$stateParams,$rootScope) {
+        if(window.location.href.indexOf('outbound') >= 0 )
+            $rootScope.activeItem = 2;
+        else if(window.location.href.indexOf('inbound') >= 0)
+            $rootScope.activeItem = 1;
+        
+
         var feedprovider = this;
         feedprovider.providers = [];
         feedprovider.todaysProviders = [];
@@ -313,6 +353,7 @@ angular.module('SimpleRESTWebsite', ['angular-storage', 'ui.router','ui.bootstra
                         feedprovider.providers = response.data;
                     });
         }
+        
         feedprovider.getOutboundProvidersData = function(){
             FeedProviderModel.getOutboundProvidersData()
                     .then(function(response){
@@ -349,6 +390,7 @@ angular.module('SimpleRESTWebsite', ['angular-storage', 'ui.router','ui.bootstra
         feedprovider.hi = function(){
             alert('Hi');
         }
+        
 
     }])
     .controller('LoginCtrl', function ($rootScope, $state, LoginService, UserService) {
@@ -380,7 +422,8 @@ angular.module('SimpleRESTWebsite', ['angular-storage', 'ui.router','ui.bootstra
     })
     .controller('MainCtrl', function ($rootScope, $state, LoginService, UserService) {
         var main = this;
-        main.activeItem =  0;
+        // $rootScope.activeItem =  0;
+
         main.navList = [
             { href : '#/dashboard',title : 'Feed Dashboard'},
             { href : '#/inbound/dashboard',title : 'Inbound'},
@@ -388,7 +431,7 @@ angular.module('SimpleRESTWebsite', ['angular-storage', 'ui.router','ui.bootstra
             { href : '#/vehicle',title : 'Vehicle'}
         ];
         main.navClicked = function(index){
-           main.activeItem = index;
+            $rootScope.activeItem = index;
         }
         console.log("main controller")
         function logout() {
@@ -415,7 +458,8 @@ angular.module('SimpleRESTWebsite', ['angular-storage', 'ui.router','ui.bootstra
 
 
     })
-    .controller('appdashboardCtrl', ['TasksModel', function (TasksModel, $rootScope, $state, LoginService, UserService) {
+    .controller('appdashboardCtrl', ['TasksModel','$rootScope', function (TasksModel, $rootScope) {
+        $rootScope.activeItem = 0;
         var appdashboard = this;
         // tasks = [];
         var getAllTasks = function () {
@@ -443,7 +487,12 @@ angular.module('SimpleRESTWebsite', ['angular-storage', 'ui.router','ui.bootstra
         }
         getVehicles();
     }])
-    .controller('ScheduleCtrl', ['ScheduleModel', function (ScheduleModel) {
+    .controller('ScheduleCtrl', ['ScheduleModel','$rootScope','$stateParams', function (ScheduleModel, $rootScope, $stateParams) {
+        if(window.location.href.indexOf('outbound') >= 0 )
+            $rootScope.activeItem = 2;
+        else if(window.location.href.indexOf('inbound') >= 0)
+            $rootScope.activeItem = 1;
+
         $('#sDate,#eDate').datetimepicker();
         $('#sDate').on('dp.change', function(e){  
            /*  var incrementDay = moment(new Date(e.date));
@@ -461,6 +510,7 @@ angular.module('SimpleRESTWebsite', ['angular-storage', 'ui.router','ui.bootstra
             // $(this).data("DateTimePicker").hide();
             schedule.form.endDate = $('#eDate input').val(); 
         });
+        
         var schedule = this;
         schedule.loading = false;
         var date =  moment(new Date());
@@ -471,20 +521,25 @@ angular.module('SimpleRESTWebsite', ['angular-storage', 'ui.router','ui.bootstra
         schedule.form.endDate = date.add(1,'days').format('MM/DD/YYYY h:mm A');
         schedule.res = {};
         schedule.providers = [];
+        schedule.scheduleHistory = [];
+        schedule.state = $stateParams.state;
         schedule.scheduleJob = function() {
-            schedule.loading = true;
-            schedule.form.utcStartDate = moment.utc(new Date(schedule.form.startDate)).format('YYYY-MM-DD HH:mm:ss');       
-            console.log('Form Data ' ,  schedule.form);
-            ScheduleModel.scheduleJob(schedule.form)
-                .then(function (res) {
-                    schedule.loading = false;
-                    schedule.res = res.data;
-                    if(res.data.result){
-                        alert(res.data.msg);
-                        window.location.href = '#/inbound/provider/schedule/list';
-                    }
-                    
-                })
+            if ($stateParams.state != 'view') {
+
+                schedule.loading = true;
+                schedule.form.utcStartDate = moment.utc(new Date(schedule.form.startDate)).format('YYYY-MM-DD HH:mm:ss');       
+                console.log('Form Data ' ,  schedule.form);
+                ScheduleModel.scheduleJob(schedule.form)
+                    .then(function (res) {
+                        schedule.loading = false;
+                        schedule.res = res.data;
+                        if(res.data.result){
+                            alert(res.data.msg);
+                            window.location.href = '#/inbound/provider/schedule/list';
+                        }
+                        
+                    })
+                }
         };
 
         schedule.scheduleOutboundJob = function(){
@@ -506,12 +561,21 @@ angular.module('SimpleRESTWebsite', ['angular-storage', 'ui.router','ui.bootstra
         schedule.getProviders = function(){
             ScheduleModel.getProviders()
                 .then(function(res){
-                    console.log('response : ', res.data);
-                    
                     schedule.providers = res.data;
+                    if ($stateParams.state == 'view')
+                        schedule.getScheduleDetails($stateParams.scheduleId);
+                })
+        }
+        schedule.getBothProviders = function(){
+            ScheduleModel.getBothProviders()
+                .then(function(res){
+                    schedule.providers = res.data;
+                    if ($stateParams.state == 'view')
+                        schedule.getScheduleDetails($stateParams.scheduleId);
                 })
         }
         schedule.getProvidersScheduleData = function(){
+            // $rootScope.activeItem = 1;
             ScheduleModel.getProvidersScheduleData()
                 .then(function(res){
                     if(res.data.result)
@@ -521,6 +585,7 @@ angular.module('SimpleRESTWebsite', ['angular-storage', 'ui.router','ui.bootstra
                 })
         }
         schedule.getOutboundProvidersScheduleData = function(){
+            // $rootScope.activeItem = 2;
             ScheduleModel.getOutboundProvidersScheduleData()
             .then(function(res){
                 if(res.data.result)
@@ -559,11 +624,41 @@ angular.module('SimpleRESTWebsite', ['angular-storage', 'ui.router','ui.bootstra
             }   
 
             return intervals[value];
-          
        }
+       schedule.getScheduleHistory = function () {
+        ScheduleModel.getScheduleHistory($stateParams.scheduleId)
+            .then(function (response) {
+                schedule.scheduleHistory = response.data;
+            })
+    }
+
+    schedule.getScheduleDetails = function (scheduleId) {
+        ScheduleModel.getScheduleDetails(scheduleId)
+            .then(function (res) {
+                schedule.form.provider = schedule.form2.IProvider = res.data.providerId;
+                schedule.form2.OProvider = res.data.OProviderId;
+                schedule.form.startDate =  schedule.form2.startDate = moment(moment(moment(res.data.startDate).format('MM-DD-YYYY HH:mm:ss')).toDate()).format('MM-DD-YYYY hh:mm:ss A');
+                
+                schedule.form.interval = schedule.form2.interval = res.data.interval;
+                schedule.form.status = schedule.form2.status = res.data.isActive.toString();
+                schedule.form2.id = res.data.id;
+            })
+    }
+        schedule.runSchedule = function(scheduleId){
+            ScheduleModel.runSchedule(scheduleId)
+                .then(function(res){
+                    alert(res.data.msg);
+                    window.location.reload();
+                })
+        }
         
     }])
-    .controller('ProviderCtrl',['ProviderModel','$scope',function(ProviderModel,$scope){
+    .controller('ProviderCtrl',['ProviderModel','$rootScope','$scope',function(ProviderModel,$rootScope,$scope){
+        if(window.location.href.indexOf('outbound') >= 0 )
+            $rootScope.activeItem = 2;
+        else if(window.location.href.indexOf('inbound') >= 0)
+            $rootScope.activeItem = 1;
+
         var provider = this;
         provider.name = "AJay";
         provider.mapppedHeader = {};
@@ -702,9 +797,10 @@ angular.module('SimpleRESTWebsite', ['angular-storage', 'ui.router','ui.bootstra
         //     provider.isFTPTested = 
         // }
         getOrignalHeaders();
+       
     }])
-    .controller('DashboardCtrl', ['VehiclesModel', 'fileUpload', function (VehiclesModel, fileUpload) {
-
+    .controller('DashboardCtrl', ['VehiclesModel', 'fileUpload','$rootScope', function (VehiclesModel, fileUpload,$rootScope) {
+        $rootScope.activeItem = 3;
         var dashboard = this;
         $.validate({
             modules : 'security',

@@ -1,4 +1,4 @@
-<div class="container" ng-init="schedule.getProviders()">
+<div class="container" ng-init="schedule.getBothProviders()">
   <div class="row">
     <ul class="nav nav-pills">
       <li>
@@ -67,6 +67,12 @@
                     </div>
                 </div>
             </div>
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label">ID</label>
+                <div class="col-sm-10">
+                   <input type="text" class="form-control" ng-model="schedule.form2.id">
+                </div>
+            </div>
           </div>
           <div class="col-sm-6">
             <div class="">
@@ -75,14 +81,23 @@
               <hr>
             </div>
             <div class="form-group row">
-                <label class="col-sm-2 col-form-label">Provider</label>
+                <label class="col-sm-2 col-form-label">Outbound Provider</label>
                 <div class="col-sm-10">
-                    <select required class="form-control" ng-model="schedule.form2.provider">
+                    <select required class="form-control" ng-model="schedule.form2.OProvider">
                         <option value="">Select A Provider</option>
-                        <option value="{{ provider._id }}" ng-repeat="provider in schedule.providers">{{ provider.providerName}}</option>
+                        <option ng-if="provider.providerType == 2" value="{{ provider._id }}" ng-repeat="provider in schedule.providers">{{ provider.providerName}}</option>
                     </select>
                 </div>
             </div>
+            <!-- <div class="form-group row">
+                <label class="col-sm-2 col-form-label">Inbound Provider</label>
+                <div class="col-sm-10">
+                    <select class="form-control" ng-model="schedule.form2.IProvider">
+                        <option value="">Select A Provider</option>
+                        <option ng-if="provider.providerType == 1" value="{{ provider._id }}" ng-repeat="provider in schedule.providers">{{ provider.providerName}}</option>
+                    </select>
+                </div>
+            </div> -->
             <div class="form-group row">
                 <label class="col-sm-2 col-form-label">Aggregate ?</label>
                 <div class="col-sm-10">
@@ -126,7 +141,7 @@
             </div>
           </div>
         </div>
-        <div class="row">
+        <div ng-if="!schedule.state" class="row">
           <div class="col-md-3">
             <button class="btn btn-success" type="submit">Schedule Feed</button>
           </div>

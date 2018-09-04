@@ -4,6 +4,7 @@ var scheduleSchemas = {
     schema: {
         _id: mongoose.Schema.Types.ObjectId,
         providerId: mongoose.Schema.Types.ObjectId,
+        OProviderId: mongoose.Schema.Types.ObjectId,
         startDate: {
           type: Date
         },
@@ -34,6 +35,9 @@ var scheduleSchemas = {
         },
         type : {
           type : Number
+        },
+        id : {
+          type : String
         }
     },
     options : {

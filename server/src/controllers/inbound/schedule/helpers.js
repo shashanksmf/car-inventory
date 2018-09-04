@@ -55,6 +55,7 @@ function updateLastNextRun(ftpDetails,added,error,errorObj){
         obj['error'] = error;
         obj['added'] = added;
         obj['providerType'] = 1;
+        obj['scheduleId'] =  result._id;
         insertHistory(obj,errorObj);
         /* Provider.updateOne({_id : providerId},{nextRun : calculated.nextRunDate, lastRun : calculated.lastRunDate, added : added  }, function(err,result){ 
             // if(!err)
@@ -64,7 +65,7 @@ function updateLastNextRun(ftpDetails,added,error,errorObj){
     })
 }
 
-function reScheduleJob(job,isStarted = false){
+function    reScheduleJob(job,isStarted = false){
    // for re scheduling already  jobs which are vanished because server is restarted;
    
    // get local time with respect to utc time stored into db taken from client at time of scheduling
@@ -73,20 +74,22 @@ function reScheduleJob(job,isStarted = false){
     var startDate = moment(utcStartDate).format('YYYY-MM-DD HH:mm:ss');
 
     cronJobs[job._id] = schedule.scheduleJob({ start: new Date(startDate).getTime(), rule: job.expression },function(job){
-        
-        if(!cronJobs[job._id]['isStarted']){
-            cronJobs[job._id]['isStarted'] = true;
-            updateIsStartedFlag(job._id);
-        }
-       
-        getProviderFTPDetails(job.providerId,function(ftpDetails){
-            ftpDetails.jobId = job._id;
-            readFileFromServer(ftpDetails);
-        });
+            executeCronJob(job);
     }.bind(null,job));
     // cronJobs[job._id]['isStarted'] = isStarted;
 }
 
+function executeCronJob(job){
+    if(!cronJobs[job._id]['isStarted']){
+        cronJobs[job._id]['isStarted'] = true;
+        updateIsStartedFlag(job._id);
+    }
+   
+    getProviderFTPDetails(job.providerId,function(ftpDetails){
+        ftpDetails.jobId = job._id;
+        readFileFromServer(ftpDetails);
+    });
+}
 
 function insertRecordsIntoDB(vehicles, dealerObj){
     // inserting vehicle and task obj
@@ -235,7 +238,7 @@ function updateIsActiveFlag(jobId,cb){
     Schedule.updateOne({_id : jobId},{isActive : false}, function(err,result){   
         if(!err)  
            { 
-             cronJobs[jobId].cancel();
+             if(cronJobs[jobId]) cronJobs[jobId].cancel();
             // updating db isStarted field to false
              Schedule.updateOne({_id : jobId},{isStarted : false}, function(err,result){ 
                 if(!err)  {
@@ -346,6 +349,22 @@ module.exports = {
                 
         })
     },
+    runCronJob : function(req,res){
+        var scheduleId = req.params.scheduleId;
+        Schedule.find({ _id : scheduleId, isActive: true, type : 1 },function(err,result){
+            var job = result[0];
+            job.startDate = moment.utc().format('YYYY-MM-DD HH:mm:ss');
+            // cronJobs[job._id].cancel(); delete cronJobs[job._id];
+            executeCronJob(job);
+            if(err) throw err;
+            if(job.isStarted)
+                reScheduleJob(job,true);
+            else
+                reScheduleJob(job);
+
+            res.json({result : 1, msg : 'Schedule Started Successfully!'});
+        })
+    },
     getproviders : function(req,res){
         Provider.find({providerType : 1},function(err,result){
             if(err) throw err;
@@ -386,6 +405,20 @@ module.exports = {
                 else
                     res.json({result : false, msg : 'Error While Fetching Schedule Data!'});
             });
-        
+    },
+    getScheduleHistory : function(req,res){
+        var scheduleId = req.params.scheduleId;
+
+        History.find({scheduleId : scheduleId},function(err,result){
+            res.json(result);    
+        })
+
+    },
+    getScheduleDetails : function(req,res){
+        var scheduleId = req.params.scheduleId;
+
+        Schedule.findOne({_id : scheduleId},function(err,result){
+            res.json(result);
+        })
     }
 };

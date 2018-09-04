@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "angularjs-bootstrap-datetimepicker": "^1.1.4",
+    "async": "^2.6.1",
     "body-parser": "^1.18.3",
     "compression": "^1.0.3",
     "cors": "^2.5.2",

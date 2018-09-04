@@ -66,6 +66,7 @@ module.exports = {
             // console.log('Files ', list);
             
             c.end();
+            list.splice(0,0,{type : 'd', name : './'});
             res.json({
               result: 1,
               msg: 'Connection Successfully Established !',
