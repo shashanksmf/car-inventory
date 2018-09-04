@@ -699,7 +699,11 @@ angular.module('SimpleRESTWebsite', ['angular-storage', 'ui.router','ui.bootstra
         provider.submitProviderForm = function(){
            provider.form.headers = provider.mapppedHeader;
            if(provider.isFTPTested){
-                ProviderModel.submitForm(provider.form)
+                var extension = provider.form.directory.split('.').pop(); 
+                if(extension != 'csv' && extension != 'txt'){
+                    alert('Invalid File Type, Only CSV And Txt file suported');
+                }else{
+                    ProviderModel.submitForm(provider.form)
                         .then(function(response){
                             var result = response.data;
                             if(result.result){
@@ -709,9 +713,10 @@ angular.module('SimpleRESTWebsite', ['angular-storage', 'ui.router','ui.bootstra
                                 alert(result.msg);
                             }
                         });
-                }else{
-                    alert('Connect To FTP Server First!')
                 }
+            }else{
+                alert('Connect To FTP Server First!')
+            }
         }
       
         provider.submitOutboundProviderForm = function(){
@@ -758,16 +763,21 @@ angular.module('SimpleRESTWebsite', ['angular-storage', 'ui.router','ui.bootstra
         provider.getProviderHeaders =  function(){
             if(provider.isFTPTested){
                if(provider.form.directory != undefined ){
-                provider.headersFetched = false;
-                ProviderModel.getProviderHeaders(provider.form)
-                .then(function(res){
-                    provider.headersFetched = true;
-                   if(res.data.result){
-                        provider.providerHeaders = res.data.headers;
-                        $('#myModal').modal('hide');
-                    }else
-                        alert(res.data.msg);
-                });   
+                var extension = provider.form.directory.split('.').pop(); 
+                   if(extension != 'csv' && extension != 'txt'){
+                        alert('Invalid File Type, Only CSV And Txt file suported');
+                   }else{
+                    provider.headersFetched = false;
+                    ProviderModel.getProviderHeaders(provider.form)
+                    .then(function(res){
+                        provider.headersFetched = true;
+                       if(res.data.result){
+                            provider.providerHeaders = res.data.headers;
+                            $('#myModal').modal('hide');
+                        }else
+                            alert(res.data.msg);
+                    }); 
+                   }  
                }else{
                 alert('Select FTP Directory And Filename!');
                }
