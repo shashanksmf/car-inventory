@@ -36,7 +36,7 @@
                               <td>{{ (scheduleHistory.lastRun)? schedule.utcToLocalTime(scheduleHistory.lastRun):'N/A' }}</td>
                               <td>{{ scheduleHistory.added }}</td>
                               <td>N/A</td>
-                              <td><a href="#/inbound/schedule/error/{{ provider.providerName + '/' + provider._id}}">{{ scheduleHistory.error}}</a></td>
+                              <td><a href="#/inbound/schedule/error/{{ scheduleHistory.providerName + '/' + scheduleHistory._id}}">{{ scheduleHistory.error}}</a></td>
                           </tr>
                     </tbody>
                 </table>
