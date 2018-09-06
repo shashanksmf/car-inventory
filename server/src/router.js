@@ -12,7 +12,7 @@ Routes.api = function() {
   
   app.use('/inbound', require('./controllers/inbound').router);
   app.use('/outbound', require('./controllers/outbound').router);
-  // app.use('/provider', require('./controllers/provider').router);
+  app.use('/dealership', require('./controllers/dealership').router);
   app.use('/task', require('./controllers/task').router);
   app.use('/vehicle', require('./controllers/vehicle').router);
   app.use('/ftp', require('./controllers/ftp').router);

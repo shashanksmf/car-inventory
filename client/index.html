@@ -19,6 +19,7 @@
 
     <link href="//cdn.rawgit.com/Eonasdan/bootstrap-datetimepicker/e8bddc60e73c1ec2475f827be36e1957af72e2ea/build/css/bootstrap-datetimepicker.css"
         rel="stylesheet">
+    <!-- <link rel="stylesheet" href="./app/assets/css/dataTable.css"> -->
     <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.9.0/moment-with-locales.js"></script>
     <!-- <script src="app/assets/js/moment-timezone.js"></script> -->
     <script src="//cdn.rawgit.com/Eonasdan/bootstrap-datetimepicker/e8bddc60e73c1ec2475f827be36e1957af72e2ea/src/js/bootstrap-datetimepicker.js"></script>
@@ -31,6 +32,10 @@
     <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.19/angular-animate.min.js"></script>
     <script src="https://rawgit.com/weblogng/weblogng-client-javascript/master/release/logger.js"></script>
     <script src="https://rawgit.com/weblogng/angular-weblogng/master/dist/angular-weblogng.js"></script>
+    <!-- <script src="./app/assets/js/dataTable.min.js"></script> -->
+
+    <link rel="stylesheet"; href="https://unpkg.com/ng-table@2.0.2/bundles/ng-table.min.css">
+    <script src="https://unpkg.com/ng-table@2.0.2/bundles/ng-table.min.js"></script>
 </head>
 
 <body ng-controller="MainCtrl as main" ng-cloak>
@@ -40,27 +45,28 @@
         </button>
     </nav> -->
     <nav class="navbar navbar-default">
-            <div class="container-fluid">
-              <div class="navbar-header">
-                <a class="navbar-brand" href="#">Dealer Expo</a>
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span> 
-                  </button>
-              </div>
-              <ul class="nav navbar-nav collapse navbar-collapse"  id="myNavbar">
-                  <li class="{{ (activeItem == $index )?'active' : '' }}" ng-repeat="item in main.navList" ng-click="main.navClicked($index)"><a href="{{item.href}}"> {{ item.title}}</a></li>
-                <!-- <li><a href="#/dashboard">Feed Dashboard</a></li>
-                <li class="active"><a href="#/inbound/dashboard">Inbound</a></li>
-                <li><a href="#/outbound/dashboard">Outbound</a></li>
-                <li><a href="#/vehicle">Vehicle</a></li> -->
-                <button ng-if="main.currentUser" class="btn btn-default navbar-btn" ng-click="main.logout()">Logout
-                        <strong>{{main.currentUser.email}}</strong>
-                    </button>
-              </ul>
+        <div class="container-fluid">
+            <div class="navbar-header">
+            <a class="navbar-brand" href="#">{{(main.navType == 2)?'Carweek Dealership':'Dealer Expo'}}</a>
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span> 
+                </button>
             </div>
-          </nav>
+            <ul class="nav navbar-nav collapse navbar-collapse"  id="myNavbar">
+                <li class="{{ (activeItem == $index )?'active' : '' }}" ng-repeat="item in main.navBar" ng-click="main.navClicked($index)"><a href="{{item.href}}"> {{ item.title}}</a></li>
+            <!-- <li><a href="#/dashboard">Feed Dashboard</a></li>
+            <li class="active"><a href="#/inbound/dashboard">Inbound</a></li>
+            <li><a href="#/outbound/dashboard">Outbound</a></li>
+            <li><a href="#/vehicle">Vehicle</a></li> -->
+            <button ng-if="main.currentUser" class="btn btn-default navbar-btn" ng-click="main.logout()">Logout
+                    <strong>{{main.currentUser.email}}</strong>
+                </button>
+            </ul>
+        </div>
+    </nav>
+
     <div class="container-fluid">
         <div class="">
             <div ui-view></div>

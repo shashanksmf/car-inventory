@@ -7,6 +7,7 @@ const schedules = require('./schedules');
 const history = require('./history');
 const dealer = require('./dealers');
 const error = require('./errors');
+const dealership = require('./dealerships');
 
 var Schema = {};
 var schemaTemplate = {};
@@ -24,6 +25,7 @@ Schema.loadSchemas = function(callback) {
   var historySchema = new mongoose.Schema(history.schema, history.options);
   var dealerSchema = new mongoose.Schema(dealer.schema, dealer.options);
   var errorSchema = new mongoose.Schema(error.schema, error.options);
+  var dealershipSchema = new mongoose.Schema(dealership.schema, dealership.options);
 
 
   schemaTemplate[tasks.options.collection] = mongoose.model('tasksModal', taskSchema);
@@ -34,6 +36,7 @@ Schema.loadSchemas = function(callback) {
   schemaTemplate[history.options.collection] = mongoose.model('historyModal', historySchema);
   schemaTemplate[dealer.options.collection] = mongoose.model('dealerModal', dealerSchema);
   schemaTemplate[error.options.collection] = mongoose.model('errorModal', errorSchema);
+  schemaTemplate[dealership.options.collection] = mongoose.model('dealershipModal', dealershipSchema);
 
   
   callback();
