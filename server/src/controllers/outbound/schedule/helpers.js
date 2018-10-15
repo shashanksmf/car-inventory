@@ -350,9 +350,9 @@ module.exports = {
 //    scheduleObj['endDate'] = req.body.endDate;
        scheduleObj['interval'] = req.body.interval;
        if(scheduleObj['interval'] == 100)
-         scheduleObj['expression'] = '0 */1 * * * * ';
+       scheduleObj['expression'] = '0 */1 * * * * ';
         else
-        scheduleObj['expression'] = '0 0 */' + req.body.interval + ' * * *';
+       scheduleObj['expression'] = '0 0 */' + req.body.interval + ' * * *';
 
        scheduleObj['isActive'] = req.body.status;
        scheduleObj['type'] = 2;
