@@ -7,7 +7,7 @@ var Schedule = Database.getcollectionSchema('schedule');
 var Provider = Database.getcollectionSchema('provider');
 var History = Database.getcollectionSchema('history');
 var Vehicle = Database.getcollectionSchema('vehicle');
-
+var OutboundAdded = Database.getcollectionSchema('outboundAdded')
 var path = require('path');
 var Client = require('ftp');
 var mongoose = require('mongoose');
@@ -33,7 +33,7 @@ function calculateNextLastRun(scheduleObj,added = 0){
     });
     return output;
 }
-function updateLastNextRun(ftpDetails,added = 0){
+function updateLastNextRun(ftpDetails,addedIds,directory,added = 0){
     Schedule.findOne({_id : ftpDetails.jobId},function(err,result){
         var calculated = calculateNextLastRun(result,added);
         var obj = {};
@@ -43,8 +43,11 @@ function updateLastNextRun(ftpDetails,added = 0){
         obj['providerId'] = ftpDetails._id;
         obj['providerName'] = ftpDetails.providerName;
         obj['type'] = 2;
-        obj['added'] = added;
+        obj['added'] = addedIds.length;
         obj['providerType'] = 2;
+        obj['addedIds'] = addedIds;
+        let arr = directory.split('/');
+        obj['filename'] = arr[arr.length - 1];
         obj['scheduleId'] = result._id;
         insertHistory(obj);
     })
@@ -87,10 +90,33 @@ async function executeCronJob(job){
     uploadAllVehicles(job);
    }
 }
+function getProviderHeaderFields(providerId,cb){
+    Provider.findOne({_id: providerId},function(err,result){
+        if(!err){
+            delete result.headersMapped['$init'];
+            cb(result.headersMapped);
+        }
+            
+    });
+}
+function insertRecordsIntoDB(vehicles,providerDetails,directory){
+    // inserting vehicle and task obj
+    OutboundAdded.create(vehicles, function (err, vehicles) {
+            if (err) return err;
+            let addedIds = [];
+            if(vehicles && vehicles.length)
+                vehicles.forEach(vehicle => {
+                    addedIds.push(vehicle._id);
+                })
+            updateLastNextRun(providerDetails,addedIds,directory)
+      });
+}
+
 function readFileFromServer(ftpDetails,OProviderId,id){
    return new Promise((success, error)=>{
     var c = new Client();
-    var added = 0;
+    var added = [];
+    getProviderHeaderFields(ftpDetails._id,function(providerHeaders){
 
         c.connect({
             host: ftpDetails.ftpHost,
@@ -106,49 +132,76 @@ function readFileFromServer(ftpDetails,OProviderId,id){
                   console.log('File Download Error : ', err);
                   
               }
-    
+              csv.fromStream(stream, {
+                headers: true,
+                ignoreEmpty: true,
+              })
+                .on("data",  function(data2) {
+                    
+                    // added.push(data);
+                    var data = {};
+                    for(var key in data2){
+                        data[key.replace(/['"]+/g, '').trim()] = data2[key];
+                    }
+                    var vehicleObj = {};
+                    for(var key in providerHeaders){
+                        if(providerHeaders[key]){
+                            var value = data[providerHeaders[key]];
+                            vehicleObj[headers[key]] = value;
+                        }
+                    }
+                    vehicleObj['_id'] = new mongoose.Types.ObjectId();
+
+                    added.push(vehicleObj);
+
+                }).on("end", async function() {
+                    var filename =  new Date().getTime() + '.csv';   // temprary unqueue filename 
+                    /*  // extracting orignal filename from path
+                    var orginalFilename = ftpDetails.directory.replace(/^.*[\\\/]/, '');  */
+
+                    // localpath of file to be uploaded 
+                    var localPath = path.join(__baseDir , 'inboundFiles' ,filename);
+                    /*
+                    *  Adding new column (id) and its values into csv file  
+                    */
+                    var modifiedStream = await modifyFile(stream,id);
+                    /* Writing file into temprary folder */
+                    let fileResult
+                    try{
+                        fileResult = fs.writeFileSync(localPath,modifiedStream);
+                        /* Fetching Outbound provider's FTP Details  */
+                        let providerDetails;
+                        try{
+                            providerDetails = await getProviderFTPDetails(OProviderId);
+                            providerDetails.jobId = ftpDetails.jobId;   // 
+                            
+                            let uploadedFile;
+                            try{
+                                /* Uploading file which is downloaded */
+                                uploadedFile = await uploadFile(providerDetails,localPath,filename);
+                                insertRecordsIntoDB(added,providerDetails,ftpDetails.directory)
+                            }catch(err){
+                                error('File Upload Error : ', err);
+                            }finally{
+                                
+                            }
+                        }catch(err){
+                            error('Error While Get Outbound Provider Info :  ', err);
+                        }
+                    }catch(err){
+                        error('Error FS Write CSV', err);
+                    }
+                });
+
               stream.once('close', function() {c.end();});
 
-              var filename =  new Date().getTime() + '.csv';   // temprary unqueue filename 
-             /*  // extracting orignal filename from path
-              var orginalFilename = ftpDetails.directory.replace(/^.*[\\\/]/, '');  */
-
-              // localpath of file to be uploaded 
-              var localPath = path.join(__baseDir , 'inboundFiles' ,filename);
-              /*
-               *  Adding new column (id) and its values into csv file  
-               */
-              var modifiedStream = await modifyFile(stream,id);
-              /* Writing file into temprary folder */
-              let fileResult
-              try{
-                  fileResult = fs.writeFileSync(localPath,modifiedStream);
-                  /* Fetching Outbound provider's FTP Details  */
-                  let providerDetails;
-                  try{
-                      providerDetails = await getProviderFTPDetails(OProviderId);
-                      providerDetails.jobId = ftpDetails.jobId;   // 
-                      
-                      let uploadedFile;
-                      try{
-                      /* Uploading file which is downloaded */
-                      uploadedFile = await uploadFile(providerDetails,localPath,filename);
-                      }catch(err){
-                         error('File Upload Error : ', err);
-                      }finally{
-                         
-                      }
-                  }catch(err){
-                     error('Error While Get Outbound Provider Info :  ', err);
-                  }
-              }catch(err){
-               error('Error FS Write CSV', err);
-              }
+              
             });
           });
           c.on('error', function(err) {
             error("err", err)
           });
+        })
    })
 }
 
@@ -191,7 +244,7 @@ function uploadFile(ftpDetails,localPath,filename){
                     error(err);
                 }
                 else{
-                    updateLastNextRun(ftpDetails);
+                    
                     /*  Deleting Temprary stored file */
                     fs.unlink(localPath,(err) => {
                         if(!err)

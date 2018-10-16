@@ -17,31 +17,31 @@
                     </h4>
                     <hr>
 
-              <div class="table-responsive">
-                <table class="table table-striped table-bordered">
-                    <thead>
-                        <tr>
-                            <th>Provider</th>
-                            <th>Run Time</th>
-                            <th>Added</th>
-                            <th>Updated</th>
-                            <th>Error</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr ng-if="feedprovider.todaysProviders[0].providerName == undefined" >
-                                <td style="text-align: center" colspan="9">No Data Found</td>
-                            </tr>
-                      <tr ng-repeat="provider in feedprovider.todaysProviders">
-                              <td>{{ provider.providerName }}</td>
-                              <td>{{ (provider.lastRun)? feedprovider.utcToLocalTime(provider.lastRun):'N/A' }}</td>
-                              <td>{{ provider.added}}</td>
-                              <td>N/A</td>
-                              <td><a href="#/inbound/schedule/error/{{ provider.providerName + '/' + provider._id}}">{{ provider.error}}</a></td>
-                          </tr>
-                    </tbody>
-                </table>
-              </div>
+                    <div class="table-responsive">
+                        <table class="table table-striped table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Provider</th>
+                                    <th>Run Time</th>
+                                    <th>Added</th>
+                                    <th>Updated</th>
+                                    <th>Error</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-if="feedprovider.todaysProviders[0].providerName == undefined" >
+                                        <td style="text-align: center" colspan="9">No Data Found</td>
+                                    </tr>
+                            <tr ng-repeat="provider in feedprovider.todaysProviders">
+                                    <td>{{ provider.providerName }}</td>
+                                    <td>{{ (provider.lastRun)? feedprovider.utcToLocalTime(provider.lastRun):'N/A' }}</td>
+                                    <td><a href="#/inbound/schedule/added/{{ provider._id}}"> {{ provider.added }} View</a></td>
+                                    <td>N/A</td>
+                                    <td><a href="#/inbound/schedule/error/{{ provider.providerName }}/{{ provider._id}}">{{ provider.error}} View</a></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
                 <div class="col-md-6">
                         <h4>

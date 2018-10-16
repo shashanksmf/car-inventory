@@ -6,6 +6,7 @@ var Database = require("./../../database");
 var Vehicle = Database.getcollectionSchema('vehicle');
 var Task = Database.getcollectionSchema('task');
 var TestData = Database.getcollectionSchema('testData');
+var History = Database.getcollectionSchema('history');
 
 var readChunk = require('read-chunk');
 var fileType = require('file-type');
@@ -27,11 +28,14 @@ module.exports = {
             type = fileType(buffer);
             var vehicles = [];
             var taskObj = {};
-            taskObj['_id'] = new mongoose.Types.ObjectId();
-            taskObj['startTime'] = Date.now();
+            // taskObj['_id'] = new mongoose.Types.ObjectId();
+            // taskObj['startTime'] = Date.now();
+            taskObj['lastRun'] = Date.now();
             var headers = {};
             var isFirstLine = true;
-            taskObj['file'] = file.name;
+            // taskObj['file'] = file.name;
+            taskObj['filename'] = file.name;
+
 
             csv
                 .fromString(buffer.toString(), {
@@ -53,7 +57,7 @@ module.exports = {
                 .on('end', function () {
                     Vehicle.create(vehicles, function (err, result) {
                         if (err) return err;
-                        taskObj['success'] = vehicles.length;
+                     /*    taskObj['success'] = vehicles.length;
                         taskObj['endTime'] = Date.now();
 
                         Task.create(taskObj, function (err, result) {
@@ -68,7 +72,33 @@ module.exports = {
                             })
                             if (err) return err;
                             res.send(vehicles.length + ' vehicles have been successfully uploaded.');
-                        })
+                        }) */
+
+                        let addedIds = [];
+                        result.forEach(vehicle => {
+                            addedIds.push(vehicle._id);
+                        });
+
+                        taskObj['_id'] = new mongoose.Types.ObjectId();
+                        taskObj['nextRun'] = Date.now();
+                        taskObj['type'] = 3;
+                        taskObj['error'] = 0;
+                        taskObj['added'] = vehicles.length;
+                        // taskObj['providerType'] = 1;
+                        taskObj['addedIds'] = addedIds;
+                        History.create(taskObj,function(err,result){
+                            if(err)
+                               return;
+                            var testObj = {};
+                            testObj["_id"] = mongoose.Types.ObjectId();
+                            testObj['headers'] = headers;
+                            testObj["taskID"] = taskObj['_id'];
+
+                            TestData.create(testObj, function (err, result) {
+                                if (err) throw err;
+                            })
+                    
+                        });
                     });
                 });
         })

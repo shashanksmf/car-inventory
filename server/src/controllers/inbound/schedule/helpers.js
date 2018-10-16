@@ -9,6 +9,8 @@ var History = Database.getcollectionSchema('history');
 var Vehicle = Database.getcollectionSchema('vehicle');
 var Dealer = Database.getcollectionSchema('dealer');
 var Error = Database.getcollectionSchema('error');
+var OutboundAdded = Database.getcollectionSchema('outboundAdded')
+
 var csv = require('fast-csv');
 var Client = require('ftp');
 var mongoose = require('mongoose');
@@ -35,7 +37,7 @@ function calculateNextLastRun(scheduleObj,added = 0){
     });
     return output;
 }
-function updateLastNextRun(ftpDetails,added,error,errorObj){
+function updateLastNextRun(ftpDetails,added,error,errorObj,addedIds){
     Schedule.findOne({_id : ftpDetails.jobId},function(err,result){
         // var hours = result.interval;
         // var lastRunDate = new Date(moment.utc(new Date()).format(')).getTime();
@@ -55,7 +57,10 @@ function updateLastNextRun(ftpDetails,added,error,errorObj){
         obj['error'] = error;
         obj['added'] = added;
         obj['providerType'] = 1;
-        obj['scheduleId'] =  result._id;
+        obj['scheduleId'] = result._id;
+        obj['addedIds'] = addedIds;
+        let arr = ftpDetails.directory.split('/');
+        obj['filename'] = arr[arr.length - 1];
         insertHistory(obj,errorObj);
         /* Provider.updateOne({_id : providerId},{nextRun : calculated.nextRunDate, lastRun : calculated.lastRunDate, added : added  }, function(err,result){ 
             // if(!err)
@@ -91,11 +96,18 @@ function executeCronJob(job){
     });
 }
 
-function insertRecordsIntoDB(vehicles, dealerObj){
+function insertRecordsIntoDB(vehicles, dealerObj,updateLNRObj){
     // inserting vehicle and task obj
-    Vehicle.create(vehicles, function (err, result) {
+    Vehicle.create(vehicles, function (err, vehicles) {
             if (err) return err;
+            let addedIds = [];
+            if(vehicles && vehicles.length)
+                vehicles.forEach(vehicle => {
+                    addedIds.push(vehicle._id);
+                })
+            updateLastNextRun(updateLNRObj.ftpDetails,updateLNRObj.added, updateLNRObj.error, updateLNRObj.errorObj,addedIds)
       });
+      
     Dealer.create(dealerObj, function(err, result){
         if (err) throw err;
     })
@@ -191,8 +203,9 @@ function readFileFromServer(ftpDetails){
                                 rowNo : j });
                         }
                     });
-                    updateLastNextRun(ftpDetails,vehicleNew.length, error, errorObj);
-                    insertRecordsIntoDB(vehicleNew, dealerObj);
+                    // updateLastNextRun(ftpDetails,vehicleNew.length, error, errorObj);
+                    const updateLNRObj = { ftpDetails, added : vehicleNew.length,error,errorObj}
+                    insertRecordsIntoDB(vehicleNew, dealerObj,updateLNRObj);
                 });
         
             });
@@ -379,6 +392,40 @@ module.exports = {
             else
                 res.json({result : 1, error : result});
         });
+    },
+    getAdded : function(req,res){
+        var historyId = req.query.historyId;
+        if(historyId){
+            History.findOne({_id:  historyId},function(err,result){
+                if(err)
+                    res.json({result : 0, msg : 'No History Found'})
+                if(result){
+                    Vehicle.find({_id : { $in : result.addedIds}}).lean()
+                        .then(vehicles => {
+                            if(vehicles.length)
+                                res.json({result : 1, addeds : vehicles});
+                            else{
+                                OutboundAdded.find({_id : { $in : result.addedIds}}).lean()
+                                    .then(vehicles => {
+                                        if(vehicles.length)
+                                            res.json({result : 1, addeds : vehicles});
+                                        else
+                                            res.json({result : 0, msg : ' No Vehicles Found!'});
+
+                                    }).catch(error => {
+                                        res.json({result : 0 , msg : 'No Vehicles Found!'});
+                                    })
+                            }
+                        }).catch(error => {
+                                res.json({result : 0 , msg : 'No Vehicles Found!'});
+                        })
+                }else{
+                    res.json({result : 0, msg : ' No Vehicles Found!'});
+                }  
+            });
+        }else{
+            res.json({result : 0, msg : 'Invalid Input'})
+        }
     },
     getProvidersScheduleData : function(req,res){
         Schedule.aggregate(

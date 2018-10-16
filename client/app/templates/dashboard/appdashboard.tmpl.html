@@ -1,40 +1,124 @@
+<div class="container" ng-init="appdashboard.getTasksData()">
 
-<div class="container">
-
-  <h3 class="page-heading">Dashboard</h3>
+ 
   <div ng-view></div>
 
   <div class="container">
-    <h5 class="bg-primary dashboard-table-heading">Recent Reporting Tasks</h5>
-    <div class="table-wrapper container-fluid">
-      <table class="inbound-outbound-table table">
-        <thead>
-          <tr>
-            <th>Task ID</th>
-            <th>Type</th>
-            <th>Start Time</th>
-            <th>End Time</th>
-            <th>Success</th>
-            <th>Errors</th>
-            <!-- <th>3xx (redirect)</th> -->
-            <!-- <th>Other</th> -->
-          </tr>
-        </thead>
-        <tbody>
-          <tr ng-if="appdashboard.tasks[0].file == undefined" >
+    <div class="row">
+        <h4>
+            Recent Reporting Tasks
+          </h4>
+          <hr>
+
+          <div class="table-responsive">
+            <table class="table table-striped table-bordered">
+          <thead>
+            <tr>
+              <th>Task ID</th>
+              <th>Type</th>
+              <th>Start Time</th>
+              <th>End Time</th>
+              <th>Success</th>
+              <th>Errors</th>
+              <!-- <th>3xx (redirect)</th> -->
+              <!-- <th>Other</th> -->
+            </tr>
+          </thead>
+          <tbody>
+            <tr ng-if="!appdashboard.tasks.length">
               <td style="text-align: center" colspan="9">No Task Found</td>
-          </tr>
-          <tr ng-repeat="task in appdashboard.tasks">
-            <td>{{$index +1 }}</td>
-            <td><a href="#/task/{{ task._id }}">{{ task.file}}</a></td>
-            <td>{{ task.startTime}}</td>
-            <td>{{ task.endTime }}</td>
-            <td>{{ task.success }}</td>
-            <td>{{ task.error }}</td>
-          </tr>
-        </tbody>
-      </table>
+            </tr>
+            <!-- <tr ng-repeat="task in appdashboard.tasks">
+              <td>{{$index +1 }}</td>
+              <td>
+                <a href="#/task/{{ task._id }}">{{ task.file}}</a>
+              </td>
+              <td>{{ appdashboard.utcToLocalTime(task.startTime)}}</td>
+              <td>{{ appdashboard.utcToLocalTime(task.endTime) }}</td>
+              <td>{{ task.success }}</td>
+              <td>{{ task.error }}</td>
+            </tr> -->
+            <tr ng-repeat="task in appdashboard.tasks">
+              <td>{{$index +1 }}</td>
+              <td>{{ task.filename}}</td>
+              <td>{{ appdashboard.utcToLocalTime(task.lastRun)}}</td>
+              <td>{{ (task.type == 3)?appdashboard.utcToLocalTime(task.nextRun):'+1 Min' }}</td>
+              <td><a href="#/inbound/schedule/added/{{ task._id }}"> {{ task.added }} View</a></td>
+              <td><a href="#/inbound/schedule/error/{{ task.providerName }}/{{ task._id}}">{{ task.error}} View</a></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
+    <!-- <div class="row">
+      <div class="col-md-12">
+        <div class="col-md-6">
+          <h4>
+            Inbound Schedule Processed Today
+          </h4>
+          <hr>
+
+          <div class="table-responsive">
+            <table class="table table-striped table-bordered">
+              <thead>
+                <tr>
+                  <th>Provider</th>
+                  <th>Run Time</th>
+                  <th>Added</th>
+                  <th>Updated</th>
+                  <th>Error</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr ng-if="!appdashboard.todaysProviders.length">
+                  <td style="text-align: center" colspan="9">No Data Found</td>
+                </tr>
+                <tr ng-repeat="provider in appdashboard.todaysProviders">
+                  <td>{{ provider.providerName }}</td>
+                  <td>{{ (provider.lastRun)? appdashboard.utcToLocalTime(provider.lastRun):'N/A' }}</td>
+                  <td>
+                    <a href="#/inbound/schedule/added/{{ provider._id}}"> {{ provider.added }} View</a>
+                  </td>
+                  <td>N/A</td>
+                  <td>
+                    <a href="#/inbound/schedule/error/{{ provider.providerName + '/' + provider._id}}">{{ provider.error}} View</a>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <h4>
+            Outbound Schedule Processed Today
+          </h4>
+          <hr>
+
+          <table class="table table-striped table-bordered">
+            <thead>
+              <tr>
+                <th>Provider</th>
+                <th>Run Time</th>
+                <th>File Error Count</th>
+                <th>File Error Percentage %</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr ng-if="!appdashboard.todaysOutboundProviders.length">
+                <td style="text-align: center" colspan="9">No Data Found</td>
+              </tr>
+              <tr ng-repeat="provider in appdashboard.todaysOutboundProviders">
+                <td>{{ provider.providerName }}</td>
+                <td>{{ (provider.lastRun)? appdashboard.utcToLocalTime(provider.lastRun):'N/A' }}</td>
+                <td>N/A</td>
+                <td>N/A</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+    </div> -->
   </div>
 
 </div>
@@ -45,18 +129,19 @@
     padding: 10px;
     margin-bottom: 0;
   }
-.table-wrapper {
-  border:1px solid #428bca;
-}
 
-.inbound-outbound-table {
-  margin-top: 20px;
-}
+  .table-wrapper {
+    border: 1px solid #428bca;
+  }
 
-table.table tbody tr td,
-table.table thead tr th,
-table.table thead {
-  border:2px solid #ddd;
+  .inbound-outbound-table {
+    margin-top: 20px;
+  }
+
+  table.table tbody tr td,
+  table.table thead tr th,
+  table.table thead {
+    border: 2px solid #ddd;
   }
 
   .page-heading {

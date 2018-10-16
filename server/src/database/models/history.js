@@ -32,6 +32,12 @@ var historySchema = {
         },
         type: {
             type: Number
+        },
+        addedIds : {
+            type : Array
+        },
+        filename : {
+            type : String
         }
 
 

@@ -56,6 +56,12 @@ angular.module('SimpleRESTWebsite', ['angular-storage', 'ui.router', 'ui.bootstr
                 controller: 'FeedProviderCtrl',
                 controllerAs: 'feedprovider'
             })
+            .state('added', {
+                url: '/inbound/schedule/added/:historyId',
+                templateUrl: 'app/templates/inbound/added.tpl.html',
+                controller: 'FeedProviderCtrl',
+                controllerAs: 'feedprovider'
+            })
             .state('inbound/add', {
                 url: '/inbound/provider/feed/add',
                 templateUrl: 'app/templates/inbound/addProvider.tpl.html',
@@ -208,6 +214,9 @@ angular.module('SimpleRESTWebsite', ['angular-storage', 'ui.router', 'ui.bootstr
         }
         service.getErrors = function (historyId) {
             return $http.get('/inbound/schedule/errors', { params: { historyId: historyId } })
+        } 
+        service.getAdded = function (historyId) {
+            return $http.get('/inbound/schedule/added', { params: { historyId: historyId } })
         }
     })
     .service('VehiclesModel', function ($http, ENDPOINT_URI) {
@@ -366,6 +375,7 @@ angular.module('SimpleRESTWebsite', ['angular-storage', 'ui.router', 'ui.bootstr
         feedprovider.providers = [];
         feedprovider.todaysProviders = [];
         feedprovider.errors = [];
+        feedprovider.addeds = [];
         feedprovider.pname = '';
         feedprovider.getProvidersData = function () {
             FeedProviderModel.getProvidersData()
@@ -398,7 +408,7 @@ angular.module('SimpleRESTWebsite', ['angular-storage', 'ui.router', 'ui.bootstr
             return moment(moment(moment(time).format('YYYY-MM-DD HH:mm:ss ')).toDate()).format('YYYY-MM-DD HH:mm:ss ');
         }
         feedprovider.getErrors = function () {
-            feedprovider.pname = $stateParams.providerName;
+            feedprovider.pname =  $stateParams.providerName;
             FeedProviderModel.getErrors($stateParams.historyId)
                 .then(function (response) {
                     if (response.data.result)
@@ -408,6 +418,15 @@ angular.module('SimpleRESTWebsite', ['angular-storage', 'ui.router', 'ui.bootstr
                 })
         }
 
+        feedprovider.getAdded = function(){
+            FeedProviderModel.getAdded($stateParams.historyId)
+                .then(function (response) {
+                    if (response.data.result)
+                        feedprovider.addeds = response.data.addeds;
+                    else
+                        alert(response.data.msg);
+                })
+        }
         feedprovider.hi = function () {
             alert('Hi');
         }
@@ -493,17 +512,41 @@ angular.module('SimpleRESTWebsite', ['angular-storage', 'ui.router', 'ui.bootstr
 
 
     })
-    .controller('appdashboardCtrl', ['TasksModel', '$rootScope', function (TasksModel, $rootScope) {
+    .controller('appdashboardCtrl', ['TasksModel','FeedProviderModel', '$rootScope', function (TasksModel,FeedProviderModel, $rootScope) {
         $rootScope.activeItem = 0;
         var appdashboard = this;
+        appdashboard.tasks = [];
+        appdashboard.todaysProviders = [];
+        appdashboard.todaysOutboundProviders = [];
         // tasks = [];
-        var getAllTasks = function () {
+        appdashboard.getTasksData = function () {
             TasksModel.getAllTasks()
                 .then(function (response) {
                     appdashboard.tasks = response.data;
                 })
         };
-        getAllTasks();
+        appdashboard.utcToLocalTime = function (time) {
+            return moment(moment(moment(time).format('YYYY-MM-DD HH:mm:ss ')).toDate()).format('YYYY-MM-DD HH:mm:ss ');
+        }
+        appdashboard.getTodaysProvidersData = function () {
+            FeedProviderModel.getTodaysProvidersData()
+                .then(function (response) {
+                    appdashboard.todaysProviders = response.data;
+                })
+        }
+        appdashboard.getTodaysOutboundProvidersData = function () {
+            FeedProviderModel.getTodaysOutboundProvidersData()
+                .then(function (response) {
+                    appdashboard.todaysOutboundProviders = response.data;
+                })
+        }
+
+     /*    appdashboard.getAllData = function(){
+            appdashboard.getTasksData();
+            appdashboard.getTodaysProvidersData();
+            appdashboard.getTodaysOutboundProvidersData();
+        } */
+        // getAllTasks();
 
     }])
     .controller('DealershipCtrl', ['DealershipModel', '$rootScope', 'NgTableParams', function (DealershipModel, $rootScope, NgTableParams) {
