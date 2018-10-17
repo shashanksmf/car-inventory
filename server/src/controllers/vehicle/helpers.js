@@ -12,7 +12,7 @@ var readChunk = require('read-chunk');
 var fileType = require('file-type');
 var formidable = require('formidable');
 var mapping = require('./../../utils/mapping');
-
+var moment = require('moment');
 module.exports = {
     uploadCSV : function (req, res) {
 
@@ -30,7 +30,7 @@ module.exports = {
             var taskObj = {};
             // taskObj['_id'] = new mongoose.Types.ObjectId();
             // taskObj['startTime'] = Date.now();
-            taskObj['lastRun'] = Date.now();
+            taskObj['lastRun'] = new Date(moment.utc().format('YYYY-MM-DD HH:mm:ss')).getTime()
             var headers = {};
             var isFirstLine = true;
             // taskObj['file'] = file.name;
@@ -81,7 +81,7 @@ module.exports = {
                         });
 
                         taskObj['_id'] = new mongoose.Types.ObjectId();
-                        taskObj['nextRun'] = Date.now();
+                        taskObj['nextRun'] = new Date(moment.utc().format('YYYY-MM-DD HH:mm:ss')).getTime();
                         taskObj['type'] = 3;
                         taskObj['error'] = 0;
                         taskObj['added'] = vehicles.length;
