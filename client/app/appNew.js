@@ -525,8 +525,11 @@ angular.module('SimpleRESTWebsite', ['angular-storage', 'ui.router', 'ui.bootstr
                     appdashboard.tasks = response.data;
                 })
         };
-        appdashboard.utcToLocalTime = function (time) {
-            return moment(moment(moment(time).format('YYYY-MM-DD HH:mm:ss ')).toDate()).format('YYYY-MM-DD HH:mm:ss ');
+        appdashboard.utcToLocalTime = function (time, type = 0) {
+            if(type)
+                return moment(moment(moment(time).format('YYYY-MM-DD HH:mm:ss ')).add(0,'minutes').toDate()).format('YYYY-MM-DD HH:mm:ss ');
+            else
+                return moment(moment(moment(time).format('YYYY-MM-DD HH:mm:ss ')).toDate()).format('YYYY-MM-DD HH:mm:ss ');
         }
         appdashboard.getTodaysProvidersData = function () {
             FeedProviderModel.getTodaysProvidersData()

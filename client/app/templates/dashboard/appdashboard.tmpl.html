@@ -42,7 +42,7 @@
               <td>{{$index +1 }}</td>
               <td>{{ task.filename}}</td>
               <td>{{ appdashboard.utcToLocalTime(task.lastRun)}}</td>
-              <td>{{ (task.type == 3)?appdashboard.utcToLocalTime(task.nextRun):'+1 Min' }}</td>
+              <td>{{ (task.type == 3)?appdashboard.utcToLocalTime(task.nextRun):appdashboard.utcToLocalTime(task.nextRun,1) }}</td>
               <td><a href="#/inbound/schedule/added/{{ task._id }}"> {{ task.added }} View</a></td>
               <td><a href="#/inbound/schedule/error/{{ task.providerName }}/{{ task._id}}">{{ task.error}} View</a></td>
             </tr>
