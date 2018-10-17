@@ -56,7 +56,8 @@ module.exports = {
                 })
                 .on('end', function () {
                     Vehicle.create(vehicles, function (err, result) {
-                        if (err) return err;
+                        if (err) 
+                            res.send('Error While Uploding , Try Again !');
                      /*    taskObj['success'] = vehicles.length;
                         taskObj['endTime'] = Date.now();
 
@@ -88,7 +89,7 @@ module.exports = {
                         taskObj['addedIds'] = addedIds;
                         History.create(taskObj,function(err,result){
                             if(err)
-                               return;
+                                res.send('Error While Uploding , Try Again !');
                             var testObj = {};
                             testObj["_id"] = mongoose.Types.ObjectId();
                             testObj['headers'] = headers;
@@ -97,6 +98,7 @@ module.exports = {
                             TestData.create(testObj, function (err, result) {
                                 if (err) throw err;
                             })
+                            res.send(vehicles.length + ' vehicles have been successfully uploaded.');
                     
                         });
                     });
