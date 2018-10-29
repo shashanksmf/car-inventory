@@ -44,7 +44,7 @@
                                 <td>{{  schedule.getIntervals(provider.interval)   }}</td>
                                 <td>{{  (provider.lastRun)? schedule.utcToLocalTime(provider.lastRun):'N/A' }}</td>
                                 <td>{{ schedule.utcToLocalTime(provider.nextRun); }}</td>
-                                <td><a href="#/outbound/provider/schedule/s/view/{{ provider._id }}">View</a> | <a href="#/outbound/provider/schedule/history/{{ provider._id }}">History</a> | <a href="">Run</a> | <a href=""ng-click="schedule.cancelOutboundJob(provider._id)">Deativate</a></td>  
+                                <td><a href="#/outbound/provider/schedule/s/view/{{ provider._id }}">View</a> | <a href="#/outbound/provider/schedule/history/{{ provider._id }}">History</a> | <a href="">Run</a><!--  | <a href=""ng-click="schedule.cancelOutboundJob(provider._id)">Deativate</a> --></td>  
                             </tr>
                     </tbody>
                 </table>

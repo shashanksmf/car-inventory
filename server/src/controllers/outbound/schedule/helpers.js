@@ -505,5 +505,35 @@ module.exports = {
         Schedule.findOne({_id : scheduleId},function(err,result){
             res.json(result);
         })
+    },
+    downloadFile : function(req,res){
+        const providerId = req.params.providerId;
+        getProviderFTPDetails(providerId,function(ftpDetails){
+            var c = new Client();
+            c.connect({
+                host: ftpDetails.ftpHost,
+                port: 21,
+                user: ftpDetails.ftpUsername,
+                password: ftpDetails.ftpPassword
+              });
+              c.on('ready', function() {
+                c.get(ftpDetails.directory, function(err, stream) {
+                  if (err) {
+                      console.error('FTP GET ERROR : ' + err);    
+                  }
+                  let filename =  extractFilename(ftpDetails.directory);
+                  res.set('Content-disposition', 'attachment; filename=' +  filename);
+                  res.set('Content-Type', 'text/plain');
+                  stream.pipe(res);
+                  //stream.pipe(fs.createWriteStream(__baseDir + '/inboundFiles/' + filename));
+                  stream.once('close', function() {
+                    c.end();
+                  });
+                    c.on('error', function(err) {
+                            console.error("FTP Connect Error : ", err)
+                        });
+                    });
+            });
+        });
     }
 };

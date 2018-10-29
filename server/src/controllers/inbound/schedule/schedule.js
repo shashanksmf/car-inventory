@@ -14,6 +14,7 @@ router.get('/schedule/added',helpers.getAdded);
 router.get('/schedule/history/:scheduleId',helpers.getScheduleHistory);
 router.get('/schedule/details/:scheduleId',helpers.getScheduleDetails);
 router.get('/schedule/run/:scheduleId',helpers.runCronJob);
+router.get('/schedule/file/:providerId',helpers.downloadFile);
 
 }
 

@@ -73,6 +73,11 @@
                    <input type="text" class="form-control" ng-model="schedule.form2.id">
                 </div>
             </div>
+            <div ng-if="schedule.state" class="form-group row">
+                <div class="col-md-12">
+                    <button class="btn btn-danger btn-block" type="button" ng-click="schedule.cancelOutboundJob(schedule.scheduleId)"> Deactivate This Schedule </button>
+                </div>
+            </div>
           </div>
           <div class="col-sm-6">
             <div class="">

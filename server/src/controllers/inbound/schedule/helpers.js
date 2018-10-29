@@ -1,6 +1,7 @@
 var mongoose = require('mongoose');
 var schedule = require('node-schedule');
 var cronJobs = {};
+var fs = require('fs');
 
 var Database = require("./../../../database");
 var Schedule = Database.getcollectionSchema('schedule');
@@ -59,8 +60,7 @@ function updateLastNextRun(ftpDetails,added,error,errorObj,addedIds){
         obj['providerType'] = 1;
         obj['scheduleId'] = result._id;
         obj['addedIds'] = addedIds;
-        let arr = ftpDetails.directory.split('/');
-        obj['filename'] = arr[arr.length - 1];
+        obj['filename'] = extractFilename(ftpDetails.directory);
         insertHistory(obj,errorObj);
         /* Provider.updateOne({_id : providerId},{nextRun : calculated.nextRunDate, lastRun : calculated.lastRunDate, added : added  }, function(err,result){ 
             // if(!err)
@@ -70,7 +70,7 @@ function updateLastNextRun(ftpDetails,added,error,errorObj,addedIds){
     })
 }
 
-function    reScheduleJob(job,isStarted = false){
+function reScheduleJob(job,isStarted = false){
    // for re scheduling already  jobs which are vanished because server is restarted;
    
    // get local time with respect to utc time stored into db taken from client at time of scheduling
@@ -312,6 +312,10 @@ function cancelScheduledJob(jobId,cb){
     });
     
 }
+function extractFilename(path){
+    let pathsArr = path.split('/');
+    return  pathsArr[pathsArr.length - 1];
+}
 module.exports = {
     scheduleJob : function(req,res){
 
@@ -464,8 +468,38 @@ module.exports = {
     getScheduleDetails : function(req,res){
         var scheduleId = req.params.scheduleId;
 
-        Schedule.findOne({_id : scheduleId},function(err,result){
+        Schedule.findOne({_id : scheduleId,  isActive : true},function(err,result){
             res.json(result);
         })
+    },
+    downloadFile : function(req,res){
+        const providerId = req.params.providerId;
+        getProviderFTPDetails(providerId,function(ftpDetails){
+            var c = new Client();
+            c.connect({
+                host: ftpDetails.ftpHost,
+                port: 21,
+                user: ftpDetails.ftpUsername,
+                password: ftpDetails.ftpPassword
+              });
+              c.on('ready', function() {
+                c.get(ftpDetails.directory, function(err, stream) {
+                  if (err) {
+                      console.error('FTP GET ERROR : ' + err);    
+                  }
+                  let filename =  extractFilename(ftpDetails.directory);
+                  res.set('Content-disposition', 'attachment; filename=' +  filename);
+                  res.set('Content-Type', 'text/plain');
+                  stream.pipe(res);
+                  //stream.pipe(fs.createWriteStream(__baseDir + '/inboundFiles/' + filename));
+                  stream.once('close', function() {
+                    c.end();
+                  });
+                    c.on('error', function(err) {
+                            console.error("FTP Connect Error : ", err)
+                        });
+                    });
+            });
+        });
     }
 };

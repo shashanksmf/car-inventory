@@ -722,22 +722,28 @@ dealership.searchDealership = function () {
             return moment(moment(moment(time).format('YYYY-MM-DD HH:mm:ss ')).toDate()).format('YYYY-MM-DD HH:mm:ss ');
         }
         schedule.cancelJob = function (id) {
-            ScheduleModel.cancelJob(id)
+            if(confirm('are you sure you want to delete')){
+                ScheduleModel.cancelJob(id)
                 .then(function (res) {
                     if (res.data.result) {
                         alert(res.data.msg);
-                        location.reload();
+                        // location.reload();
+                        window.location.href = '#/inbound/provider/schedule/list';
                     }
                 })
+            }
         }
         schedule.cancelOutboundJob = function (id) {
-            ScheduleModel.cancelOutboundJob(id)
+            if(confirm('are you sure you want to delete')){
+                ScheduleModel.cancelOutboundJob(id)
                 .then(function (res) {
                     if (res.data.result) {
                         alert(res.data.msg);
                         location.reload();
+                        window.location.href = '#/outbound/provider/schedule/list';
                     }
                 })
+            }
         }
         schedule.getIntervals = function (value) {
             var intervals = {
@@ -759,13 +765,19 @@ dealership.searchDealership = function () {
         schedule.getScheduleDetails = function (scheduleId) {
             ScheduleModel.getScheduleDetails(scheduleId)
                 .then(function (res) {
-                    schedule.form.provider = schedule.form2.IProvider = res.data.providerId;
-                    schedule.form2.OProvider = res.data.OProviderId;
-                    schedule.form.startDate = schedule.form2.startDate = moment(moment(moment(res.data.startDate).format('MM-DD-YYYY HH:mm:ss')).toDate()).format('MM-DD-YYYY hh:mm:ss A');
+                    if(res.data != "null"){
+                        schedule.form.provider = schedule.form2.IProvider = res.data.providerId;
+                        schedule.form2.OProvider = res.data.OProviderId;
+                        schedule.form.startDate = schedule.form2.startDate = moment(moment(moment(res.data.startDate).format('MM-DD-YYYY HH:mm:ss')).toDate()).format('MM-DD-YYYY hh:mm:ss A');
 
-                    schedule.form.interval = schedule.form2.interval = res.data.interval;
-                    schedule.form.status = schedule.form2.status = res.data.isActive.toString();
-                    schedule.form2.id = res.data.id;
+                        schedule.form.interval = schedule.form2.interval = res.data.interval;
+                        schedule.form.status = schedule.form2.status = res.data.isActive.toString();
+                        schedule.form2.id = res.data.id;
+                        schedule.scheduleId = scheduleId;
+                    }
+                    /* else{
+                        window.location.href = '#/inbound/provider/schedule/list';
+                    } */
                 })
         }
         schedule.runSchedule = function (scheduleId) {
