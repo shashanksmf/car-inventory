@@ -15,6 +15,11 @@ var moment = require('moment');
 var fs = require('fs');
 var csv = require('fast-csv');
 
+
+function extractFilename(path){
+    let pathsArr = path.split('/');
+    return  pathsArr[pathsArr.length - 1];
+}
 function calculateNextLastRun(scheduleObj,added = 0){
     var output = {};
     var hours = scheduleObj.interval;
@@ -35,21 +40,25 @@ function calculateNextLastRun(scheduleObj,added = 0){
 }
 function updateLastNextRun(ftpDetails,addedIds,directory,added = 0){
     Schedule.findOne({_id : ftpDetails.jobId},function(err,result){
-        var calculated = calculateNextLastRun(result,added);
-        var obj = {};
-        obj['_id'] = new mongoose.Types.ObjectId();
-        obj['lastRun'] = calculated.lastRunDate;
-        obj['nextRun'] =  calculated.nextRunDate;
-        obj['providerId'] = ftpDetails._id;
-        obj['providerName'] = ftpDetails.providerName;
-        obj['type'] = 2;
-        obj['added'] = addedIds.length;
-        obj['providerType'] = 2;
-        obj['addedIds'] = addedIds;
-        let arr = directory.split('/');
-        obj['filename'] = arr[arr.length - 1];
-        obj['scheduleId'] = result._id;
-        insertHistory(obj);
+        if(!err && result){
+            var calculated = calculateNextLastRun(result,added);
+            var obj = {};
+            obj['_id'] = new mongoose.Types.ObjectId();
+            obj['lastRun'] = calculated.lastRunDate;
+            obj['nextRun'] =  calculated.nextRunDate;
+            obj['providerId'] = ftpDetails._id;
+            obj['providerName'] = ftpDetails.providerName;
+            obj['type'] = 2;
+            obj['added'] = addedIds.length;
+            obj['providerType'] = 2;
+            obj['addedIds'] = addedIds;
+            let arr = directory.split('/');
+            obj['filename'] = arr[arr.length - 1];
+            obj['scheduleId'] = result._id;
+            insertHistory(obj);
+        }else{
+           console.error('Schedule Not Found At outbound/helpers : ', 60 );
+        }
     })
 }
 
@@ -92,7 +101,7 @@ async function executeCronJob(job){
 }
 function getProviderHeaderFields(providerId,cb){
     Provider.findOne({_id: providerId},function(err,result){
-        if(!err){
+        if(!err && result){
             delete result.headersMapped['$init'];
             cb(result.headersMapped);
         }
@@ -129,9 +138,13 @@ function readFileFromServer(ftpDetails,OProviderId,id){
             c.get(ftpDetails.directory, async function(err, stream) {
              
               if (err) {
-                  console.log('File Download Error : ', err);
-                  
+                  console.log('File Download Error : ', err);   
+                  return;
               }
+               /*
+                *  Adding new column (id) and its values into csv file  
+                */
+              var modifiedStream = await modifyFile(stream,id);
               csv.fromStream(stream, {
                 headers: true,
                 ignoreEmpty: true,
@@ -151,6 +164,7 @@ function readFileFromServer(ftpDetails,OProviderId,id){
                         }
                     }
                     vehicleObj['_id'] = new mongoose.Types.ObjectId();
+                    vehicleObj['id'] = id;
 
                     added.push(vehicleObj);
 
@@ -161,10 +175,7 @@ function readFileFromServer(ftpDetails,OProviderId,id){
 
                     // localpath of file to be uploaded 
                     var localPath = path.join(__baseDir , 'inboundFiles' ,filename);
-                    /*
-                    *  Adding new column (id) and its values into csv file  
-                    */
-                    var modifiedStream = await modifyFile(stream,id);
+                   
                     /* Writing file into temprary folder */
                     let fileResult
                     try{
@@ -335,9 +346,11 @@ async function uploadAllVehicles(job){
      */
     var vehicles = await Vehicle.find({},{_id : 0, providerId : 0, created : 0}).lean();
 
-    vehicles.forEach((item,index) => {
-        vehicles[index].id = job.id;
-    });
+    if(Array.isArray(vehicles) && vehicles.length){
+        vehicles.forEach((item,index) => {
+            vehicles[index].id = job.id;
+        });
+    }
     csv.writeToString(vehicles,
         {headers: true},
         async function(err, data){
@@ -366,13 +379,6 @@ async function uploadAllVehicles(job){
     
 }
 
-/* function getHeaders(data){
-    var headers = [];
-    for(var key in data){
-        headers.push(key);
-    }
-    return headers;
-} */
 
 function insertJobIntoDB(job,cb){
     Schedule.create(job,function(err,result){
@@ -432,36 +438,44 @@ module.exports = {
     },
     reScheduleCronJobs : function(){
         Schedule.find({ isActive: true, type : 2 },function(err,result){
-            if(err) throw err;
-            result.forEach(function(job){
-                if(job.isStarted)
-                    reScheduleJob(job,true);
-                else
-                    reScheduleJob(job);
-            })
-                
+            if(!err && result.length){
+                result.forEach(function(job){
+                    if(job.isStarted)
+                        reScheduleJob(job,true);
+                    else
+                        reScheduleJob(job);
+                })
+            }else{
+                console.error(err);
+            }    
         })
     },
     runCronJob : function(req,res){
         var scheduleId = req.params.scheduleId;
         Schedule.find({ _id : scheduleId, isActive: true, type : 1 },function(err,result){
-            var job = result[0];
-            job.startDate = moment.utc().format('YYYY-MM-DD HH:mm:ss');
-            // cronJobs[job._id].cancel(); delete cronJobs[job._id];
-            executeCronJob(job);
-            if(err) throw err;
-            if(job.isStarted)
-                reScheduleJob(job,true);
-            else
-                reScheduleJob(job);
+            if(!err && result){
+                var job = result[0];
+                job.startDate = moment.utc().format('YYYY-MM-DD HH:mm:ss');
+                // cronJobs[job._id].cancel(); delete cronJobs[job._id];
+                executeCronJob(job);
+                if(err) throw err;
+                if(job.isStarted)
+                    reScheduleJob(job,true);
+                else
+                    reScheduleJob(job);
 
-            res.json({result : 1, msg : 'Schedule Started Successfully!'});
+                res.json({result : 1, msg : 'Schedule Started Successfully!'});
+            }else{
+                res.json({result : 0, msg : 'Error While Scheduling!'});
+            }
         })
     },
     getproviders : function(req,res){
         Provider.find(function(err,result){
-            if(err) throw err;
-            res.json(result);
+            if(!err && result.length) 
+                res.json(result);
+            else    
+                res.send('Something Went Wrong!');
         })
     },
     getProvidersScheduleData : function(req,res){
@@ -484,7 +498,7 @@ module.exports = {
                 }
         
             ],function(err,result){
-                if(!err)
+                if(!err && result)
                     res.json({result : true, data : result});
                 else
                     res.json({result : false, msg : 'Error While Fetching Schedule Data!'});
@@ -507,33 +521,42 @@ module.exports = {
         })
     },
     downloadFile : function(req,res){
-        const providerId = req.params.providerId;
-        getProviderFTPDetails(providerId,function(ftpDetails){
-            var c = new Client();
-            c.connect({
-                host: ftpDetails.ftpHost,
-                port: 21,
-                user: ftpDetails.ftpUsername,
-                password: ftpDetails.ftpPassword
-              });
-              c.on('ready', function() {
-                c.get(ftpDetails.directory, function(err, stream) {
-                  if (err) {
-                      console.error('FTP GET ERROR : ' + err);    
-                  }
-                  let filename =  extractFilename(ftpDetails.directory);
-                  res.set('Content-disposition', 'attachment; filename=' +  filename);
-                  res.set('Content-Type', 'text/plain');
-                  stream.pipe(res);
-                  //stream.pipe(fs.createWriteStream(__baseDir + '/inboundFiles/' + filename));
-                  stream.once('close', function() {
-                    c.end();
-                  });
-                    c.on('error', function(err) {
-                            console.error("FTP Connect Error : ", err)
+        const scheduleId = req.params.scheduleId;
+       Schedule.findOne({_id : scheduleId},function(err,result){
+            if(!err && result){
+                Provider.findOne({ _id : result.providerId},function(err,ftpDetails){
+                    if(!err && ftpDetails){
+                        var c = new Client();
+                        c.connect({
+                            host: ftpDetails.ftpHost,
+                            port: 21,
+                            user: ftpDetails.ftpUsername,
+                            password: ftpDetails.ftpPassword
+                            });
+                            c.on('ready', function() {
+                                c.get(ftpDetails.directory, function(err, stream) {
+                                    if (err) {
+                                        console.error('FTP GET ERROR : ' + err);    
+                                    }
+                                    let filename =  extractFilename(ftpDetails.directory);
+                                    res.set('Content-disposition', 'attachment; filename=' +  filename);
+                                    res.set('Content-Type', 'text/plain');
+                                    stream.pipe(res);
+                                    //stream.pipe(fs.createWriteStream(__baseDir + '/inboundFiles/' + filename));
+                                    stream.once('close', function() {
+                                    c.end();
+                                    });
+                                    c.on('error', function(err) {
+                                            console.error("FTP Connect Error : ", err)
+                                        });
+                                });
                         });
-                    });
-            });
-        });
+                    }else
+                        res.send('Something Went Wrong!')
+                   
+                });
+            }else
+               res.send('Something Went Wrong!');
+       })
     }
 };

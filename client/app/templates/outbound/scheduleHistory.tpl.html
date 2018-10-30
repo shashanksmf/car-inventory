@@ -22,6 +22,7 @@
                             <th>Run Time</th>
                             <th>File Error Count</th>
                             <th>File Error Percentage %</th>
+                            <th>File</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -33,7 +34,8 @@
                               <td>{{ (scheduleHistory.lastRun)? schedule.utcToLocalTime(scheduleHistory.lastRun):'N/A' }}</td>
                               <td>N/A</td>
                               <td>N/A</td>
-                          </tr>
+                              <td><a href="/outbound/schedule/file/{{scheduleHistory.scheduleId}}">Download</a></td>
+                            </tr>
                     </tbody>
                 </table>
               </div>

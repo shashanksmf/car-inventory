@@ -9,7 +9,7 @@ Schedule.bindRoutes = function(router) {
     router.get('/schedule/job/cancel/:jobId',helpers.cancelJob);
     router.get('/schedule/providers',helpers.getproviders);
     router.get('/schedule/providers/data',helpers.getProvidersScheduleData);
-    router.get('/schedule/file/:providerId',helpers.downloadFile);
+    router.get('/schedule/file/:scheduleId',helpers.downloadFile);
 
 }
 

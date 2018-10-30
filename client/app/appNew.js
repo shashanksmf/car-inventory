@@ -414,7 +414,7 @@ angular.module('SimpleRESTWebsite', ['angular-storage', 'ui.router', 'ui.bootstr
                     if (response.data.result)
                         feedprovider.errors = response.data.error;
                     else
-                        alert(response.data.msg);
+                        console.error(response.data.msg);
                 })
         }
 
@@ -424,7 +424,7 @@ angular.module('SimpleRESTWebsite', ['angular-storage', 'ui.router', 'ui.bootstr
                     if (response.data.result)
                         feedprovider.addeds = response.data.addeds;
                     else
-                        alert(response.data.msg);
+                        console.error(response.data.msg);
                 })
         }
         feedprovider.hi = function () {
@@ -705,7 +705,7 @@ dealership.searchDealership = function () {
                     if (res.data.result)
                         schedule.providers = res.data.data;
                     else
-                        alert(res.data.msg);
+                        console.error(res.data.msg);
                 })
         }
         schedule.getOutboundProvidersScheduleData = function () {
@@ -715,7 +715,7 @@ dealership.searchDealership = function () {
                     if (res.data.result)
                         schedule.providers = res.data.data;
                     else
-                        alert(res.data.msg);
+                    console.error(res.data.msg);
                 })
         }
         schedule.utcToLocalTime = function (time) {
@@ -846,7 +846,7 @@ dealership.searchDealership = function () {
                                 alert(result.msg);
                                 location.reload();
                             } else {
-                                alert(result.msg);
+                                console.error(result.msg);
                             }
                         });
                 }
@@ -865,7 +865,7 @@ dealership.searchDealership = function () {
                                 alert(result.msg);
                                 location.reload();
                             } else {
-                                alert(result.msg);
+                                console.error(result.msg);
                             }
                         });
                 } else {
@@ -911,7 +911,7 @@ dealership.searchDealership = function () {
                                     provider.providerHeaders = res.data.headers;
                                     $('#myModal').modal('hide');
                                 } else
-                                    alert(res.data.msg);
+                                    console.error(res.data.msg);
                             });
                     }
                 } else {
@@ -959,7 +959,7 @@ dealership.searchDealership = function () {
                 return false;
             },
             onError: function (err) {
-                alert('Error', err)
+                console.error('Error', err)
             }
         });
         dashboard.uploadTxt = 'Upload';
@@ -990,8 +990,8 @@ dealership.searchDealership = function () {
                     })
 
                     .error(function (data) {
-                        console.log("data", data);
-                        alert("error uploading file")
+                        console.error("Error While Uploading File", data);
+                        // alert("error uploading file")
                     });
             }
 

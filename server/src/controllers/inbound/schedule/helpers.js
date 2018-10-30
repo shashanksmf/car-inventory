@@ -47,21 +47,25 @@ function updateLastNextRun(ftpDetails,added,error,errorObj,addedIds){
         //     nextRunDate = lastRunDate + (1 * 60 * 1000 );
         // else
         //     nextRunDate = lastRunDate + ( hours * 60 * 60 * 1000 );
-        var calculated = calculateNextLastRun(result,added);
-        var obj = {};
-        obj['_id'] = new mongoose.Types.ObjectId();
-        obj['lastRun'] = calculated.lastRunDate;
-        obj['nextRun'] =  calculated.nextRunDate;
-        obj['providerId'] = ftpDetails._id;
-        obj['providerName'] = ftpDetails.providerName;
-        obj['type'] = 1;
-        obj['error'] = error;
-        obj['added'] = added;
-        obj['providerType'] = 1;
-        obj['scheduleId'] = result._id;
-        obj['addedIds'] = addedIds;
-        obj['filename'] = extractFilename(ftpDetails.directory);
-        insertHistory(obj,errorObj);
+        if(!err && result){
+            var calculated = calculateNextLastRun(result,added);
+            var obj = {};
+            obj['_id'] = new mongoose.Types.ObjectId();
+            obj['lastRun'] = calculated.lastRunDate;
+            obj['nextRun'] =  calculated.nextRunDate;
+            obj['providerId'] = ftpDetails._id;
+            obj['providerName'] = ftpDetails.providerName;
+            obj['type'] = 1;
+            obj['error'] = error;
+            obj['added'] = added;
+            obj['providerType'] = 1;
+            obj['scheduleId'] = result._id;
+            obj['addedIds'] = addedIds;
+            obj['filename'] = extractFilename(ftpDetails.directory);
+            insertHistory(obj,errorObj);
+        }else{
+            console.error(err);
+        }
         /* Provider.updateOne({_id : providerId},{nextRun : calculated.nextRunDate, lastRun : calculated.lastRunDate, added : added  }, function(err,result){ 
             // if(!err)
             //     // console.log('Date Updated!');
@@ -233,7 +237,7 @@ function insertErrors(errorObj,historyId){
 }
 function getProviderHeaderFields(providerId,cb){
     Provider.findOne({_id: providerId},function(err,result){
-        if(!err){
+        if(!err && result){
             delete result.headersMapped['$init'];
             cb(result.headersMapped);
         }
@@ -356,35 +360,44 @@ module.exports = {
     },
     reScheduleCronJobs : function(){
         Schedule.find({ isActive: true, type : 1 },function(err,result){
-            if(err) throw err;
-            result.forEach(function(job){
-                if(job.isStarted)
-                    reScheduleJob(job,true);
-                else
-                    reScheduleJob(job);
-            })
+            if(!err && result){
+                result.forEach(function(job){
+                    if(job.isStarted)
+                        reScheduleJob(job,true);
+                    else
+                        reScheduleJob(job);
+                })
+            }else{
+                console.error(err);
+                
+            }
+            
                 
         })
     },
     runCronJob : function(req,res){
         var scheduleId = req.params.scheduleId;
         Schedule.find({ _id : scheduleId, isActive: true, type : 1 },function(err,result){
-            var job = result[0];
-            job.startDate = moment.utc().format('YYYY-MM-DD HH:mm:ss');
-            // cronJobs[job._id].cancel(); delete cronJobs[job._id];
-            executeCronJob(job);
-            if(err) throw err;
-            if(job.isStarted)
-                reScheduleJob(job,true);
-            else
-                reScheduleJob(job);
+            if(!err && result){
+                var job = result[0];
+                job.startDate = moment.utc().format('YYYY-MM-DD HH:mm:ss');
+                // cronJobs[job._id].cancel(); delete cronJobs[job._id];
+                executeCronJob(job);
+                if(err) throw err;
+                if(job.isStarted)
+                    reScheduleJob(job,true);
+                else
+                    reScheduleJob(job);
 
-            res.json({result : 1, msg : 'Schedule Started Successfully!'});
+                res.json({result : 1, msg : 'Schedule Started Successfully!'});
+            }else{
+                res.json({result :  0, msg : 'Error while Starting schedule!'});
+            }
         })
     },
     getproviders : function(req,res){
         Provider.find({providerType : 1},function(err,result){
-            if(err) throw err;
+            if(err) console.error(err);
             res.json(result);
         })
     },
@@ -401,31 +414,29 @@ module.exports = {
         var historyId = req.query.historyId;
         if(historyId){
             History.findOne({_id:  historyId},function(err,result){
-                if(err)
-                    res.json({result : 0, msg : 'No History Found'})
-                if(result){
+                if(!err && result){
                     Vehicle.find({_id : { $in : result.addedIds}}).lean()
-                        .then(vehicles => {
-                            if(vehicles.length)
-                                res.json({result : 1, addeds : vehicles});
-                            else{
-                                OutboundAdded.find({_id : { $in : result.addedIds}}).lean()
-                                    .then(vehicles => {
-                                        if(vehicles.length)
-                                            res.json({result : 1, addeds : vehicles});
-                                        else
-                                            res.json({result : 0, msg : ' No Vehicles Found!'});
+                    .then(vehicles => {
+                        if(vehicles.length)
+                            res.json({result : 1, addeds : vehicles});
+                        else{
+                            OutboundAdded.find({_id : { $in : result.addedIds}}).lean()
+                                .then(vehicles => {
+                                    if(vehicles.length)
+                                        res.json({result : 1, addeds : vehicles});
+                                    else
+                                        res.json({result : 0, msg : ' No Vehicles Found!'});
 
-                                    }).catch(error => {
-                                        res.json({result : 0 , msg : 'No Vehicles Found!'});
-                                    })
-                            }
-                        }).catch(error => {
-                                res.json({result : 0 , msg : 'No Vehicles Found!'});
-                        })
-                }else{
-                    res.json({result : 0, msg : ' No Vehicles Found!'});
-                }  
+                                }).catch(error => {
+                                    res.json({result : 0 , msg : 'No Vehicles Found!'});
+                                })
+                        }
+                    }).catch(error => {
+                            res.json({result : 0 , msg : 'No Vehicles Found!'});
+                    })
+                }else
+                    res.json({result : 0, msg : 'No History Found : ' + err})
+                
             });
         }else{
             res.json({result : 0, msg : 'Invalid Input'})
