@@ -10,6 +10,15 @@ var mongoose = require('mongoose');
 var moment = require('moment');
 
 module.exports = {
+    getProviderInfo : function(req,res){
+      const providerId = req.query.providerId;
+      Provider.findOne({_id : providerId, providerType : 2},function(err,result){
+        if(!err && result)
+          res.send({result : true, data : result});
+        else
+          res.send({result : false , msg : 'Provider\'s info not found '});
+      })
+    },
     getProvidersDetails : function(req,res){
      Provider.aggregate([{
         $match : {

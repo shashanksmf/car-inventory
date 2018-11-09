@@ -73,6 +73,12 @@ angular.module('SimpleRESTWebsite', ['angular-storage', 'ui.router', 'ui.bootstr
                 templateUrl: 'app/templates/outbound/addProvider.tpl.html',
                 controller: 'ProviderCtrl',
                 controllerAs: 'provider'
+            }) 
+            .state('outbound/view', {
+                url: '/outbound/provider/feed/view/:providerId',
+                templateUrl: 'app/templates/outbound/viewProvider.tpl.html',
+                controller: 'ProviderCtrl',
+                controllerAs: 'provider'
             })
             .state('inbound/list', {
                 url: '/inbound/provider/feed/list',
@@ -335,6 +341,9 @@ angular.module('SimpleRESTWebsite', ['angular-storage', 'ui.router', 'ui.bootstr
 
         service.getDirectoryFiles = function (formData) {
             return $http.get('ftp/getDirectoryFiles', { params: formData });
+        }
+        service.getProviderDetails = function (providerId){
+            return $http.get('/outbound/provider/view',{ params : { providerId : providerId}})
         }
 
     })
@@ -789,7 +798,7 @@ dealership.searchDealership = function () {
         }
 
     }])
-    .controller('ProviderCtrl', ['ProviderModel', '$rootScope', '$scope', function (ProviderModel, $rootScope, $scope) {
+    .controller('ProviderCtrl', ['ProviderModel', '$rootScope', '$scope','$stateParams', function (ProviderModel, $rootScope, $scope, $stateParams) {
         if (window.location.href.indexOf('outbound') >= 0)
             $rootScope.activeItem = 2;
         else if (window.location.href.indexOf('inbound') >= 0)
@@ -944,6 +953,23 @@ dealership.searchDealership = function () {
         //     provider.form = {};
         //     provider.isFTPTested = 
         // }
+        provider.getProviderDetails = function(){
+            var providerId =  $stateParams.providerId;
+            if(providerId){
+                ProviderModel.getProviderDetails(providerId)
+                    .then(function(res){
+                        if(res.data.result) {
+                            var providerInfo =  res.data.data;
+                            provider.form.providerName = providerInfo.providerName;
+                            provider.form.directory = providerInfo.directory;
+                            provider.form.ftpUsername = providerInfo.ftpUsername;
+                            provider.form.ftpPassword = providerInfo.ftpPassword;
+                            provider.form.ftpHost = providerInfo.ftpHost;
+                            provider.form.providerStatus = providerInfo.providerStatus;
+                        }
+                    })
+            }
+        }
         getOrignalHeaders();
 
     }])
