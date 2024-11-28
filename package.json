@@ -21,7 +21,7 @@
     "express": "^4.16.3",
     "express-fileupload": "^0.4.0",
     "fast-csv": "^2.4.1",
-    "file-type": "^9.0.0",
+    "file-type": "^16.5.4",
     "formidable": "^1.2.1",
     "ftp": "^0.3.10",
     "ftp-client": "^0.2.2",
